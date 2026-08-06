@@ -1,5 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label=";e!w��f(">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="攻略校長旮拉給木">
   <rect width="800" height="600" fill="#0A0A0A"/>
-  <text x="400" y="280" text-anchor="middle" font-size="48" font-weight="900" fill="#D7F238" font-family="sans-serif">GALAGA</text>
-  <text x="400" y="360" text-anchor="middle" font-size="36" fill="#FFBF00" font-family="sans-serif">;e!w��f(</text>
+  <polygon points="400,420 360,480 440,480" fill="#FFBF00"/>
+  <circle cx="280" cy="200" r="24" fill="#19A9E5"/>
+  <circle cx="400" cy="160" r="24" fill="#D7F238"/>
+  <circle cx="520" cy="200" r="24" fill="#19A9E5"/>
+  <text x="400" y="100" text-anchor="middle" font-size="36" font-weight="900" fill="#FFBF00" font-family="Noto Sans TC, Microsoft JhengHei, sans-serif">攻略校長旮拉給木</text>
 </svg>

@@ -3,9 +3,9 @@ import type { SiteConfig } from "@/types";
 export const siteConfig: SiteConfig = {
   year: 2026,
   yearName: "2026 丙午竹梅賽",
-  tagline: "竹梅 2026 強勢回歸",
+  tagline: "2026 強勢回歸",
   description:
-    "只要是清交人就絕對不能錯過的竹梅！清交學生自主籌辦的荒謬校際競技平台——看起來像正式大型錦標賽，但比賽項目完全不正常。",
+    "只要是清交人就絕對不能錯過的竹梅！清交大學生自主籌辦的一系列好玩活動——看起來像正式大型錦標賽，但比賽項目完全不正常。",
   nthuScore: 3,
   nycuScore: 2,
   instagramUrl: "https://www.instagram.com/chumei2026/",

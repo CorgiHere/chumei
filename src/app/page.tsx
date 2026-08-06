@@ -35,6 +35,40 @@ export default function HomePage() {
       <Hero />
 
       <div className="grid-bg">
+        <section className="border-b-4 border-black bg-[var(--color-brand-yellow)]">
+          <div className="container-main flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
+            <p className="font-black">
+              現正開放：猜拳贏機票報名 · 攻略校長旮拉給木 · 小徑 T 預購
+            </p>
+            <div className="flex flex-wrap gap-2">
+              <a
+                href={siteConfig.rpsFormUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-secondary text-sm"
+              >
+                猜拳報名
+              </a>
+              <a
+                href={siteConfig.galagaUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-outline text-sm"
+              >
+                玩旮拉給木
+              </a>
+              <a
+                href={siteConfig.merchFormUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-outline text-sm"
+              >
+                預購小徑 T
+              </a>
+            </div>
+          </div>
+        </section>
+
         {nextActivity && (
           <section className="container-main py-12">
             <NextActivity activity={nextActivity} />

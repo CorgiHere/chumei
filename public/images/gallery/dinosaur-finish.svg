@@ -1,4 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="PýÑ]Ú¬“">
-  <rect width="800" height="450" fill="#D7F238"/>
-  <text x="400" y="230" text-anchor="middle" font-size="48" font-weight="900" fill="#0A0A0A" font-family="sans-serif">]Ú</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="????????">
+  <rect width="800" height="450" fill="#19A9E5"/>
+  <rect y="320" width="800" height="130" fill="#1E9E58"/>
+  <rect x="680" y="80" width="16" height="240" fill="#FFFFFF"/>
+  <rect x="660" y="80" width="56" height="24" fill="#FFBF00"/>
+  <ellipse cx="280" cy="300" rx="90" ry="50" fill="#7A1F40"/>
+  <circle cx="340" cy="250" r="42" fill="#7A1F40"/>
+  <text x="40" y="60" font-size="28" font-weight="900" fill="#FFFFFF" font-family="Noto Sans TC, Microsoft JhengHei, sans-serif">???? · FINISH</text>
 </svg>

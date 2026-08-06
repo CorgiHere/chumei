@@ -1,4 +1,11 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="PçÕ'g">
-  <rect width="800" height="450" fill="#FFBF00"/>
-  <text x="400" y="230" text-anchor="middle" font-size="40" font-weight="900" fill="#0A0A0A" font-family="sans-serif">PçÕ'g</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 450" role="img" aria-label="???????">
+  <rect width="800" height="450" fill="#E9E9E9"/>
+  <rect y="300" width="800" height="150" fill="#333333"/>
+  <ellipse cx="220" cy="290" rx="70" ry="40" fill="#FFBF00"/>
+  <circle cx="260" cy="250" r="34" fill="#FFBF00"/>
+  <ellipse cx="400" cy="290" rx="70" ry="40" fill="#19A9E5"/>
+  <circle cx="440" cy="250" r="34" fill="#19A9E5"/>
+  <ellipse cx="580" cy="290" rx="70" ry="40" fill="#7A1F40"/>
+  <circle cx="620" cy="250" r="34" fill="#7A1F40"/>
+  <text x="40" y="60" font-size="28" font-weight="900" fill="#0A0A0A" font-family="Noto Sans TC, Microsoft JhengHei, sans-serif">????????</text>
 </svg>

@@ -1,8 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap");
-
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   --color-brand-yellow: #ffbf00;
@@ -172,6 +169,80 @@
   .prose-chumei a {
     color: var(--color-brand-blue);
     text-decoration: underline;
+  }
+
+  .hazard-stripe-animated {
+    background: repeating-linear-gradient(
+      -55deg,
+      var(--color-black) 0 24px,
+      var(--color-signal-lime) 24px 48px
+    );
+    background-size: 68px 68px;
+    animation: stripe-scroll 8s linear infinite;
+  }
+
+  .reveal-up {
+    animation: reveal-up 0.7s ease-out both;
+  }
+
+  .reveal-up-delay {
+    animation: reveal-up 0.7s ease-out 0.15s both;
+  }
+
+  .score-pulse {
+    animation: score-pulse 2.4s ease-in-out infinite;
+  }
+
+  .speed-lines {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    opacity: 0.18;
+    background: repeating-linear-gradient(
+      100deg,
+      transparent 0 18px,
+      rgba(255, 191, 0, 0.35) 18px 20px
+    );
+    animation: speed-drift 12s linear infinite;
+  }
+}
+
+@keyframes stripe-scroll {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 68px 0;
+  }
+}
+
+@keyframes reveal-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes score-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.04);
+  }
+}
+
+@keyframes speed-drift {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 120px 0;
   }
 }
 

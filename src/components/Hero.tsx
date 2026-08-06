@@ -2,33 +2,37 @@ import Link from "next/link";
 import { siteConfig } from "@/data/site";
 import { getNextActivity } from "@/data/activities";
 import { Scoreboard } from "./Scoreboard";
-import { withBasePath } from "@/lib/utils";
+import { formatDateOnly, withBasePath } from "@/lib/utils";
 
 export function Hero() {
   const nextActivity = getNextActivity();
 
   return (
     <section className="relative overflow-hidden bg-[var(--color-black)] text-white">
-      <div className="hazard-stripe h-2" aria-hidden />
-      <div className="container-main py-16 md:py-24">
-        <div className="grid items-center gap-10 lg:grid-cols-2">
-          <div>
-            <p className="mb-2 text-sm font-bold text-[var(--color-brand-yellow)]">
+      <div className="hazard-stripe-animated h-2.5" aria-hidden />
+      <div className="speed-lines" aria-hidden />
+      <div className="container-main relative py-14 md:py-20">
+        <div className="grid items-center gap-10 lg:grid-cols-[1.15fr_0.85fr]">
+          <div className="reveal-up">
+            <p className="mb-3 inline-block rounded-[var(--radius-pill)] border border-[var(--color-brand-yellow)] px-3 py-1 text-xs font-bold tracking-wide text-[var(--color-brand-yellow)]">
               {siteConfig.yearName}
             </p>
-            <h1 className="display-title text-[var(--font-size-display-lg)] font-black leading-none">
-              {siteConfig.tagline}
+            <h1 className="display-title text-[var(--font-size-display-lg)] font-black leading-[0.95]">
+              竹梅賽
             </h1>
-            <p className="mt-6 max-w-lg text-lg text-gray-300">
+            <p className="mt-3 text-2xl font-black text-[var(--color-brand-yellow)] md:text-3xl">
+              {siteConfig.tagline}
+            </p>
+            <p className="mt-5 max-w-xl text-base text-gray-300 md:text-lg">
               {siteConfig.description}
             </p>
             {nextActivity && (
-              <p className="mt-4 rounded-[var(--radius-md)] bg-[var(--color-brand-yellow)] px-4 py-2 text-sm font-bold text-black">
-                下一場：{nextActivity.title} ·{" "}
-                {new Date(nextActivity.startAt).toLocaleDateString("zh-TW", {
-                  month: "2-digit",
-                  day: "2-digit",
-                })}
+              <p className="mt-5 max-w-xl rounded-[var(--radius-md)] bg-[var(--color-brand-yellow)] px-4 py-3 text-sm font-bold text-black">
+                下一場：{nextActivity.title}
+                <span className="mx-2 opacity-50">·</span>
+                {formatDateOnly(nextActivity.startAt)}
+                <span className="mx-2 opacity-50">·</span>
+                {nextActivity.venue.name}
               </p>
             )}
             <div className="mt-8 flex flex-wrap gap-3">
@@ -37,18 +41,35 @@ export function Hero() {
                   href={withBasePath(`/activities/${nextActivity.slug}`)}
                   className="btn-primary"
                 >
-                  查看活動
+                  {nextActivity.status === "registration_open"
+                    ? "前往報名"
+                    : nextActivity.status === "ongoing"
+                      ? "立即挑戰"
+                      : "查看活動"}
                 </Link>
               )}
-              <Link href={withBasePath("/schedule")} className="btn-outline !text-white !border-white hover:!bg-white/10">
+              <Link
+                href={withBasePath("/schedule")}
+                className="btn-outline !border-white !text-white hover:!bg-white/10"
+              >
                 全部賽程
               </Link>
+              <a
+                href={siteConfig.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-outline !border-white/40 !text-white/90 hover:!bg-white/10"
+              >
+                Instagram
+              </a>
             </div>
           </div>
-          <Scoreboard />
+          <div className="reveal-up-delay score-pulse">
+            <Scoreboard />
+          </div>
         </div>
       </div>
-      <div className="hazard-stripe h-2" aria-hidden />
+      <div className="hazard-stripe-animated h-2.5" aria-hidden />
     </section>
   );
 }

@@ -26,16 +26,26 @@ export function Scoreboard({ compact = false, className }: ScoreboardProps) {
       <div
         className={cn(
           "flex items-center justify-center gap-4",
-          compact ? "text-3xl" : "text-5xl",
+          compact ? "text-3xl" : "text-5xl md:text-6xl",
         )}
       >
         <div className="text-center">
-          <p className="text-sm font-bold text-[var(--color-nthu)]">清華</p>
+          <p
+            className="mb-1 rounded-full px-3 py-0.5 text-sm font-bold text-white"
+            style={{ background: "var(--color-nthu)" }}
+          >
+            清華
+          </p>
           <p className="display-title font-black">{siteConfig.nthuScore}</p>
         </div>
         <span className="text-[var(--color-brand-yellow)]">：</span>
         <div className="text-center">
-          <p className="text-sm font-bold text-[var(--color-nycu)]">陽明交大</p>
+          <p
+            className="mb-1 rounded-full px-3 py-0.5 text-sm font-bold text-white"
+            style={{ background: "var(--color-nycu)" }}
+          >
+            陽明交大
+          </p>
           <p className="display-title font-black">{siteConfig.nycuScore}</p>
         </div>
       </div>

@@ -1,7 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="�l�">
-  <rect width="800" height="600" fill="#FFBF00"/>
-  <rect x="200" y="200" width="400" height="200" rx="20" fill="#333"/>
-  <circle cx="280" cy="420" r="40" fill="#0A0A0A"/>
-  <circle cx="520" cy="420" r="40" fill="#0A0A0A"/>
-  <text x="400" y="150" text-anchor="middle" font-size="64" font-weight="900" fill="#0A0A0A" font-family="sans-serif">�l�</text>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" role="img" aria-label="辦公椅競速">
+  <rect width="800" height="600" fill="#19A9E5"/>
+  <rect x="320" y="180" width="160" height="140" rx="16" fill="#0A0A0A"/>
+  <rect x="300" y="320" width="200" height="30" fill="#0A0A0A"/>
+  <circle cx="340" cy="400" r="28" fill="#FFBF00"/>
+  <circle cx="460" cy="400" r="28" fill="#FFBF00"/>
+  <text x="400" y="100" text-anchor="middle" font-size="48" font-weight="900" fill="#fff" font-family="Noto Sans TC, Microsoft JhengHei, sans-serif">辦公椅競速</text>
 </svg>
