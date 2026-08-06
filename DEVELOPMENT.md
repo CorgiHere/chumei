@@ -1,8 +1,8 @@
 # 竹梅賽官網 — 開發進度紀錄
 
 > 更新日期：2026-08-06  
-> 線上網址：https://corgichen.github.io/chumei/  
-> Repo：https://github.com/CorgiChen/chumei  
+> 線上網址：https://corgihere.github.io/chumei/  
+> Repo：https://github.com/CorgiHere/chumei  
 > 產品規範：[`AGENT.md`](./AGENT.md)  
 > 設計規格：[`DESIGN_SPEC.md`](./DESIGN_SPEC.md)
 
@@ -184,7 +184,7 @@ npm run build    # prebuild 會先跑 seo，輸出至 out/
 
 # 模擬 GitHub Pages 建置（驗證 /chumei 前綴）
 set GITHUB_PAGES=true
-set GITHUB_REPOSITORY=CorgiChen/chumei
+set GITHUB_REPOSITORY=CorgiHere/chumei
 npm run build
 ```
 
@@ -194,7 +194,7 @@ Push `main` 後 Actions 自動部署 Pages（workflow 會設 `GITHUB_PAGES=true`
 
 - 共用 helper：`src/lib/seo.ts`（canonical／OG／Twitter／JSON-LD）
 - 靜態 export 用 `public/robots.txt`、`public/sitemap.xml`（`npm run seo` 產生）
-- 正式網址：`https://corgichen.github.io/chumei/`（`siteConfig.siteUrl`）
+- 正式網址：`https://corgihere.github.io/chumei/`（`siteConfig.siteUrl`）
 
 ---
 

@@ -19,5 +19,5 @@ export const siteConfig: SiteConfig = {
   contactEmail: "chumei2026@gmail.com",
   logoUrl: "/images/brand/chumei-logo.png",
   /** Canonical production origin (includes /chumei for GitHub Pages). */
-  siteUrl: "https://corgichen.github.io/chumei",
+  siteUrl: "https://corgihere.github.io/chumei",
 };
