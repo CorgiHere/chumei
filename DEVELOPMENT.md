@@ -18,9 +18,21 @@
 | 輸出 | Static Export（`output: "export"`） |
 | 部署 | GitHub Actions → GitHub Pages |
 | 內容來源 | `src/data/*` 靜態資料（活動、消息、場地、歷屆、站台） |
-| 路徑處理 | `basePath` / `assetPrefix` 於 Pages 環境自動加 `/chumei` |
+| 路徑處理 | Pages 建置（`GITHUB_PAGES=true`）設 `basePath`／`assetPrefix`＝`/chumei`；見下方注意事項 |
 | 字體 | Noto Sans TC（400–900） |
 | 規範文件 | `AGENT.md`、`DESIGN_SPEC.md` |
+
+### GitHub Pages `basePath` 注意事項（重要）
+
+Pages 站點掛在 `https://…/chumei/`，路徑前綴由 Next 設定處理。**不要對 `next/link` 再手動加前綴。**
+
+| 用途 | 做法 | 範例 |
+|------|------|------|
+| 頁面導覽（`Link`／`href`） | 只用 app 路徑；Next 會自動加 `basePath` | `href="/activities"` → 輸出 `/chumei/activities/` |
+| 靜態圖（`Image`／`<img>`） | 用 `withBasePath()`（`src/lib/utils.ts`） | `src={withBasePath("/images/…")}` → `/chumei/images/…` |
+
+錯誤示範：`href={withBasePath("/activities")}` 會變成 `/chumei/chumei/activities/` → **404**。  
+未加前綴的圖片 `src="/images/…"` 在 Pages 上會 404。本地 `npm run dev` 的 `NEXT_PUBLIC_BASE_PATH` 為空，兩種寫法在本機都正常。
 
 ### 目錄結構（重點）
 
@@ -49,7 +61,7 @@ src/
 
 | 模組 | 狀態 | 備註 |
 |------|------|------|
-| 專案骨架＋GitHub Pages | ✅ 完成 | Actions 自動部署 |
+| 專案骨架＋GitHub Pages | ✅ 完成 | Actions 自動部署；`basePath` 用法見 §1 |
 | Design Tokens／背景間距 | ✅ Phase 1 | 依 `DESIGN_SPEC` 更新 `globals.css` |
 | Header／Footer／Section／Badge／Card | ✅ Phase 1 | 黑底 Header、四欄 Footer、Featured／Grid 卡 |
 | 首頁重構 | ✅ Phase 2 | Hero、狀態條、還能繼續胡鬧、精選 6 卡… |
@@ -148,6 +160,7 @@ src/
 - [x] DESIGN_SPEC Phase 1–2（共用元件＋首頁）
 - [x] 替換活動 SVG 為 Instagram／官方遊戲圖
 - [x] 條碼達人改用專屬宣傳影片截圖（DXdvNT9knSJ）
+- [x] 修正 Pages 雙重 `basePath`（導覽 404）與圖片缺前綴
 - [ ] 確認 Linktree／旮拉給木／小徑 T 連結
 
 ### P1
@@ -165,11 +178,16 @@ src/
 
 ```bash
 npm install
-npm run dev      # http://localhost:3000
+npm run dev      # http://localhost:3000（無 basePath）
 npm run build    # 輸出至 out/
+
+# 模擬 GitHub Pages 建置（驗證 /chumei 前綴）
+set GITHUB_PAGES=true
+set GITHUB_REPOSITORY=CorgiChen/chumei
+npm run build
 ```
 
-Push `main` 後 Actions 自動部署 Pages。
+Push `main` 後 Actions 自動部署 Pages（workflow 會設 `GITHUB_PAGES=true`）。
 
 ---
 
@@ -181,3 +199,4 @@ Push `main` 後 Actions 自動部署 Pages。
 | 2026-08-06 | 更新 AGENT／DEVELOPMENT 規範對照 |
 | 2026-08-06 | **DESIGN_SPEC Phase 1–2**：Tokens、共用元件、首頁重構；`npm run build` 通過 |
 | 2026-08-06 | 以 Instagram 貼文圖替換各活動主視覺；圖庫改為實拍照 |
+| 2026-08-06 | **修正 Pages 404**：`Link` 不再包 `withBasePath`；`Image` 改用 `withBasePath` |

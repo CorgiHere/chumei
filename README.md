@@ -30,6 +30,10 @@ npm run build
 
 部署網址：`https://<username>.github.io/chumei/`
 
+### `basePath` 注意
+
+站點路徑前綴為 `/chumei`。`next/link` 的 `href` 請寫 `/activities` 這類 app 路徑（**不要**再包 `withBasePath`，否則會變成 `/chumei/chumei/...` 而 404）。靜態圖請用 `withBasePath("/images/...")`。細節見 [`DEVELOPMENT.md`](./DEVELOPMENT.md)。
+
 ## 技術棧
 
 - Next.js 16 (App Router, Static Export)

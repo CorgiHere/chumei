@@ -1607,9 +1607,10 @@ AI Agent 在執行任何網站修改時，必須遵守以下流程：
 |------|------|
 | 技術棧 | Next.js 16 static export、React 19、Tailwind 4、GitHub Pages |
 | 內容存放 | `src/data/*`（無 CMS） |
+| Pages 路徑 | `basePath`＝`/chumei`；`Link` 勿再包 `withBasePath`；`Image` 須用 `withBasePath`（見 `DEVELOPMENT.md`） |
 | 2026 總錦標 | 清華 3 ： 4 陽明交大（交大獲勝） |
 | 計分七場 | 恐龍、酒精微積分、辦公椅、日麻、台麻、刷條碼、兩校憑拳 |
 | 賽季狀態 | 正賽已結束；旮拉給木仍可玩；首頁 CTA 為賽季結束版 |
 | 歷屆 | 僅收錄有資料的 2026；無虛構屆次、無天干地支命名 |
 | 內容核對 | 已對齊 @chumei2026；總錦標圖 https://www.instagram.com/p/DXbxyXpEvby/ |
-| 主要缺口 | 真實活動照片、ICS／分享、CMS、圖庫深化 |
+| 主要缺口 | ICS／分享、CMS、圖庫深化、Phase 3–5 視覺 |
