@@ -6,7 +6,7 @@ import { siteConfig } from "@/data/site";
 
 export const metadata: Metadata = {
   title: "圖庫",
-  description: "2026 丙午竹梅賽活動照片、精彩時刻與幕後花絮。",
+  description: "2026 竹梅賽活動照片、精彩時刻與幕後花絮。",
 };
 
 export default function GalleryPage() {
@@ -38,11 +38,11 @@ export default function GalleryPage() {
             </figure>
           ))}
         </div>
-        <p className="mt-8 text-center text-sm text-[var(--color-gray)]">
+        <p className="mt-8 text-center text-sm text-muted">
           更多照片請追蹤{" "}
           <a
             href={siteConfig.instagramUrl}
-            className="font-bold text-[var(--color-brand-blue)]"
+            className="font-bold text-brand-blue"
             target="_blank"
             rel="noopener noreferrer"
           >

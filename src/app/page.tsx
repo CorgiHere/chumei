@@ -35,20 +35,18 @@ export default function HomePage() {
       <Hero />
 
       <div className="grid-bg">
-        <section className="border-b-4 border-black bg-[var(--color-brand-yellow)]">
+        <section className="border-b-4 border-black bg-brand-yellow">
           <div className="container-main flex flex-col gap-3 py-4 sm:flex-row sm:items-center sm:justify-between">
             <p className="font-black">
-              現正開放：猜拳贏機票報名 · 攻略校長旮拉給木 · 小徑 T 預購
+              2026 總錦標交大 4：3 · 旮拉給木持續開放 · 小徑 T 領取／表單見 Linktree
             </p>
             <div className="flex flex-wrap gap-2">
-              <a
-                href={siteConfig.rpsFormUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <Link
+                href={withBasePath("/scoreboard")}
                 className="btn-secondary text-sm"
               >
-                猜拳報名
-              </a>
+                查看比分
+              </Link>
               <a
                 href={siteConfig.galagaUrl}
                 target="_blank"
@@ -58,12 +56,12 @@ export default function HomePage() {
                 玩旮拉給木
               </a>
               <a
-                href={siteConfig.merchFormUrl}
+                href={siteConfig.linktreeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-outline text-sm"
               >
-                預購小徑 T
+                Linktree
               </a>
             </div>
           </div>
@@ -125,13 +123,13 @@ export default function HomePage() {
         </section>
 
         {recentResults.length > 0 && (
-          <section className="bg-[var(--color-charcoal)] py-12 text-white">
+          <section className="bg-charcoal py-12 text-white">
             <div className="container-main">
               <SectionHeader title="最近結果" />
               <div className="grid gap-4 md:grid-cols-2">
                 {recentResults.map((activity) => (
-                  <div key={activity.id} className="rounded-[var(--radius-lg)] border-2 border-[var(--color-brand-yellow)] p-5">
-                    <p className="text-sm text-[var(--color-brand-yellow)]">
+                  <div key={activity.id} className="rounded-lg border-2 border-brand-yellow p-5">
+                    <p className="text-sm text-brand-yellow">
                       {activity.result?.summary}
                     </p>
                     <h3 className="mt-2 text-xl font-black">{activity.title}</h3>
@@ -190,7 +188,7 @@ export default function HomePage() {
             {partners.map((partner) => (
               <div
                 key={partner.id}
-                className="rounded-[var(--radius-md)] border-2 border-black px-6 py-4 font-bold"
+                className="rounded-md border-2 border-black px-6 py-4 font-bold"
               >
                 {partner.name}
               </div>

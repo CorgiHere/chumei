@@ -14,12 +14,12 @@ type NextActivityProps = {
 export function NextActivity({ activity }: NextActivityProps) {
   return (
     <section className="card p-6">
-      <p className="mb-2 text-sm font-bold text-[var(--color-brand-blue)]">
+      <p className="mb-2 text-sm font-bold text-brand-blue">
         下一場活動
       </p>
       <h2 className="text-2xl font-black">{activity.title}</h2>
       {activity.tagline && (
-        <p className="mt-1 text-[var(--color-gray)]">{activity.tagline}</p>
+        <p className="mt-1 text-muted">{activity.tagline}</p>
       )}
       <div className="mt-4 space-y-2 text-sm">
         <p>

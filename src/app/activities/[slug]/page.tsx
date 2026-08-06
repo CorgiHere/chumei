@@ -48,10 +48,10 @@ export default async function ActivityDetailPage({ params }: PageProps) {
 
   return (
     <div className="pb-12">
-      <section className="bg-[var(--color-black)] py-12 text-white">
+      <section className="bg-black py-12 text-white">
         <div className="container-main">
           <StatusBadge status={activity.status} className="mb-4" />
-          <h1 className="display-title text-[var(--font-size-h1)] font-black">
+          <h1 className="display-title text-h1 font-black">
             {activity.title}
           </h1>
           {activity.subtitle && (
@@ -61,7 +61,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
             <span>{formatDate(activity.startAt)}</span>
             <span>{activity.venue.name}</span>
             {activity.isScored && (
-              <span className="rounded-full bg-[var(--color-brand-yellow)] px-2 py-0.5 font-bold text-black">
+              <span className="rounded-full bg-brand-yellow px-2 py-0.5 font-bold text-black">
                 計入總錦標
               </span>
             )}
@@ -85,7 +85,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
               )}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-outline !border-white !text-white"
+              className="btn-outline border-white! text-white!"
             >
               加入行事曆
             </a>
@@ -171,7 +171,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
                       {activity.result.rankings.map((r) => (
                         <li
                           key={r.rank}
-                          className="flex items-center justify-between border-b border-[var(--color-light-gray)] py-2"
+                          className="flex items-center justify-between border-b border-light-gray py-2"
                         >
                           <span>
                             第 {r.rank} 名 · {r.teamName}（
@@ -193,7 +193,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
             <section className="card p-5">
               <h2 className="font-black">場地資訊</h2>
               <p className="mt-2 font-bold">{activity.venue.name}</p>
-              <p className="text-sm text-[var(--color-gray)]">
+              <p className="text-sm text-muted">
                 {getCampusLabel(activity.venue.campus)}
               </p>
               {activity.venue.meetingPoint && (

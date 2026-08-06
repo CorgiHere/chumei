@@ -4,7 +4,7 @@ import { withBasePath } from "@/lib/utils";
 
 export function Footer() {
   return (
-    <footer className="mt-auto bg-[var(--color-black)] text-white">
+    <footer className="mt-auto bg-black text-white">
       <div className="hazard-stripe h-3" aria-hidden />
       <div className="container-main py-12">
         <div className="grid gap-8 md:grid-cols-3">
@@ -22,27 +22,27 @@ export function Footer() {
             <p className="mb-3 font-bold">快速連結</p>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link href={withBasePath("/activities")} className="hover:text-[var(--color-brand-yellow)]">
+                <Link href={withBasePath("/activities")} className="hover:text-brand-yellow">
                   活動總覽
                 </Link>
               </li>
               <li>
-                <Link href={withBasePath("/schedule")} className="hover:text-[var(--color-brand-yellow)]">
+                <Link href={withBasePath("/schedule")} className="hover:text-brand-yellow">
                   賽程
                 </Link>
               </li>
               <li>
-                <Link href={withBasePath("/scoreboard")} className="hover:text-[var(--color-brand-yellow)]">
+                <Link href={withBasePath("/scoreboard")} className="hover:text-brand-yellow">
                   比分與結果
                 </Link>
               </li>
               <li>
-                <Link href={withBasePath("/join")} className="hover:text-[var(--color-brand-yellow)]">
+                <Link href={withBasePath("/join")} className="hover:text-brand-yellow">
                   加入竹梅
                 </Link>
               </li>
               <li>
-                <Link href={withBasePath("/contact")} className="hover:text-[var(--color-brand-yellow)]">
+                <Link href={withBasePath("/contact")} className="hover:text-brand-yellow">
                   聯絡我們
                 </Link>
               </li>
@@ -57,7 +57,7 @@ export function Footer() {
                   href={siteConfig.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-[var(--color-brand-yellow)]"
+                  className="hover:text-brand-yellow"
                 >
                   Instagram @chumei2026
                 </a>
@@ -67,7 +67,7 @@ export function Footer() {
                   href={siteConfig.facebookUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-[var(--color-brand-yellow)]"
+                  className="hover:text-brand-yellow"
                 >
                   Facebook 竹梅籌備委員會
                 </a>
@@ -77,7 +77,7 @@ export function Footer() {
                   href={siteConfig.threadsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-[var(--color-brand-yellow)]"
+                  className="hover:text-brand-yellow"
                 >
                   Threads @chumei2026
                 </a>
@@ -87,7 +87,7 @@ export function Footer() {
                   href={siteConfig.linktreeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="hover:text-[var(--color-brand-yellow)]"
+                  className="hover:text-brand-yellow"
                 >
                   Linktree
                 </a>

@@ -8,12 +8,12 @@ type StatusBadgeProps = {
 };
 
 const statusColors: Partial<Record<ActivityStatus, string>> = {
-  registration_open: "bg-[var(--color-success)] text-white",
-  registration_closing: "bg-[var(--color-warning)] text-black",
-  finished: "bg-[var(--color-dark-gray)] text-white",
-  upcoming: "bg-[var(--color-brand-blue)] text-white",
-  cancelled: "bg-[var(--color-danger)] text-white",
-  postponed: "bg-[var(--color-danger)] text-white",
+  registration_open: "bg-success text-white",
+  registration_closing: "bg-warning text-black",
+  finished: "bg-dark-gray text-white",
+  upcoming: "bg-brand-blue text-white",
+  cancelled: "bg-danger text-white",
+  postponed: "bg-danger text-white",
 };
 
 export function StatusBadge({
@@ -23,7 +23,7 @@ export function StatusBadge({
 }: StatusBadgeProps) {
   const label = getStatusLabel(status);
   const colorClass =
-    statusColors[status] ?? "bg-[var(--color-light-gray)] text-black";
+    statusColors[status] ?? "bg-light-gray text-black";
 
   return (
     <span

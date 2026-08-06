@@ -30,15 +30,15 @@ export default async function NewsDetailPage({ params }: PageProps) {
   return (
     <article className="grid-bg py-12">
       <div className="container-main max-w-3xl">
-        <span className="rounded-full bg-[var(--color-brand-yellow)] px-2 py-0.5 text-xs font-bold">
+        <span className="rounded-full bg-brand-yellow px-2 py-0.5 text-xs font-bold">
           {getNewsCategoryLabel(post.category)}
         </span>
-        <h1 className="display-title mt-4 text-[var(--font-size-h1)] font-black">
+        <h1 className="display-title mt-4 text-h1 font-black">
           {post.title}
         </h1>
         <time
           dateTime={post.publishedAt}
-          className="mt-4 block text-sm text-[var(--color-gray)]"
+          className="mt-4 block text-sm text-muted"
         >
           發布：{formatDate(post.publishedAt)}
         </time>

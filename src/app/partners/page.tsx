@@ -26,7 +26,7 @@ export default function PartnersPage() {
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {partners.map((p) => (
             <div key={p.id} className="card p-6 text-center">
-              <p className="text-xs font-bold text-[var(--color-brand-blue)]">
+              <p className="text-xs font-bold text-brand-blue">
                 {typeLabels[p.type]}
               </p>
               <p className="mt-2 text-lg font-black">{p.name}</p>
@@ -36,7 +36,7 @@ export default function PartnersPage() {
 
         <div className="card mt-10 p-6 text-center">
           <h2 className="text-xl font-black">合作提案</h2>
-          <p className="mt-2 text-[var(--color-gray)]">
+          <p className="mt-2 text-muted">
             歡迎贊助、協辦或媒體合作洽詢
           </p>
           <Link href={withBasePath("/contact")} className="btn-primary mt-4">

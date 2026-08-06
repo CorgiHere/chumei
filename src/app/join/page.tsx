@@ -53,7 +53,7 @@ export default function JoinPage() {
           {joinOptions.map((opt) => (
             <div key={opt.title} className="card p-5">
               <h2 className="text-lg font-black">{opt.title}</h2>
-              <p className="mt-2 text-sm text-[var(--color-gray)]">{opt.desc}</p>
+              <p className="mt-2 text-sm text-muted">{opt.desc}</p>
               {"internal" in opt && opt.internal ? (
                 <Link
                   href={withBasePath(opt.href)}
@@ -76,11 +76,11 @@ export default function JoinPage() {
         </div>
 
         <div className="mt-8 text-center">
-          <p className="text-sm text-[var(--color-gray)]">
+          <p className="text-sm text-muted">
             或直接{" "}
             <Link
               href={withBasePath("/contact")}
-              className="font-bold text-[var(--color-brand-blue)]"
+              className="font-bold text-brand-blue"
             >
               聯絡我們
             </Link>

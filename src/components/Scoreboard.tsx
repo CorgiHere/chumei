@@ -16,11 +16,11 @@ export function Scoreboard({ compact = false, className }: ScoreboardProps) {
   return (
     <div
       className={cn(
-        "rounded-[var(--radius-lg)] border-4 border-black bg-[var(--color-charcoal)] p-6 text-white",
+        "rounded-lg border-4 border-black bg-charcoal p-6 text-white",
         className,
       )}
     >
-      <p className="mb-1 text-xs font-bold uppercase tracking-wider text-[var(--color-brand-yellow)]">
+      <p className="mb-1 text-xs font-bold uppercase tracking-wider text-brand-yellow">
         總錦標
       </p>
       <div
@@ -30,20 +30,14 @@ export function Scoreboard({ compact = false, className }: ScoreboardProps) {
         )}
       >
         <div className="text-center">
-          <p
-            className="mb-1 rounded-full px-3 py-0.5 text-sm font-bold text-white"
-            style={{ background: "var(--color-nthu)" }}
-          >
+          <p className="mb-1 rounded-full bg-nthu px-3 py-0.5 text-sm font-bold text-white">
             清華
           </p>
           <p className="display-title font-black">{siteConfig.nthuScore}</p>
         </div>
-        <span className="text-[var(--color-brand-yellow)]">：</span>
+        <span className="text-brand-yellow">：</span>
         <div className="text-center">
-          <p
-            className="mb-1 rounded-full px-3 py-0.5 text-sm font-bold text-white"
-            style={{ background: "var(--color-nycu)" }}
-          >
+          <p className="mb-1 rounded-full bg-nycu px-3 py-0.5 text-sm font-bold text-white">
             陽明交大
           </p>
           <p className="display-title font-black">{siteConfig.nycuScore}</p>

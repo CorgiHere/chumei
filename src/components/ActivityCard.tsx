@@ -19,7 +19,7 @@ export function ActivityCard({ activity }: ActivityCardProps) {
         <div className="flex items-start gap-4 p-5 md:w-2/3">
           {activity.index && (
             <div
-              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-[var(--color-brand-blue)] text-xl font-black text-white"
+              className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-brand-blue text-xl font-black text-white"
               aria-hidden
             >
               {String(activity.index).padStart(2, "0")}
@@ -29,18 +29,33 @@ export function ActivityCard({ activity }: ActivityCardProps) {
             <StatusBadge status={activity.status} className="mb-2" />
             <h3 className="text-xl font-black">{activity.title}</h3>
             {activity.tagline && (
-              <p className="mt-1 text-sm text-[var(--color-gray)]">
+              <p className="mt-1 text-sm text-muted">
                 {activity.tagline}
               </p>
             )}
+            <p className="mt-2 line-clamp-2 text-sm">{activity.description}</p>
             <p className="mt-3 text-sm font-medium">
               {formatDateOnly(activity.startAt)} · {activity.venue.name}
             </p>
-            {activity.isScored && (
-              <span className="mt-2 inline-block rounded-full border border-black px-2 py-0.5 text-xs font-bold">
-                計分項目
+            <div className="mt-2 flex flex-wrap gap-2">
+              {activity.isScored ? (
+                <span className="inline-block rounded-full border border-black px-2 py-0.5 text-xs font-bold">
+                  計分項目
+                </span>
+              ) : (
+                <span className="inline-block rounded-full border border-dashed border-muted px-2 py-0.5 text-xs font-bold text-muted">
+                  非計分項目
+                </span>
+              )}
+              <span className="inline-block rounded-full bg-light-gray px-2 py-0.5 text-xs font-bold">
+                {activity.format === "team" ? "團體賽" : "個人賽"}
               </span>
-            )}
+              {activity.categories.includes("線上活動") && (
+                <span className="inline-block rounded-full bg-brand-blue/15 px-2 py-0.5 text-xs font-bold text-brand-blue">
+                  線上
+                </span>
+              )}
+            </div>
             <div className="mt-4 flex flex-wrap gap-2">
               <Link
                 href={withBasePath(`/activities/${activity.slug}`)}
@@ -79,7 +94,7 @@ export function ActivityCard({ activity }: ActivityCardProps) {
             </div>
           </div>
         </div>
-        <div className="relative aspect-[4/3] bg-[var(--color-light-gray)] md:w-1/3">
+        <div className="relative aspect-4/3 bg-light-gray md:w-1/3">
           <Image
             src={activity.cardImage ?? activity.heroImage}
             alt={`${activity.title}主視覺`}

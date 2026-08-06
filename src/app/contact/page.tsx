@@ -16,7 +16,7 @@ export default function ContactPage() {
         <div className="card space-y-6 p-6">
           <div>
             <h2 className="font-black">竹梅籌備委員會</h2>
-            <p className="mt-2 text-sm text-[var(--color-gray)]">
+            <p className="mt-2 text-sm text-muted">
               清交學生自主籌辦的一系列好玩活動
             </p>
           </div>
@@ -27,7 +27,7 @@ export default function ContactPage() {
               <dd>
                 <a
                   href={`mailto:${siteConfig.contactEmail}`}
-                  className="text-[var(--color-brand-blue)]"
+                  className="text-brand-blue"
                 >
                   {siteConfig.contactEmail}
                 </a>
@@ -40,7 +40,7 @@ export default function ContactPage() {
                   href={siteConfig.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[var(--color-brand-blue)]"
+                  className="text-brand-blue"
                 >
                   @chumei2026
                 </a>
@@ -53,7 +53,7 @@ export default function ContactPage() {
                   href={siteConfig.facebookUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[var(--color-brand-blue)]"
+                  className="text-brand-blue"
                 >
                   竹梅籌備委員會
                 </a>
@@ -66,7 +66,7 @@ export default function ContactPage() {
                   href={siteConfig.threadsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[var(--color-brand-blue)]"
+                  className="text-brand-blue"
                 >
                   @chumei2026
                 </a>
@@ -79,7 +79,7 @@ export default function ContactPage() {
                   href={siteConfig.linktreeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-[var(--color-brand-blue)]"
+                  className="text-brand-blue"
                 >
                   linktr.ee/chumei2026
                 </a>
@@ -87,7 +87,7 @@ export default function ContactPage() {
             </div>
           </dl>
 
-          <p className="text-sm text-[var(--color-gray)]">
+          <p className="text-sm text-muted">
             🐼🦊 歡迎匿名提問，請至 Instagram 限時動態或 Linktree 表單。
           </p>
         </div>

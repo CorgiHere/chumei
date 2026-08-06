@@ -35,7 +35,7 @@ export function Header() {
             <Link
               key={item.href}
               href={withBasePath(item.href)}
-              className="text-sm font-bold hover:text-[var(--color-brand-blue)]"
+              className="text-sm font-bold hover:text-brand-blue"
             >
               {item.label}
             </Link>
@@ -102,7 +102,7 @@ export function Header() {
               <Link
                 key={item.href}
                 href={withBasePath(item.href)}
-                className="rounded-md px-3 py-3 font-bold hover:bg-[var(--color-light-gray)]"
+                className="rounded-md px-3 py-3 font-bold hover:bg-light-gray"
                 onClick={() => setMenuOpen(false)}
               >
                 {item.label}
@@ -112,7 +112,7 @@ export function Header() {
               href={siteConfig.instagramUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="rounded-md px-3 py-3 font-bold text-[var(--color-brand-blue)]"
+              className="rounded-md px-3 py-3 font-bold text-brand-blue"
             >
               Instagram @chumei2026
             </a>

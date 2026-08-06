@@ -88,7 +88,7 @@ export function getCalendarUrl(
     text: title,
     dates: `${fmt(start)}/${fmt(end)}`,
     location,
-    details: "2026 丙午竹梅賽官方活動",
+    details: "2026 竹梅賽官方活動",
   });
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
 }
