@@ -1,5 +1,7 @@
+import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/data/site";
+import { withBasePath } from "@/lib/utils";
 import { HazardBar } from "./HazardBar";
 
 export function Footer() {
@@ -9,9 +11,18 @@ export function Footer() {
       <div className="container-main py-14">
         <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
           <div>
-            <p className="display-title-skew mb-2 text-2xl font-black text-brand-yellow">
-              {siteConfig.yearName}
-            </p>
+            <div className="mb-3 flex items-center gap-3">
+              <Image
+                src={withBasePath(siteConfig.logoUrl)}
+                alt="竹梅 Chu Mei"
+                width={48}
+                height={48}
+                className="h-12 w-12 rounded-lg"
+              />
+              <p className="display-title-skew text-2xl font-black text-brand-yellow">
+                {siteConfig.yearName}
+              </p>
+            </div>
             <p className="text-sm leading-relaxed text-white/70">
               看起來像正式大型錦標賽，但比賽項目完全不正常。清交學生自主籌辦。
             </p>

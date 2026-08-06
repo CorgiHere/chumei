@@ -296,10 +296,19 @@ export default function HomePage() {
               .map((partner) => (
               <div
                 key={partner.id}
-                className="rounded-xl border-2 border-black bg-light-gray px-6 py-4 font-black text-muted grayscale transition hover:bg-white hover:text-black hover:grayscale-0"
+                className="flex flex-col items-center gap-3 rounded-xl border-2 border-black bg-light-gray px-8 py-6 font-black text-muted grayscale transition hover:bg-white hover:text-black hover:grayscale-0"
               >
+                {partner.logo && (
+                  <Image
+                    src={withBasePath(partner.logo)}
+                    alt={partner.name}
+                    width={72}
+                    height={72}
+                    className="h-[72px] w-[72px] rounded-lg"
+                  />
+                )}
                 <p className="text-xs font-bold text-brand-blue">主辦單位</p>
-                <p className="mt-1">{partner.name}</p>
+                <p>{partner.name}</p>
               </div>
             ))}
           </div>

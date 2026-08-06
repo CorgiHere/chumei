@@ -165,4 +165,5 @@ export type SiteConfig = {
   merchFormUrl: string;
   rpsFormUrl: string;
   contactEmail: string;
+  logoUrl: string;
 };

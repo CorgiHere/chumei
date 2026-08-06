@@ -27,6 +27,7 @@ export const partners: Partner[] = [
     name: "竹梅籌備委員會",
     type: "organizer",
     note: "主辦單位",
+    logo: "/images/brand/chumei-logo.png",
     showOnHome: true,
   },
   {

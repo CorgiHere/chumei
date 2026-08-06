@@ -1,7 +1,9 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { SectionHeader } from "@/components/SectionHeader";
 import { partners } from "@/data/history";
+import { withBasePath } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "合作夥伴",
@@ -25,7 +27,16 @@ export default function PartnersPage() {
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {partners.map((p) => (
-            <div key={p.id} className="card p-6 text-center">
+            <div key={p.id} className="card flex flex-col items-center p-6 text-center">
+              {p.logo && (
+                <Image
+                  src={withBasePath(p.logo)}
+                  alt={p.name}
+                  width={80}
+                  height={80}
+                  className="mb-3 h-20 w-20 rounded-lg"
+                />
+              )}
               <p className="text-xs font-bold text-brand-blue">
                 {typeLabels[p.type]}
               </p>

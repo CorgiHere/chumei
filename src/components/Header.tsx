@@ -1,11 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { siteConfig } from "@/data/site";
 import { getOpenRegistrationActivities } from "@/data/activities";
-import { cn } from "@/lib/utils";
+import { cn, withBasePath } from "@/lib/utils";
 
 const navItems = [
   { href: "/activities", label: "活動總覽" },
@@ -58,14 +59,14 @@ export function Header() {
           className="flex items-center gap-3"
           onClick={() => setMenuOpen(false)}
         >
-          <span
-            className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-brand-yellow text-xs font-black text-black"
-            aria-hidden
-          >
-            Chu
-            <br />
-            Mei
-          </span>
+          <Image
+            src={withBasePath(siteConfig.logoUrl)}
+            alt="竹梅 Chu Mei"
+            width={44}
+            height={44}
+            className="h-11 w-11 rounded-lg border-2 border-brand-yellow"
+            priority
+          />
           <span className="display-title text-base font-black tracking-tight md:text-lg">
             {siteConfig.yearName}
           </span>

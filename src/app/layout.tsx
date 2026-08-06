@@ -22,6 +22,11 @@ export const metadata: Metadata = {
     description: siteConfig.description,
     type: "website",
     locale: "zh_TW",
+    images: [{ url: siteConfig.logoUrl, width: 543, height: 543, alt: "竹梅 Chu Mei" }],
+  },
+  icons: {
+    icon: [{ url: siteConfig.logoUrl, type: "image/png" }],
+    apple: [{ url: siteConfig.logoUrl }],
   },
 };
 
