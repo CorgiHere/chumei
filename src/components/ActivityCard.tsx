@@ -58,6 +58,16 @@ export function ActivityCard({ activity }: ActivityCardProps) {
                   立即報名
                 </a>
               )}
+              {activity.status === "ongoing" && activity.registrationUrl && (
+                <a
+                  href={activity.registrationUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary text-sm"
+                >
+                  立即遊玩
+                </a>
+              )}
               {activity.status === "finished" && (
                 <Link
                   href={withBasePath(`/activities/${activity.slug}#results`)}

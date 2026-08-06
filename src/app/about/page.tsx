@@ -57,6 +57,14 @@ export default function AboutPage() {
               >
                 Instagram
               </a>
+              <a
+                href={siteConfig.facebookUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-outline text-sm"
+              >
+                Facebook
+              </a>
               <Link href={withBasePath("/contact")} className="btn-outline text-sm">
                 聯絡我們
               </Link>

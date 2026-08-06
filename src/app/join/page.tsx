@@ -6,25 +6,40 @@ import { withBasePath } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "加入竹梅",
-  description: "加入竹梅籌備團隊、提案新活動、志工招募與贊助合作。",
+  description: "加入竹梅籌備團隊、提案新活動、志工招募、週邊預購與贊助合作。",
 };
 
 const joinOptions = [
   {
     title: "加入籌備團隊",
     desc: "參與活動規劃、宣傳與現場執行，一起胡鬧也要一本正經。",
+    href: siteConfig.linktreeUrl,
+    cta: "前往 Linktree",
+  },
+  {
+    title: "小徑 T 預購",
+    desc: "竹梅週邊小徑 T 預購表單開放中，尺寸與領取方式見表單說明。",
+    href: siteConfig.merchFormUrl,
+    cta: "立即預購",
   },
   {
     title: "提案新活動",
     desc: "有荒謬但可行的點子？歡迎提案，我們認真評估（真的）。",
+    href: siteConfig.instagramUrl,
+    cta: "到 IG 留言／私訊",
   },
   {
     title: "志工招募",
-    desc: "活動日現場支援、攝影、裁判助理等。",
+    desc: "活動日現場支援、攝影、裁判助理等。最新招募請追蹤社群公告。",
+    href: siteConfig.instagramUrl,
+    cta: "追蹤最新招募",
   },
   {
     title: "贊助合作",
     desc: "提供資源或曝光合作，詳見合作夥伴頁面。",
+    href: "/partners",
+    cta: "查看合作資訊",
+    internal: true,
   },
 ];
 
@@ -39,20 +54,29 @@ export default function JoinPage() {
             <div key={opt.title} className="card p-5">
               <h2 className="text-lg font-black">{opt.title}</h2>
               <p className="mt-2 text-sm text-[var(--color-gray)]">{opt.desc}</p>
+              {"internal" in opt && opt.internal ? (
+                <Link
+                  href={withBasePath(opt.href)}
+                  className="btn-outline mt-4 inline-flex text-sm"
+                >
+                  {opt.cta}
+                </Link>
+              ) : (
+                <a
+                  href={opt.href}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-primary mt-4 inline-flex text-sm"
+                >
+                  {opt.cta}
+                </a>
+              )}
             </div>
           ))}
         </div>
 
         <div className="mt-8 text-center">
-          <a
-            href={siteConfig.linktreeUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-primary"
-          >
-            前往 Linktree 了解更多
-          </a>
-          <p className="mt-4">
+          <p className="text-sm text-[var(--color-gray)]">
             或直接{" "}
             <Link
               href={withBasePath("/contact")}

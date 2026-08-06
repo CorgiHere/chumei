@@ -40,6 +40,11 @@ export default async function ActivityDetailPage({ params }: PageProps) {
   const isRegistrationOpen =
     activity.status === "registration_open" ||
     activity.status === "registration_closing";
+  const isPlayable =
+    activity.status === "ongoing" && Boolean(activity.registrationUrl);
+  const primaryCtaLabel = isPlayable ? "立即遊玩" : "立即報名";
+  const showPrimaryCta =
+    (isRegistrationOpen || isPlayable) && activity.registrationUrl;
 
   return (
     <div className="pb-12">
@@ -62,14 +67,14 @@ export default async function ActivityDetailPage({ params }: PageProps) {
             )}
           </div>
           <div className="mt-6 flex flex-wrap gap-3">
-            {isRegistrationOpen && activity.registrationUrl && (
+            {showPrimaryCta && (
               <a
                 href={activity.registrationUrl}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="btn-primary"
               >
-                立即報名
+                {primaryCtaLabel}
               </a>
             )}
             <a

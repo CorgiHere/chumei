@@ -1,5 +1,6 @@
 import type { Activity } from "@/types";
 import { venues } from "./venues";
+import { siteConfig } from "./site";
 
 export const activities: Activity[] = [
   {
@@ -17,8 +18,8 @@ export const activities: Activity[] = [
     startAt: "2026-03-29T14:00:00+08:00",
     status: "finished",
     venue: venues["nthu-lawn"],
-    categories: ["實體活動", "團體賽", "計分項目"],
-    format: "team",
+    categories: ["實體活動", "個人賽", "計分項目"],
+    format: "individual",
     teamSizeMin: 1,
     teamSizeMax: 1,
     participantLimit: 32,
@@ -26,7 +27,8 @@ export const activities: Activity[] = [
     rules: [
       {
         title: "勝負條件",
-        content: "各組穿著完整恐龍裝，完成 50 公尺直線賽道。最先衝線且恐龍裝未脫落者獲勝。",
+        content:
+          "各組穿著完整恐龍裝，完成 50 公尺直線賽道。最先衝線且恐龍裝未脫落者獲勝。",
       },
       {
         title: "比賽流程",
@@ -34,7 +36,8 @@ export const activities: Activity[] = [
       },
       {
         title: "違規與判定",
-        content: "中途脫下恐龍頭套、推擠對手、或恐龍裝不完整者，由裁判判定失格或加時。",
+        content:
+          "中途脫下恐龍頭套、推擠對手、或恐龍裝不完整者，由裁判判定失格或加時。",
       },
     ],
     safetyNotes: ["請穿著運動鞋", "恐龍裝需自行準備或現場租借"],
@@ -48,7 +51,8 @@ export const activities: Activity[] = [
       winner: "NTHU",
       nthuScore: 1,
       nycuScore: 0,
-      summary: "清華恐龍軍團以 0.3 秒優勢險勝，現場觀眾表示「這真的有必要辦第二屆嗎」——有的。",
+      summary:
+        "清華恐龍軍團以些微優勢險勝，現場觀眾表示「這真的有必要辦第二屆嗎」——有的。",
       rankings: [
         { rank: 1, school: "NTHU", teamName: "清恐龍突擊隊", score: "12.4s" },
         { rank: 2, school: "NYCU", teamName: "狐龍混合種", score: "12.7s" },
@@ -56,7 +60,7 @@ export const activities: Activity[] = [
       ],
     },
     socialLinks: [
-      { platform: "Instagram", url: "https://www.instagram.com/chumei2026/" },
+      { platform: "Instagram", url: siteConfig.instagramUrl },
     ],
   },
   {
@@ -73,20 +77,21 @@ export const activities: Activity[] = [
     cardImage: "/images/activities/office-chair.svg",
     startAt: "2026-04-05T15:00:00+08:00",
     registrationStartAt: "2026-03-20T00:00:00+08:00",
-    registrationEndAt: "2026-04-08T23:59:00+08:00",
-    status: "registration_open",
+    registrationEndAt: "2026-04-03T23:59:00+08:00",
+    status: "finished",
     venue: venues["nthu-gym"],
-    categories: ["實體活動", "團體賽", "計分項目"],
-    format: "team",
+    categories: ["實體活動", "個人賽", "計分項目"],
+    format: "individual",
     teamSizeMin: 1,
     teamSizeMax: 1,
     participantLimit: 24,
     registrationFee: 0,
-    registrationUrl: "https://linktr.ee/chumei2026",
+    registrationUrl: siteConfig.linktreeUrl,
     rules: [
       {
         title: "勝負條件",
-        content: "以辦公椅完成環形賽道，禁止雙腳著地推進。最先完成規定圈數者獲勝。",
+        content:
+          "以辦公椅完成環形賽道，禁止雙腳著地推進。最先完成規定圈數者獲勝。",
       },
       {
         title: "器材規範",
@@ -101,6 +106,14 @@ export const activities: Activity[] = [
     isScored: true,
     scoreWeight: 1,
     organizerIds: ["chumei-committee"],
+    result: {
+      status: "official",
+      publishedAt: "2026-04-05T17:00:00+08:00",
+      winner: "NYCU",
+      nthuScore: 0,
+      nycuScore: 1,
+      summary: "陽明交大以穩定過彎技術奪冠，清華選手則留下華麗翻椅名場面。",
+    },
   },
   {
     id: "act-05",
@@ -115,7 +128,7 @@ export const activities: Activity[] = [
     heroImage: "/images/activities/mahjong.svg",
     cardImage: "/images/activities/mahjong.svg",
     startAt: "2026-04-11T19:00:00+08:00",
-    status: "upcoming",
+    status: "finished",
     venue: venues["nthu-mw"],
     categories: ["實體活動", "團體賽", "計分項目"],
     format: "team",
@@ -123,7 +136,7 @@ export const activities: Activity[] = [
     teamSizeMax: 4,
     participantLimit: 64,
     registrationFee: 0,
-    registrationUrl: "https://linktr.ee/chumei2026",
+    registrationUrl: siteConfig.linktreeUrl,
     rules: [
       {
         title: "勝負條件",
@@ -138,6 +151,14 @@ export const activities: Activity[] = [
     isScored: true,
     scoreWeight: 1,
     organizerIds: ["chumei-committee"],
+    result: {
+      status: "official",
+      publishedAt: "2026-04-12T00:30:00+08:00",
+      winner: "NTHU",
+      nthuScore: 1,
+      nycuScore: 0,
+      summary: "清華牌桌軍團連庄取勝，現場氣氛一度需要冷靜一下。",
+    },
   },
   {
     id: "act-06",
@@ -152,7 +173,7 @@ export const activities: Activity[] = [
     heroImage: "/images/activities/calculus.svg",
     cardImage: "/images/activities/calculus.svg",
     startAt: "2026-04-18T18:30:00+08:00",
-    status: "announced",
+    status: "finished",
     venue: venues["nthu-library"],
     categories: ["實體活動", "個人賽", "非計分項目"],
     format: "individual",
@@ -161,7 +182,8 @@ export const activities: Activity[] = [
     rules: [
       {
         title: "勝負條件",
-        content: "在時限內完成最多正確微積分題目。同分時以完成速度決定勝負。",
+        content:
+          "在時限內完成最多正確微積分題目。同分時以完成速度決定勝負。",
       },
       {
         title: "特殊情況",
@@ -177,29 +199,38 @@ export const activities: Activity[] = [
     slug: "galaga-president",
     year: 2026,
     index: 7,
-    title: "攻略校長旮旯給木",
+    title: "攻略校長旮拉給木",
     subtitle: "竹梅賽年度鉅獻",
     tagline: "好啊我沒差啊你繼續找理由玩嘎拉給木啊",
     description:
-      "經典街機對決，但對手可能是你意想不到的人。考驗反應速度、策略，以及面對權威時的手抖程度。",
+      "竹梅賽年度鉅獻線上互動體驗。經典街機魂 × 校園迷因，考驗反應速度、策略，以及面對權威時的手抖程度。現已上線，清交人快來挑戰。",
     heroImage: "/images/activities/galaga.svg",
     cardImage: "/images/activities/galaga.svg",
     startAt: "2026-04-25T14:00:00+08:00",
-    status: "announced",
-    venue: venues["nycu-gymnasium"],
-    categories: ["實體活動", "個人賽", "非計分項目"],
+    status: "ongoing",
+    venue: venues["online"],
+    categories: ["線上活動", "個人賽", "非計分項目"],
     format: "individual",
-    participantLimit: 16,
+    participantLimit: undefined,
     registrationFee: 0,
-    registrationUrl: "https://linktr.ee/chumei2026",
+    registrationUrl: siteConfig.galagaUrl,
     rules: [
       {
         title: "勝負條件",
-        content: "單淘汰制，經典 Galaga 規則，一局定勝負。",
+        content: "完成關卡挑戰，挑戰自我高分紀錄。詳見遊戲內說明。",
+      },
+      {
+        title: "參加方式",
+        content: "開啟活動頁即可遊玩，無需實體報到。",
       },
     ],
+    audienceNotes: ["線上隨時可玩", "建議使用電腦或平板"],
     isScored: false,
     organizerIds: ["chumei-committee"],
+    socialLinks: [
+      { platform: "Game", url: siteConfig.galagaUrl },
+      { platform: "Instagram", url: siteConfig.instagramUrl },
+    ],
   },
   {
     id: "act-08",
@@ -210,27 +241,35 @@ export const activities: Activity[] = [
     subtitle: "三局兩勝，贏了機票飛哪裡看運氣",
     tagline: "剪刀石頭布，但機票在線",
     description:
-      "最純粹的運氣對決。三局兩勝，贏家獲得機票抽獎資格。輸的人獲得下次再來的勇氣。",
+      "最純粹的運氣對決。三局兩勝，贏家獲得機票抽獎資格。輸的人獲得下次再來的勇氣。報名表單現正開放中。",
     heroImage: "/images/activities/rps.svg",
     cardImage: "/images/activities/rps.svg",
-    startAt: "2026-05-02T13:00:00+08:00",
-    registrationStartAt: "2026-04-01T00:00:00+08:00",
-    registrationEndAt: "2026-04-30T23:59:00+08:00",
-    status: "announced",
+    startAt: "2026-08-30T13:00:00+08:00",
+    registrationStartAt: "2026-07-01T00:00:00+08:00",
+    registrationEndAt: "2026-08-25T23:59:00+08:00",
+    status: "registration_open",
     venue: venues["nthu-mw"],
     categories: ["實體活動", "個人賽", "非計分項目"],
     format: "individual",
     participantLimit: 128,
     registrationFee: 0,
-    registrationUrl: "https://linktr.ee/chumei2026",
+    registrationUrl: siteConfig.rpsFormUrl,
     rules: [
       {
         title: "勝負條件",
         content: "三局兩勝制，標準剪刀石頭布規則。",
       },
+      {
+        title: "報名資訊",
+        content: "請填寫官方報名表單，名額有限，額滿為止。",
+      },
     ],
     isScored: false,
     organizerIds: ["chumei-committee"],
+    socialLinks: [
+      { platform: "報名表單", url: siteConfig.rpsFormUrl },
+      { platform: "Linktree", url: siteConfig.linktreeUrl },
+    ],
   },
 ];
 
@@ -260,7 +299,16 @@ export function getNextActivity(): Activity | undefined {
       (a, b) =>
         new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
     );
-  return upcoming[0];
+  if (upcoming[0]) return upcoming[0];
+
+  // Prefer actionable ongoing / open-registration activities when season is between events
+  const actionable = activities.find(
+    (a) =>
+      a.status === "registration_open" ||
+      a.status === "registration_closing" ||
+      a.status === "ongoing",
+  );
+  return actionable;
 }
 
 export function getRecentResults(): Activity[] {

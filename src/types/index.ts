@@ -155,6 +155,10 @@ export type SiteConfig = {
   nycuScore: number;
   instagramUrl: string;
   facebookUrl: string;
+  threadsUrl: string;
   linktreeUrl: string;
+  galagaUrl: string;
+  merchFormUrl: string;
+  rpsFormUrl: string;
   contactEmail: string;
 };

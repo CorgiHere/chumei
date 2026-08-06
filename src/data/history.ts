@@ -8,7 +8,7 @@ export const historyYears: HistoryYear[] = [
     nthuScore: 3,
     nycuScore: 2,
     activityCount: 6,
-    highlights: ["恐龍賽跑", "辦公椅競速", "麻將大賽", "酒精微積分"],
+    highlights: ["恐龍賽跑", "辦公椅競速", "麻將大賽", "攻略校長旮拉給木", "猜拳贏機票"],
     summary:
       "竹梅籌備委員會以正式錦標賽形式，舉辦一系列完全不正經的校園活動。",
   },

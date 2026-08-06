@@ -41,4 +41,11 @@ export const venues: Record<string, Venue> = {
     mapUrl: "https://maps.google.com/?q=國立清華大學圖書館",
     meetingPoint: "圖書館一樓大廳",
   },
+  online: {
+    id: "online",
+    name: "線上活動",
+    campus: "OTHER",
+    description: "透過瀏覽器即可參加，無需到場。",
+    mapUrl: "https://galgame-5c440.web.app",
+  },
 };

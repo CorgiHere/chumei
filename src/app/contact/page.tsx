@@ -47,6 +47,32 @@ export default function ContactPage() {
               </dd>
             </div>
             <div>
+              <dt className="font-bold">Facebook</dt>
+              <dd>
+                <a
+                  href={siteConfig.facebookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[var(--color-brand-blue)]"
+                >
+                  竹梅籌備委員會
+                </a>
+              </dd>
+            </div>
+            <div>
+              <dt className="font-bold">Threads</dt>
+              <dd>
+                <a
+                  href={siteConfig.threadsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-[var(--color-brand-blue)]"
+                >
+                  @chumei2026
+                </a>
+              </dd>
+            </div>
+            <div>
               <dt className="font-bold">Linktree</dt>
               <dd>
                 <a

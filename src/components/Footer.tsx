@@ -64,6 +64,26 @@ export function Footer() {
               </li>
               <li>
                 <a
+                  href={siteConfig.facebookUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[var(--color-brand-yellow)]"
+                >
+                  Facebook 竹梅籌備委員會
+                </a>
+              </li>
+              <li>
+                <a
+                  href={siteConfig.threadsUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="hover:text-[var(--color-brand-yellow)]"
+                >
+                  Threads @chumei2026
+                </a>
+              </li>
+              <li>
+                <a
                   href={siteConfig.linktreeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
