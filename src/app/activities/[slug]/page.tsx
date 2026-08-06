@@ -211,6 +211,17 @@ export default async function ActivityDetailPage({ params }: PageProps) {
                   開啟地圖
                 </a>
               )}
+              {activity.categories.includes("線上活動") &&
+                activity.registrationUrl && (
+                  <a
+                    href={activity.registrationUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-primary mt-4 w-full text-sm"
+                  >
+                    立即遊玩
+                  </a>
+                )}
             </section>
 
             {activity.safetyNotes && (

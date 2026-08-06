@@ -70,6 +70,5 @@ export const venues: Record<string, Venue> = {
     name: "線上活動",
     campus: "OTHER",
     description: "透過瀏覽器即可參加，無需到場。",
-    mapUrl: "https://galgame-5c440.web.app",
   },
 };

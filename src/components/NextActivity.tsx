@@ -61,6 +61,17 @@ export function NextActivity({ activity }: NextActivityProps) {
             開啟地圖
           </a>
         )}
+        {activity.categories.includes("線上活動") &&
+          activity.registrationUrl && (
+            <a
+              href={activity.registrationUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary text-sm"
+            >
+              立即遊玩
+            </a>
+          )}
       </div>
     </section>
   );
