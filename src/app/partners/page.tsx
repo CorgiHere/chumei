@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SectionHeader } from "@/components/SectionHeader";
 import { partners } from "@/data/history";
-import { withBasePath } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "合作夥伴",
@@ -39,7 +38,7 @@ export default function PartnersPage() {
           <p className="mt-2 text-muted">
             歡迎贊助、協辦或媒體合作洽詢
           </p>
-          <Link href={withBasePath("/contact")} className="btn-primary mt-4">
+          <Link href="/contact" className="btn-primary mt-4">
             聯絡我們
           </Link>
         </div>

@@ -9,7 +9,6 @@ import { isSameDay, isThisWeek } from "@/lib/activity-filters";
 import {
   formatDate,
   getCalendarUrl,
-  withBasePath,
 } from "@/lib/utils";
 
 type ScheduleMode = "all" | "today" | "week" | "upcoming" | "timeline";
@@ -113,7 +112,7 @@ function ScheduleItem({ activity }: { activity: Activity }) {
           </time>
           <h2 className="mt-1 text-xl font-black">
             <Link
-              href={withBasePath(`/activities/${activity.slug}`)}
+              href={`/activities/${activity.slug}`}
               className="hover:text-brand-blue"
             >
               {activity.title}
@@ -153,7 +152,7 @@ function ScheduleItem({ activity }: { activity: Activity }) {
         </div>
         <div className="flex flex-wrap gap-2">
           <Link
-            href={withBasePath(`/activities/${activity.slug}`)}
+            href={`/activities/${activity.slug}`}
             className="btn-primary text-sm"
           >
             詳情

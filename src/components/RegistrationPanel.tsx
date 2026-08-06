@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Activity } from "@/types";
-import { formatDate, withBasePath } from "@/lib/utils";
+import { formatDate } from "@/lib/utils";
 
 type RegistrationPanelProps = {
   activities: Activity[];
@@ -14,7 +14,7 @@ export function RegistrationPanel({ activities }: RegistrationPanelProps) {
         <p className="mt-2 text-sm text-muted">
           下一波活動資訊將在這裡公布。
         </p>
-        <Link href={withBasePath("/schedule")} className="btn-outline mt-4 text-sm">
+        <Link href="/schedule" className="btn-outline mt-4 text-sm">
           查看近期活動
         </Link>
       </section>

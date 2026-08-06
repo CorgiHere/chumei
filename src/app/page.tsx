@@ -56,7 +56,7 @@ export default function HomePage() {
             eyebrow="正賽精選"
             title={`${siteConfig.year} 活動精選`}
             subtitle="荒謬競技，一本正經"
-            href={withBasePath("/activities")}
+            href="/activities"
             actionLabel={`查看全部 ${activities.length} 項活動`}
           />
 
@@ -91,7 +91,7 @@ export default function HomePage() {
           </div>
 
           <div className="mt-10 text-center">
-            <Link href={withBasePath("/activities")} className="btn-primary">
+            <Link href="/activities" className="btn-primary">
               查看全部 {activities.length} 項活動 →
             </Link>
           </div>
@@ -104,7 +104,7 @@ export default function HomePage() {
             index="03"
             eyebrow="公告板"
             title="最新公告"
-            href={withBasePath("/news")}
+            href="/news"
             actionLabel="全部消息"
           />
           <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
@@ -125,7 +125,7 @@ export default function HomePage() {
                     {formatDateOnly(featuredNews.publishedAt)}
                   </p>
                   <Link
-                    href={withBasePath(`/news/${featuredNews.slug}`)}
+                    href={`/news/${featuredNews.slug}`}
                     className="btn-primary mt-6 inline-flex text-sm"
                   >
                     查看公告 →
@@ -147,7 +147,7 @@ export default function HomePage() {
                     {post.summary}
                   </p>
                   <Link
-                    href={withBasePath(`/news/${post.slug}`)}
+                    href={`/news/${post.slug}`}
                     className="text-link mt-4 inline-block text-sm"
                   >
                     閱讀 →
@@ -167,7 +167,7 @@ export default function HomePage() {
               eyebrow="賽果速覽"
               title="最近結果"
               dark
-              href={withBasePath("/scoreboard")}
+              href="/scoreboard"
               actionLabel="完整比分"
             />
             <div className="flex gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
@@ -200,7 +200,7 @@ export default function HomePage() {
                       {activity.result?.summary}
                     </p>
                     <Link
-                      href={withBasePath(`/activities/${activity.slug}#results`)}
+                      href={`/activities/${activity.slug}#results`}
                       className="btn-primary mt-5 inline-flex text-sm"
                     >
                       查看結果
@@ -220,7 +220,7 @@ export default function HomePage() {
             eyebrow="影像"
             title="精選回顧"
             subtitle="活動影像整理中 · 更多花絮見 Instagram"
-            href={withBasePath("/gallery")}
+            href="/gallery"
             actionLabel="前往圖庫"
           />
           <div className="grid gap-4 md:grid-cols-2">
@@ -231,7 +231,9 @@ export default function HomePage() {
               className="group relative aspect-video overflow-hidden rounded-xl border-4 border-black bg-light-gray"
             >
               <Image
-                src={galleryItems[0]?.imageUrl ?? "/images/gallery/hero-poster.jpg"}
+                src={withBasePath(
+                  galleryItems[0]?.imageUrl ?? "/images/gallery/hero-poster.jpg",
+                )}
                 alt={galleryItems[0]?.alt ?? "活動影像整理中"}
                 fill
                 className="object-cover transition group-hover:scale-[1.03]"
@@ -254,7 +256,7 @@ export default function HomePage() {
                   className="group relative aspect-video overflow-hidden rounded-xl border-4 border-black bg-light-gray md:aspect-auto md:min-h-[140px]"
                 >
                   <Image
-                    src={item.imageUrl}
+                    src={withBasePath(item.imageUrl)}
                     alt={item.alt}
                     fill
                     className="object-cover transition group-hover:scale-[1.03]"
@@ -299,7 +301,7 @@ export default function HomePage() {
             ))}
           </div>
           <div className="mt-8">
-            <Link href={withBasePath("/partners")} className="btn-outline text-sm">
+            <Link href="/partners" className="btn-outline text-sm">
               合作提案 →
             </Link>
           </div>

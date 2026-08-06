@@ -32,11 +32,11 @@ export function Hero() {
             </p>
 
             <div className="mt-8 hidden flex-wrap gap-3 md:flex">
-              <Link href={withBasePath("/scoreboard")} className="btn-primary">
+              <Link href="/scoreboard" className="btn-primary">
                 查看完整賽果 →
               </Link>
               <Link
-                href={withBasePath("/activities")}
+                href="/activities"
                 className="btn-dark-outline"
               >
                 瀏覽全部活動
@@ -67,7 +67,7 @@ export function Hero() {
               />
               <div className="relative overflow-hidden rounded-[28px] border-4 border-white bg-charcoal aspect-4/3 lg:aspect-3/4">
                 <Image
-                  src="/images/gallery/hero-poster.jpg"
+                  src={withBasePath("/images/gallery/hero-poster.jpg")}
                   alt="2026 竹梅賽主視覺"
                   fill
                   className="object-cover"
@@ -91,11 +91,11 @@ export function Hero() {
               </p>
             </div>
             <div className="mt-6 flex flex-col gap-3">
-              <Link href={withBasePath("/scoreboard")} className="btn-primary">
+              <Link href="/scoreboard" className="btn-primary">
                 查看賽果
               </Link>
               <Link
-                href={withBasePath("/activities")}
+                href="/activities"
                 className="btn-dark-outline"
               >
                 全部活動

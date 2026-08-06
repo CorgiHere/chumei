@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { siteConfig } from "@/data/site";
-import { withBasePath } from "@/lib/utils";
 import { HazardBar } from "./HazardBar";
 
 export function Footer() {
@@ -22,22 +21,22 @@ export function Footer() {
             <p className="mb-3 font-bold text-brand-yellow">快速連結</p>
             <ul className="space-y-2 text-sm font-bold">
               <li>
-                <Link href={withBasePath("/activities")} className="hover:text-brand-yellow">
+                <Link href="/activities" className="hover:text-brand-yellow">
                   活動總覽
                 </Link>
               </li>
               <li>
-                <Link href={withBasePath("/schedule")} className="hover:text-brand-yellow">
+                <Link href="/schedule" className="hover:text-brand-yellow">
                   賽程
                 </Link>
               </li>
               <li>
-                <Link href={withBasePath("/scoreboard")} className="hover:text-brand-yellow">
+                <Link href="/scoreboard" className="hover:text-brand-yellow">
                   比分與結果
                 </Link>
               </li>
               <li>
-                <Link href={withBasePath("/news")} className="hover:text-brand-yellow">
+                <Link href="/news" className="hover:text-brand-yellow">
                   最新消息
                 </Link>
               </li>
@@ -48,22 +47,22 @@ export function Footer() {
             <p className="mb-3 font-bold text-brand-yellow">參與</p>
             <ul className="space-y-2 text-sm font-bold">
               <li>
-                <Link href={withBasePath("/join")} className="hover:text-brand-yellow">
+                <Link href="/join" className="hover:text-brand-yellow">
                   加入竹梅
                 </Link>
               </li>
               <li>
-                <Link href={withBasePath("/partners")} className="hover:text-brand-yellow">
+                <Link href="/partners" className="hover:text-brand-yellow">
                   合作提案
                 </Link>
               </li>
               <li>
-                <Link href={withBasePath("/contact")} className="hover:text-brand-yellow">
+                <Link href="/contact" className="hover:text-brand-yellow">
                   聯絡我們
                 </Link>
               </li>
               <li>
-                <Link href={withBasePath("/gallery")} className="hover:text-brand-yellow">
+                <Link href="/gallery" className="hover:text-brand-yellow">
                   圖庫
                 </Link>
               </li>

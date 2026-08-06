@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageIntro } from "@/components/PageIntro";
 import { siteConfig } from "@/data/site";
-import { withBasePath } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "關於竹梅",
@@ -103,7 +102,7 @@ export default function AboutPage() {
               <strong>{siteConfig.yearName}</strong>
               。活動、比分與消息會隨賽事進度更新；更完整的年度回顧見{" "}
               <Link
-                href={withBasePath("/history")}
+                href="/history"
                 className="font-bold text-brand-blue underline"
               >
                 歷屆竹梅
@@ -153,12 +152,12 @@ export default function AboutPage() {
                 Linktree
               </a>
               <Link
-                href={withBasePath("/contact")}
+                href="/contact"
                 className="btn-outline text-sm"
               >
                 聯絡我們
               </Link>
-              <Link href={withBasePath("/join")} className="btn-outline text-sm">
+              <Link href="/join" className="btn-outline text-sm">
                 加入竹梅
               </Link>
             </div>

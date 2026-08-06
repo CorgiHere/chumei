@@ -6,7 +6,7 @@ import { StatusBadge } from "@/components/StatusBadge";
 import { activities } from "@/data/activities";
 import { historyYears } from "@/data/history";
 import { siteConfig } from "@/data/site";
-import { formatDateOnly, withBasePath } from "@/lib/utils";
+import { formatDateOnly } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "比分與結果",
@@ -98,11 +98,11 @@ export default function ScoreboardPage() {
                       </td>
                       <td className="px-4 py-3">
                         <Link
-                          href={withBasePath(
+                          href={
                             a.result
                               ? `/activities/${a.slug}#results`
-                              : `/activities/${a.slug}`,
-                          )}
+                              : `/activities/${a.slug}`
+                          }
                           className="text-sm font-bold text-brand-blue"
                         >
                           {a.result ? "查看結果" : "活動詳情"}
@@ -133,7 +133,7 @@ export default function ScoreboardPage() {
                     {formatDateOnly(a.startAt)} · {winnerLabel(a.result?.winner)}
                   </p>
                   <Link
-                    href={withBasePath(`/activities/${a.slug}`)}
+                    href={`/activities/${a.slug}`}
                     className="btn-outline mt-3 inline-flex text-sm"
                   >
                     查看詳情
@@ -158,7 +158,7 @@ export default function ScoreboardPage() {
               {unscored.map((a) => (
                 <Link
                   key={a.id}
-                  href={withBasePath(`/activities/${a.slug}`)}
+                  href={`/activities/${a.slug}`}
                   className="card block p-5 transition hover:-translate-y-0.5"
                 >
                   <p className="text-xs font-bold text-muted">
@@ -211,7 +211,7 @@ export default function ScoreboardPage() {
                 ))}
               </div>
               <div className="mt-6 text-center">
-                <Link href={withBasePath("/history")} className="btn-outline text-sm">
+                <Link href="/history" className="btn-outline text-sm">
                   查看歷屆竹梅
                 </Link>
               </div>

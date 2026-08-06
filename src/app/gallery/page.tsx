@@ -3,6 +3,7 @@ import Image from "next/image";
 import { SectionHeader } from "@/components/SectionHeader";
 import { galleryItems } from "@/data/history";
 import { siteConfig } from "@/data/site";
+import { withBasePath } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "圖庫",
@@ -24,7 +25,7 @@ export default function GalleryPage() {
               >
                 <div className="relative aspect-video">
                   <Image
-                    src={item.imageUrl}
+                    src={withBasePath(item.imageUrl)}
                     alt={item.alt}
                     fill
                     className="object-cover"

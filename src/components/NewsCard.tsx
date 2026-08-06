@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { NewsPost } from "@/types";
-import { getNewsCategoryLabel, formatDate, withBasePath } from "@/lib/utils";
+import { getNewsCategoryLabel, formatDate } from "@/lib/utils";
 
 type NewsCardProps = {
   post: NewsPost;
@@ -21,7 +21,7 @@ export function NewsCard({ post }: NewsCardProps) {
       </div>
       <h3 className="text-lg font-black">
         <Link
-          href={withBasePath(`/news/${post.slug}`)}
+          href={`/news/${post.slug}`}
           className="hover:text-brand-blue"
         >
           {post.title}

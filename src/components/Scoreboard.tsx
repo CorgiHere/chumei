@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { siteConfig } from "@/data/site";
 import { activities } from "@/data/activities";
-import { cn, withBasePath } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 type ScoreboardProps = {
   compact?: boolean;
@@ -106,7 +106,7 @@ export function Scoreboard({
         </div>
 
         <div className="mt-10 text-center">
-          <Link href={withBasePath("/scoreboard")} className="btn-primary">
+          <Link href="/scoreboard" className="btn-primary">
             查看七場完整結果 →
           </Link>
         </div>

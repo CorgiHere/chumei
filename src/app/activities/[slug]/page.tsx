@@ -8,7 +8,6 @@ import {
   formatDate,
   getCalendarUrl,
   getCampusLabel,
-  withBasePath,
 } from "@/lib/utils";
 
 type PageProps = {
@@ -238,7 +237,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
         </div>
 
         <div className="mt-10">
-          <Link href={withBasePath("/activities")} className="btn-outline text-sm">
+          <Link href="/activities" className="btn-outline text-sm">
             ← 返回活動總覽
           </Link>
         </div>

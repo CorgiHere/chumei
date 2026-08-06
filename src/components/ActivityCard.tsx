@@ -24,7 +24,7 @@ export function ActivityCard({
         <div className="grid md:grid-cols-[0.9fr_1.1fr]">
           <div className="relative aspect-video overflow-hidden bg-light-gray md:aspect-auto md:min-h-[280px]">
             <Image
-              src={activity.cardImage ?? activity.heroImage}
+              src={withBasePath(activity.cardImage ?? activity.heroImage)}
               alt={`${activity.title}主視覺`}
               fill
               className="object-cover transition duration-300 group-hover:scale-[1.03]"
@@ -64,7 +64,7 @@ export function ActivityCard({
             </div>
             <div className="mt-6">
               <Link
-                href={withBasePath(`/activities/${activity.slug}`)}
+                href={`/activities/${activity.slug}`}
                 className="btn-primary text-sm"
               >
                 查看詳情 →
@@ -81,7 +81,7 @@ export function ActivityCard({
       <article className="group card flex h-full flex-col overflow-hidden">
         <div className="relative aspect-4/3 overflow-hidden bg-light-gray">
           <Image
-            src={activity.cardImage ?? activity.heroImage}
+            src={withBasePath(activity.cardImage ?? activity.heroImage)}
             alt={`${activity.title}主視覺`}
             fill
             className="object-cover transition duration-300 group-hover:scale-[1.03]"
@@ -120,7 +120,7 @@ export function ActivityCard({
           </div>
           <div className="mt-auto pt-5">
             <Link
-              href={withBasePath(`/activities/${activity.slug}`)}
+              href={`/activities/${activity.slug}`}
               className="text-link text-sm"
             >
               查看詳情 →
@@ -166,7 +166,7 @@ export function ActivityCard({
             </div>
             <div className="mt-4 flex flex-wrap gap-2">
               <Link
-                href={withBasePath(`/activities/${activity.slug}`)}
+                href={`/activities/${activity.slug}`}
                 className="btn-outline text-sm"
               >
                 查看詳情
@@ -193,7 +193,7 @@ export function ActivityCard({
               )}
               {activity.status === "finished" && (
                 <Link
-                  href={withBasePath(`/activities/${activity.slug}#results`)}
+                  href={`/activities/${activity.slug}#results`}
                   className="btn-secondary text-sm"
                 >
                   查看結果
@@ -204,7 +204,7 @@ export function ActivityCard({
         </div>
         <div className="relative aspect-4/3 bg-light-gray md:w-1/3">
           <Image
-            src={activity.cardImage ?? activity.heroImage}
+            src={withBasePath(activity.cardImage ?? activity.heroImage)}
             alt={`${activity.title}主視覺`}
             fill
             className="object-cover"

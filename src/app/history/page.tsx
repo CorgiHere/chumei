@@ -4,7 +4,7 @@ import { PageIntro } from "@/components/PageIntro";
 import { activities } from "@/data/activities";
 import { historyYears } from "@/data/history";
 import { siteConfig } from "@/data/site";
-import { formatDateOnly, withBasePath } from "@/lib/utils";
+import { formatDateOnly } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "歷屆竹梅",
@@ -100,13 +100,13 @@ export default function HistoryPage() {
                   {isCurrent && (
                     <div className="mt-6 flex flex-wrap gap-2">
                       <Link
-                        href={withBasePath("/activities")}
+                        href="/activities"
                         className="btn-primary text-sm"
                       >
                         本屆活動
                       </Link>
                       <Link
-                        href={withBasePath("/scoreboard")}
+                        href="/scoreboard"
                         className="btn-outline text-sm"
                       >
                         目前比分
@@ -140,7 +140,7 @@ export default function HistoryPage() {
                 </p>
                 <h3 className="text-xl font-black">
                   <Link
-                    href={withBasePath(`/activities/${activity.slug}`)}
+                    href={`/activities/${activity.slug}`}
                     className="hover:text-brand-blue"
                   >
                     {activity.title}
@@ -161,10 +161,10 @@ export default function HistoryPage() {
         </p>
 
         <div className="mt-8 flex flex-wrap justify-center gap-3">
-          <Link href={withBasePath("/gallery")} className="btn-primary">
+          <Link href="/gallery" className="btn-primary">
             查看圖庫
           </Link>
-          <Link href={withBasePath("/about")} className="btn-outline">
+          <Link href="/about" className="btn-outline">
             關於竹梅
           </Link>
         </div>

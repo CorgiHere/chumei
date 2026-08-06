@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { siteConfig } from "@/data/site";
-import { withBasePath } from "@/lib/utils";
 
 const items = [
   {
@@ -50,7 +49,7 @@ export function LiveStatusStrip() {
             }
             return (
               <li key={item.label}>
-                <Link href={withBasePath(item.href)} className={className}>
+                <Link href={item.href} className={className}>
                   <span className="text-sm font-black">{item.label}</span>
                   <span className="shrink-0 text-xs font-bold text-brand-blue">
                     {item.cta} →

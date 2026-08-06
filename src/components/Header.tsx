@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { siteConfig } from "@/data/site";
 import { getOpenRegistrationActivities } from "@/data/activities";
-import { cn, withBasePath } from "@/lib/utils";
+import { cn } from "@/lib/utils";
 
 const navItems = [
   { href: "/activities", label: "活動總覽" },
@@ -54,7 +54,7 @@ export function Header() {
         )}
       >
         <Link
-          href={withBasePath("/")}
+          href="/"
           className="flex items-center gap-3"
           onClick={() => setMenuOpen(false)}
         >
@@ -75,7 +75,7 @@ export function Header() {
           {navItems.map((item) => (
             <Link
               key={item.href}
-              href={withBasePath(item.href)}
+              href={item.href}
               className={cn(
                 "rounded-pill px-3 py-2 text-sm font-bold transition",
                 isActive(item.href)
@@ -99,9 +99,7 @@ export function Header() {
             IG
           </a>
           <Link
-            href={withBasePath(
-              hasOpenRegistration ? "/activities" : "/schedule",
-            )}
+            href={hasOpenRegistration ? "/activities" : "/schedule"}
             className="btn-primary hidden text-sm sm:inline-flex"
           >
             {hasOpenRegistration ? "目前開放報名" : "近期活動"}
@@ -150,7 +148,7 @@ export function Header() {
             {navItems.map((item, i) => (
               <Link
                 key={item.href}
-                href={withBasePath(item.href)}
+                href={item.href}
                 className="flex items-center gap-4 border-b border-white/10 py-4"
                 onClick={() => setMenuOpen(false)}
               >

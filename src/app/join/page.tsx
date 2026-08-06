@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SectionHeader } from "@/components/SectionHeader";
 import { siteConfig } from "@/data/site";
-import { withBasePath } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "加入竹梅",
@@ -56,7 +55,7 @@ export default function JoinPage() {
               <p className="mt-2 text-sm text-muted">{opt.desc}</p>
               {"internal" in opt && opt.internal ? (
                 <Link
-                  href={withBasePath(opt.href)}
+                  href={opt.href}
                   className="btn-outline mt-4 inline-flex text-sm"
                 >
                   {opt.cta}
@@ -79,7 +78,7 @@ export default function JoinPage() {
           <p className="text-sm text-muted">
             或直接{" "}
             <Link
-              href={withBasePath("/contact")}
+              href="/contact"
               className="font-bold text-brand-blue"
             >
               聯絡我們

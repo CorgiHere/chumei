@@ -4,7 +4,6 @@ import { StatusBadge } from "./StatusBadge";
 import {
   formatDate,
   getCalendarUrl,
-  withBasePath,
 } from "@/lib/utils";
 
 type NextActivityProps = {
@@ -34,7 +33,7 @@ export function NextActivity({ activity }: NextActivityProps) {
       </div>
       <div className="mt-6 flex flex-wrap gap-3">
         <Link
-          href={withBasePath(`/activities/${activity.slug}`)}
+          href={`/activities/${activity.slug}`}
           className="btn-primary text-sm"
         >
           查看活動

@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { siteConfig } from "@/data/site";
-import { withBasePath } from "@/lib/utils";
 import { SectionHeader } from "./SectionHeader";
 
 export function KeepPlaying() {
@@ -44,7 +43,7 @@ export function KeepPlaying() {
               >
                 查看 Linktree →
               </a>
-              <Link href={withBasePath("/news/merch-tee-pickup")} className="btn-outline text-sm">
+              <Link href="/news/merch-tee-pickup" className="btn-outline text-sm">
                 領取公告
               </Link>
             </div>

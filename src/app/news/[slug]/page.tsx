@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SectionHeader } from "@/components/SectionHeader";
 import { newsPosts, getNewsBySlug } from "@/data/news";
-import { getNewsCategoryLabel, formatDate, withBasePath } from "@/lib/utils";
+import { getNewsCategoryLabel, formatDate } from "@/lib/utils";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -46,7 +46,7 @@ export default async function NewsDetailPage({ params }: PageProps) {
           className="prose-chumei mt-8 text-lg"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
-        <Link href={withBasePath("/news")} className="btn-outline mt-10 text-sm">
+        <Link href="/news" className="btn-outline mt-10 text-sm">
           ← 返回消息列表
         </Link>
       </div>
