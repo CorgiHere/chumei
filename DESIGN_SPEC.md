@@ -1,7 +1,7 @@
 # DESIGN_SPEC.md — 2026 竹梅賽官網完整介面設計規格
 
-> 適用專案：`CorgiChen/chumei`  
-> 線上版本：`https://corgichen.github.io/chumei/`  
+> 適用專案：`CorgiHere/chumei`  
+> 線上版本：`https://corgihere.github.io/chumei/`  
 > 定位：正式賽事架構 × 荒謬校園競技內容  
 > 視覺來源：竹梅賽黃藍校園綜藝風、黑黃地下競速風
 
