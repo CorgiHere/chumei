@@ -1,0 +1,232 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { StatusBadge } from "@/components/StatusBadge";
+import { SectionHeader } from "@/components/SectionHeader";
+import { activities, getActivityBySlug } from "@/data/activities";
+import {
+  formatDate,
+  getCalendarUrl,
+  getCampusLabel,
+  withBasePath,
+} from "@/lib/utils";
+
+type PageProps = {
+  params: Promise<{ slug: string }>;
+};
+
+export async function generateStaticParams() {
+  return activities.map((a) => ({ slug: a.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: PageProps): Promise<Metadata> {
+  const { slug } = await params;
+  const activity = getActivityBySlug(slug);
+  if (!activity) return { title: "活動不存在" };
+
+  return {
+    title: `${activity.title}｜報名、規則與結果`,
+    description: `查看 2026 竹梅賽${activity.title}的日期、地點、參賽資格、比賽規則、報名資訊與最新結果。`,
+  };
+}
+
+export default async function ActivityDetailPage({ params }: PageProps) {
+  const { slug } = await params;
+  const activity = getActivityBySlug(slug);
+  if (!activity) notFound();
+
+  const isRegistrationOpen =
+    activity.status === "registration_open" ||
+    activity.status === "registration_closing";
+
+  return (
+    <div className="pb-12">
+      <section className="bg-[var(--color-black)] py-12 text-white">
+        <div className="container-main">
+          <StatusBadge status={activity.status} className="mb-4" />
+          <h1 className="display-title text-[var(--font-size-h1)] font-black">
+            {activity.title}
+          </h1>
+          {activity.subtitle && (
+            <p className="mt-2 text-lg text-gray-300">{activity.subtitle}</p>
+          )}
+          <div className="mt-6 flex flex-wrap gap-4 text-sm">
+            <span>{formatDate(activity.startAt)}</span>
+            <span>{activity.venue.name}</span>
+            {activity.isScored && (
+              <span className="rounded-full bg-[var(--color-brand-yellow)] px-2 py-0.5 font-bold text-black">
+                計入總錦標
+              </span>
+            )}
+          </div>
+          <div className="mt-6 flex flex-wrap gap-3">
+            {isRegistrationOpen && activity.registrationUrl && (
+              <a
+                href={activity.registrationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn-primary"
+              >
+                立即報名
+              </a>
+            )}
+            <a
+              href={getCalendarUrl(
+                activity.title,
+                activity.startAt,
+                activity.venue.name,
+              )}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-outline !border-white !text-white"
+            >
+              加入行事曆
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <div className="container-main grid-bg py-12">
+        <div className="grid gap-10 lg:grid-cols-3">
+          <div className="lg:col-span-2 space-y-10">
+            <section>
+              <SectionHeader title="活動介紹" />
+              <p className="text-lg">{activity.description}</p>
+            </section>
+
+            {(isRegistrationOpen || activity.registrationEndAt) && (
+              <section className="card p-6">
+                <SectionHeader title="報名資訊" />
+                <dl className="grid gap-3 text-sm">
+                  <div>
+                    <dt className="font-bold">報名狀態</dt>
+                    <dd>
+                      <StatusBadge status={activity.status} />
+                    </dd>
+                  </div>
+                  {activity.registrationEndAt && (
+                    <div>
+                      <dt className="font-bold">報名截止</dt>
+                      <dd>{formatDate(activity.registrationEndAt)}</dd>
+                    </div>
+                  )}
+                  {activity.participantLimit && (
+                    <div>
+                      <dt className="font-bold">名額上限</dt>
+                      <dd>{activity.participantLimit} 人</dd>
+                    </div>
+                  )}
+                  {activity.teamSizeMin && (
+                    <div>
+                      <dt className="font-bold">隊伍人數</dt>
+                      <dd>
+                        {activity.teamSizeMin}
+                        {activity.teamSizeMax &&
+                          activity.teamSizeMax !== activity.teamSizeMin &&
+                          `–${activity.teamSizeMax}`}{" "}
+                        人
+                      </dd>
+                    </div>
+                  )}
+                  <div>
+                    <dt className="font-bold">報名費</dt>
+                    <dd>
+                      {activity.registrationFee
+                        ? `NT$ ${activity.registrationFee}`
+                        : "免費"}
+                    </dd>
+                  </div>
+                </dl>
+              </section>
+            )}
+
+            <section>
+              <SectionHeader title="比賽規則" />
+              <div className="space-y-4">
+                {activity.rules.map((rule) => (
+                  <div key={rule.title} className="card p-5">
+                    <h3 className="font-black">{rule.title}</h3>
+                    <p className="mt-2 text-sm">{rule.content}</p>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            {activity.result?.status === "official" && (
+              <section id="results">
+                <SectionHeader title="比賽結果" />
+                <div className="card p-6">
+                  {activity.result.summary && (
+                    <p className="mb-4">{activity.result.summary}</p>
+                  )}
+                  {activity.result.rankings && (
+                    <ol className="space-y-2">
+                      {activity.result.rankings.map((r) => (
+                        <li
+                          key={r.rank}
+                          className="flex items-center justify-between border-b border-[var(--color-light-gray)] py-2"
+                        >
+                          <span>
+                            第 {r.rank} 名 · {r.teamName}（
+                            {getCampusLabel(r.school)}）
+                          </span>
+                          {r.score && (
+                            <span className="font-bold">{r.score}</span>
+                          )}
+                        </li>
+                      ))}
+                    </ol>
+                  )}
+                </div>
+              </section>
+            )}
+          </div>
+
+          <aside className="space-y-6">
+            <section className="card p-5">
+              <h2 className="font-black">場地資訊</h2>
+              <p className="mt-2 font-bold">{activity.venue.name}</p>
+              <p className="text-sm text-[var(--color-gray)]">
+                {getCampusLabel(activity.venue.campus)}
+              </p>
+              {activity.venue.meetingPoint && (
+                <p className="mt-2 text-sm">
+                  集合點：{activity.venue.meetingPoint}
+                </p>
+              )}
+              {activity.venue.mapUrl && (
+                <a
+                  href={activity.venue.mapUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-outline mt-4 w-full text-sm"
+                >
+                  開啟地圖
+                </a>
+              )}
+            </section>
+
+            {activity.safetyNotes && (
+              <section className="card p-5">
+                <h2 className="font-black">注意事項</h2>
+                <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">
+                  {activity.safetyNotes.map((note) => (
+                    <li key={note}>{note}</li>
+                  ))}
+                </ul>
+              </section>
+            )}
+          </aside>
+        </div>
+
+        <div className="mt-10">
+          <Link href={withBasePath("/activities")} className="btn-outline text-sm">
+            ← 返回活動總覽
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+}
