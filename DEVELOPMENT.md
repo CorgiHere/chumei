@@ -179,7 +179,8 @@ src/
 ```bash
 npm install
 npm run dev      # http://localhost:3000（無 basePath）
-npm run build    # 輸出至 out/
+npm run seo      # 產生 public/sitemap.xml、robots.txt
+npm run build    # prebuild 會先跑 seo，輸出至 out/
 
 # 模擬 GitHub Pages 建置（驗證 /chumei 前綴）
 set GITHUB_PAGES=true
@@ -188,6 +189,12 @@ npm run build
 ```
 
 Push `main` 後 Actions 自動部署 Pages（workflow 會設 `GITHUB_PAGES=true`）。
+
+### SEO 注意
+
+- 共用 helper：`src/lib/seo.ts`（canonical／OG／Twitter／JSON-LD）
+- 靜態 export 用 `public/robots.txt`、`public/sitemap.xml`（`npm run seo` 產生）
+- 正式網址：`https://corgichen.github.io/chumei/`（`siteConfig.siteUrl`）
 
 ---
 
@@ -200,3 +207,4 @@ Push `main` 後 Actions 自動部署 Pages（workflow 會設 `GITHUB_PAGES=true`
 | 2026-08-06 | **DESIGN_SPEC Phase 1–2**：Tokens、共用元件、首頁重構；`npm run build` 通過 |
 | 2026-08-06 | 以 Instagram 貼文圖替換各活動主視覺；圖庫改為實拍照 |
 | 2026-08-06 | **修正 Pages 404**：`Link` 不再包 `withBasePath`；`Image` 改用 `withBasePath` |
+| 2026-08-06 | **全站 SEO**：metadataBase／OG／Twitter／canonical／JSON-LD；`public/sitemap.xml`＋`robots.txt` |

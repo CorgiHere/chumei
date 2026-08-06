@@ -3,13 +3,20 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { StatusBadge } from "@/components/StatusBadge";
 import { SectionHeader } from "@/components/SectionHeader";
+import { JsonLd } from "@/components/JsonLd";
 import { activities, getActivityBySlug } from "@/data/activities";
 import { partners } from "@/data/history";
+import { siteConfig } from "@/data/site";
 import {
   formatDate,
   getCalendarUrl,
   getCampusLabel,
 } from "@/lib/utils";
+import {
+  breadcrumbJsonLd,
+  buildPageMetadata,
+  eventJsonLd,
+} from "@/lib/seo";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -24,12 +31,16 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
   const activity = getActivityBySlug(slug);
-  if (!activity) return { title: "活動不存在" };
+  if (!activity) return { title: "活動不存在", robots: { index: false } };
 
-  return {
-    title: `${activity.title}｜報名、規則與結果`,
-    description: `查看 2026 竹梅賽${activity.title}的日期、地點、參賽資格、比賽規則、報名資訊與最新結果。`,
-  };
+  const title = `${siteConfig.yearName}${activity.title}｜報名、規則與結果`;
+  return buildPageMetadata({
+    title,
+    description: `查看 ${siteConfig.yearName}${activity.title}的日期、地點、參賽資格、比賽規則、報名資訊與最新結果。`,
+    path: `/activities/${activity.slug}`,
+    image: activity.cardImage ?? activity.heroImage,
+    absoluteTitle: true,
+  });
 }
 
 export default async function ActivityDetailPage({ params }: PageProps) {
@@ -48,9 +59,31 @@ export default async function ActivityDetailPage({ params }: PageProps) {
   const activityPartners = (activity.partnerIds ?? [])
     .map((id) => partners.find((p) => p.id === id))
     .filter((p): p is (typeof partners)[number] => Boolean(p));
+  const isOnline = activity.categories.includes("線上活動");
 
   return (
     <div className="pb-12">
+      <JsonLd
+        data={[
+          eventJsonLd({
+            name: activity.title,
+            description: activity.description,
+            startDate: activity.startAt,
+            endDate: activity.endAt,
+            path: `/activities/${activity.slug}`,
+            image: activity.cardImage ?? activity.heroImage,
+            locationName: activity.venue.name,
+            locationAddress: activity.venue.address,
+            isOnline,
+            status: activity.status,
+          }),
+          breadcrumbJsonLd([
+            { name: "首頁", path: "/" },
+            { name: "活動總覽", path: "/activities" },
+            { name: activity.title, path: `/activities/${activity.slug}` },
+          ]),
+        ]}
+      />
       <section className="bg-black py-12 text-white">
         <div className="container-main">
           <StatusBadge status={activity.status} className="mb-4" />

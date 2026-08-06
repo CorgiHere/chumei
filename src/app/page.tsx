@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { Hero } from "@/components/Hero";
@@ -7,11 +8,24 @@ import { Scoreboard } from "@/components/Scoreboard";
 import { ActivityCard } from "@/components/ActivityCard";
 import { SectionHeader } from "@/components/SectionHeader";
 import { HazardBar } from "@/components/HazardBar";
+import { JsonLd } from "@/components/JsonLd";
 import { activities, getActivityBySlug, getRecentResults } from "@/data/activities";
 import { newsPosts } from "@/data/news";
 import { partners, galleryItems } from "@/data/history";
 import { siteConfig } from "@/data/site";
 import { formatDateOnly, getNewsCategoryLabel, withBasePath } from "@/lib/utils";
+import {
+  buildPageMetadata,
+  organizationJsonLd,
+  websiteJsonLd,
+} from "@/lib/seo";
+
+export const metadata: Metadata = buildPageMetadata({
+  title: `${siteConfig.yearName}｜竹梅賽官方網站`,
+  description: siteConfig.description,
+  path: "/",
+  absoluteTitle: true,
+});
 
 const FEATURED_FEATURED = "dinosaur-race";
 const FEATURED_MID = ["alcohol-calculus", "office-chair-racing"] as const;
@@ -39,6 +53,7 @@ export default function HomePage() {
 
   return (
     <>
+      <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
       <Hero />
       <LiveStatusStrip />
       <KeepPlaying />

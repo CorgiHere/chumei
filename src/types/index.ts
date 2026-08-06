@@ -166,4 +166,5 @@ export type SiteConfig = {
   rpsFormUrl: string;
   contactEmail: string;
   logoUrl: string;
+  siteUrl: string;
 };

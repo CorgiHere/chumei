@@ -3,11 +3,14 @@ import { PageIntro } from "@/components/PageIntro";
 import { ScheduleExplorer } from "@/components/ScheduleExplorer";
 import { activities } from "@/data/activities";
 import { siteConfig } from "@/data/site";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "賽程",
-  description: "2026 竹梅賽完整賽程表，含日期、時間、地點與報名狀態。",
-};
+  description:
+    "2026 竹梅賽完整賽程表，含日期、時間、地點與報名狀態，快速掌握下一場荒謬競技。",
+  path: "/schedule",
+});
 
 export default function SchedulePage() {
   return (

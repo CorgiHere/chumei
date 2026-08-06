@@ -5,11 +5,14 @@ import { activities } from "@/data/activities";
 import { historyYears } from "@/data/history";
 import { siteConfig } from "@/data/site";
 import { formatDateOnly } from "@/lib/utils";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "歷屆竹梅",
-  description: "竹梅賽年度回顧、總比分與經典活動紀錄。",
-};
+  description:
+    "竹梅賽年度回顧、總比分與經典活動紀錄。目前收錄 2026 竹梅賽完整賽季。",
+  path: "/history",
+});
 
 export default function HistoryPage() {
   const years = [...historyYears].sort((a, b) => b.year - a.year);

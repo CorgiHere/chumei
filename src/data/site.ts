@@ -18,4 +18,6 @@ export const siteConfig: SiteConfig = {
   rpsFormUrl: "https://forms.gle/ZGZp3FwFKW4Bjm379",
   contactEmail: "chumei2026@gmail.com",
   logoUrl: "/images/brand/chumei-logo.png",
+  /** Canonical production origin (includes /chumei for GitHub Pages). */
+  siteUrl: "https://corgichen.github.io/chumei",
 };

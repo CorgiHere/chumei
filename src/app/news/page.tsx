@@ -3,11 +3,14 @@ import { PageIntro } from "@/components/PageIntro";
 import { NewsExplorer } from "@/components/NewsExplorer";
 import { newsPosts } from "@/data/news";
 import { siteConfig } from "@/data/site";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "最新消息",
-  description: "2026 竹梅賽最新公告、報名資訊、規則更新與結果。",
-};
+  description:
+    "2026 竹梅賽最新公告、報名資訊、規則更新、賽果與物資領取通知。",
+  path: "/news",
+});
 
 export default function NewsPage() {
   return (

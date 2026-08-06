@@ -4,11 +4,14 @@ import Link from "next/link";
 import { SectionHeader } from "@/components/SectionHeader";
 import { partners } from "@/data/history";
 import { withBasePath } from "@/lib/utils";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "合作夥伴",
-  description: "竹梅賽主辦、贊助商、協辦社團與合作單位。",
-};
+  description:
+    "竹梅賽主辦單位、贊助商、協辦社團與合作單位。歡迎贊助與協辦洽詢。",
+  path: "/partners",
+});
 
 const typeLabels = {
   organizer: "主辦單位",

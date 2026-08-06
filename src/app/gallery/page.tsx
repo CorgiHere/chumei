@@ -4,11 +4,15 @@ import { SectionHeader } from "@/components/SectionHeader";
 import { galleryItems } from "@/data/history";
 import { siteConfig } from "@/data/site";
 import { withBasePath } from "@/lib/utils";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "圖庫",
-  description: "2026 竹梅賽活動照片、精彩時刻與幕後花絮。",
-};
+  description:
+    "2026 竹梅賽活動照片、精彩時刻與幕後花絮。更多影像見 Instagram @chumei2026。",
+  path: "/gallery",
+  image: galleryItems[0]?.imageUrl,
+});
 
 export default function GalleryPage() {
   return (

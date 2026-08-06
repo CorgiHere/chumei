@@ -7,11 +7,13 @@ import { activities } from "@/data/activities";
 import { historyYears } from "@/data/history";
 import { siteConfig } from "@/data/site";
 import { formatDateOnly } from "@/lib/utils";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "比分與結果",
-  description: "2026 竹梅賽總錦標比分、各活動計分與完整結果。",
-};
+  description: `2026 竹梅賽總錦標清華 ${siteConfig.nthuScore}：${siteConfig.nycuScore} 交大，查看七場計分項目與完整賽果。`,
+  path: "/scoreboard",
+});
 
 export default function ScoreboardPage() {
   const scored = [...activities]

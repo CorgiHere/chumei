@@ -1608,6 +1608,7 @@ AI Agent 在執行任何網站修改時，必須遵守以下流程：
 | 技術棧 | Next.js 16 static export、React 19、Tailwind 4、GitHub Pages |
 | 內容存放 | `src/data/*`（無 CMS） |
 | Pages 路徑 | `basePath`＝`/chumei`；`Link` 勿再包 `withBasePath`；`Image` 須用 `withBasePath`（見 `DEVELOPMENT.md`） |
+| SEO | 每頁 metadata（title／description／canonical／OG／Twitter）；活動／消息含 JSON-LD；`public/sitemap.xml`＋`robots.txt` |
 | 2026 總錦標 | 清華 3 ： 4 交大（交大獲勝） |
 | 計分七場 | 恐龍、酒精微積分、辦公椅、日麻、台麻、刷條碼、兩校憑拳 |
 | 賽季狀態 | 正賽已結束；旮拉給木仍可玩；首頁 CTA 為賽季結束版 |

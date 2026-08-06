@@ -2,12 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageIntro } from "@/components/PageIntro";
 import { siteConfig } from "@/data/site";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "關於竹梅",
   description:
-    "竹梅賽是什麼？與梅竹賽的差異、竹梅精神與活動理念。",
-};
+    "竹梅賽是什麼？與梅竹賽的差異、竹梅精神與活動理念。清交學生自主籌辦的荒謬校際競技。",
+  path: "/about",
+});
 
 const spirits = [
   "一本正經地胡鬧",

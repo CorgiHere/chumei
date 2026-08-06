@@ -3,11 +3,14 @@ import { ActivitiesExplorer } from "@/components/ActivitiesExplorer";
 import { PageIntro } from "@/components/PageIntro";
 import { activities } from "@/data/activities";
 import { siteConfig } from "@/data/site";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "活動總覽",
-  description: "查看 2026 竹梅賽全部活動、報名狀態與詳細資訊。",
-};
+  description:
+    "搜尋、篩選並查看 2026 竹梅賽全部活動：報名狀態、計分項目、線上與實體賽事一次找齊。",
+  path: "/activities",
+});
 
 export default function ActivitiesPage() {
   return (

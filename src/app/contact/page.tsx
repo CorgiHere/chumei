@@ -1,11 +1,14 @@
 import type { Metadata } from "next";
 import { SectionHeader } from "@/components/SectionHeader";
 import { siteConfig } from "@/data/site";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "聯絡我們",
-  description: "竹梅籌備委員會聯絡方式與社群連結。",
-};
+  description:
+    "聯絡竹梅籌備委員會：Email、Instagram、Facebook、Threads 與 Linktree。",
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (

@@ -2,11 +2,14 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SectionHeader } from "@/components/SectionHeader";
 import { siteConfig } from "@/data/site";
+import { buildPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = buildPageMetadata({
   title: "加入竹梅",
-  description: "加入竹梅籌備團隊、提案新活動、志工招募、週邊預購與贊助合作。",
-};
+  description:
+    "加入竹梅籌備團隊、提案新活動、志工招募、週邊預購與贊助合作。清交學生一起一本正經地胡鬧。",
+  path: "/join",
+});
 
 const joinOptions = [
   {
