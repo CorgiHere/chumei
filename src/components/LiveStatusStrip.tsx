@@ -25,35 +25,41 @@ const items = [
 export function LiveStatusStrip() {
   return (
     <section className="border-b-4 border-black bg-brand-yellow">
-      <div className="container-main py-4">
-        <ul className="flex gap-3 overflow-x-auto pb-1 md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
+      <div className="container-main py-3 md:py-4">
+        <ul className="flex flex-col gap-2 md:grid md:grid-cols-3 md:gap-3">
           {items.map((item) => {
             const className =
-              "flex min-w-[240px] shrink-0 items-center justify-between gap-3 rounded-xl border-2 border-black bg-white px-4 py-3 md:min-w-0";
+              "flex w-full items-center justify-between gap-3 rounded-xl border-2 border-black bg-white px-4 py-3 transition hover:bg-light-gray";
+            const content = (
+              <>
+                <span className="min-w-0 text-sm font-black leading-snug">
+                  {item.label}
+                </span>
+                <span className="shrink-0 text-xs font-bold text-brand-blue">
+                  {item.cta} →
+                </span>
+              </>
+            );
+
             if (item.external) {
               return (
-                <li key={item.label}>
+                <li key={item.label} className="min-w-0">
                   <a
                     href={item.href}
                     target="_blank"
                     rel="noopener noreferrer"
                     className={className}
                   >
-                    <span className="text-sm font-black">{item.label}</span>
-                    <span className="shrink-0 text-xs font-bold text-brand-blue">
-                      {item.cta} →
-                    </span>
+                    {content}
                   </a>
                 </li>
               );
             }
+
             return (
-              <li key={item.label}>
+              <li key={item.label} className="min-w-0">
                 <Link href={item.href} className={className}>
-                  <span className="text-sm font-black">{item.label}</span>
-                  <span className="shrink-0 text-xs font-bold text-brand-blue">
-                    {item.cta} →
-                  </span>
+                  {content}
                 </Link>
               </li>
             );
