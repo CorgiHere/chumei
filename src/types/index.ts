@@ -119,7 +119,7 @@ export type NewsPost = {
 export type Partner = {
   id: string;
   name: string;
-  type: "sponsor" | "club" | "venue" | "equipment" | "media";
+  type: "organizer" | "sponsor" | "club" | "venue" | "equipment" | "media";
   logo?: string;
   url?: string;
   /** If true, appear in homepage partners strip */

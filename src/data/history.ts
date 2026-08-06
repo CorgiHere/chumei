@@ -25,7 +25,8 @@ export const partners: Partner[] = [
   {
     id: "p-01",
     name: "竹梅籌備委員會",
-    type: "club",
+    type: "organizer",
+    note: "主辦單位",
     showOnHome: true,
   },
   {

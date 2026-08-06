@@ -5,10 +5,11 @@ import { partners } from "@/data/history";
 
 export const metadata: Metadata = {
   title: "合作夥伴",
-  description: "竹梅賽贊助商、協辦社團與合作單位。",
+  description: "竹梅賽主辦、贊助商、協辦社團與合作單位。",
 };
 
 const typeLabels = {
+  organizer: "主辦單位",
   sponsor: "贊助商",
   club: "協辦社團",
   venue: "場地協力",

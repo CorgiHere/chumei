@@ -286,7 +286,7 @@ export default function HomePage() {
         <div className="container-main text-center">
           <SectionHeader
             index="06"
-            eyebrow="夥伴"
+            eyebrow="主辦"
             title="一起讓荒謬成真"
             className="md:items-center md:text-center [&_.text-link]:hidden"
           />
@@ -298,7 +298,8 @@ export default function HomePage() {
                 key={partner.id}
                 className="rounded-xl border-2 border-black bg-light-gray px-6 py-4 font-black text-muted grayscale transition hover:bg-white hover:text-black hover:grayscale-0"
               >
-                {partner.name}
+                <p className="text-xs font-bold text-brand-blue">主辦單位</p>
+                <p className="mt-1">{partner.name}</p>
               </div>
             ))}
           </div>
