@@ -68,7 +68,7 @@ export function getCampusLabel(campus: "NTHU" | "NYCU" | "OTHER"): string {
     case "NTHU":
       return "清華";
     case "NYCU":
-      return "陽明交大";
+      return "交大";
     default:
       return "其他";
   }

@@ -78,7 +78,7 @@ export default function HistoryPage() {
                   </div>
                   <div className="mt-2 flex justify-between text-xs font-bold">
                     <span className="text-nthu">清華</span>
-                    <span className="text-nycu">陽明交大</span>
+                    <span className="text-nycu">交大</span>
                   </div>
 
                   <p className="mt-5">{year.summary}</p>

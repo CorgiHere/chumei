@@ -79,7 +79,7 @@ src/
 > 已對齊 [@chumei2026](https://www.instagram.com/chumei2026/)，總錦標以 [4/22 公告](https://www.instagram.com/p/DXbxyXpEvby/) 為準。  
 > **正式活動名稱與賽果不得擅自修改。**
 
-### 計分項目（清華 3 ： 4 陽明交大）
+### 計分項目（清華 3 ： 4 交大）
 
 | 活動 | 結果 |
 |------|------|

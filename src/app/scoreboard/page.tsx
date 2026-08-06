@@ -38,7 +38,7 @@ export default function ScoreboardPage() {
           <Scoreboard className="mx-auto max-w-2xl" />
           <p className="mt-6 text-center text-white/70">
             已完成計分 {finished.length}／{scored.length} 場 · 清華{" "}
-            {siteConfig.nthuScore}：{siteConfig.nycuScore} 陽明交大
+            {siteConfig.nthuScore}：{siteConfig.nycuScore} 交大
           </p>
         </div>
         <div className="hazard-stripe-animated h-2" aria-hidden />
@@ -67,7 +67,7 @@ export default function ScoreboardPage() {
                   <tr className="border-b-2 border-black bg-brand-yellow text-left">
                     <th className="px-4 py-3">活動</th>
                     <th className="px-4 py-3">清華</th>
-                    <th className="px-4 py-3">陽明交大</th>
+                    <th className="px-4 py-3">交大</th>
                     <th className="px-4 py-3">勝方</th>
                     <th className="px-4 py-3">狀態</th>
                     <th className="px-4 py-3">日期</th>
@@ -205,7 +205,7 @@ export default function ScoreboardPage() {
                       </span>
                     </p>
                     <p className="mt-2 text-sm text-muted">
-                      清華 · 陽明交大
+                      清華 · 交大
                     </p>
                   </div>
                 ))}
@@ -230,7 +230,7 @@ function winnerLabel(
     case "NTHU":
       return "清華勝";
     case "NYCU":
-      return "陽明交大勝";
+      return "交大勝";
     case "DRAW":
       return "平手";
     case "NONE":

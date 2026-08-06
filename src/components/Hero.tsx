@@ -47,10 +47,10 @@ export function Hero() {
               <p className="display-title text-3xl font-black md:text-4xl">
                 <span className="text-nthu">清華 {nthu}</span>
                 <span className="mx-3 text-brand-yellow">───</span>
-                <span className="text-[#7EB6FF]">{nycu} 陽明交大</span>
+                <span className="text-[#7EB6FF]">{nycu} 交大</span>
               </p>
               <p className="mt-2 text-sm font-bold text-brand-yellow">
-                2026 總錦標 · 陽明交大獲勝
+                2026 總錦標 · 交大獲勝
               </p>
             </div>
           </div>
@@ -84,10 +84,10 @@ export function Hero() {
             </p>
             <div className="mt-6 border-y border-white/20 py-5">
               <p className="display-title text-3xl font-black">
-                清華 {siteConfig.nthuScore}：{siteConfig.nycuScore} 陽明交大
+                清華 {siteConfig.nthuScore}：{siteConfig.nycuScore} 交大
               </p>
               <p className="mt-1 text-sm font-bold text-brand-yellow">
-                總錦標 · 陽明交大獲勝
+                總錦標 · 交大獲勝
               </p>
             </div>
             <div className="mt-6 flex flex-col gap-3">

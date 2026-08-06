@@ -62,7 +62,7 @@ export function Scoreboard({
           </p>
           <div className="text-center md:text-right">
             <p className="mb-2 inline-block rounded-pill bg-nycu px-3 py-1 text-sm font-bold">
-              陽明交大
+              交大
             </p>
             <p className="display-title text-display-score font-black">
               {nycuPad}
@@ -139,7 +139,7 @@ export function Scoreboard({
         <span className="text-brand-yellow">：</span>
         <div className="text-center">
           <p className="mb-1 rounded-full bg-nycu px-3 py-0.5 text-sm font-bold text-white">
-            陽明交大
+            交大
           </p>
           <p className="display-title font-black">{siteConfig.nycuScore}</p>
         </div>

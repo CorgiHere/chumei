@@ -128,7 +128,7 @@ function ScheduleItem({ activity }: { activity: Activity }) {
             {activity.venue.campus !== "OTHER" && (
               <span className="text-muted">
                 {" "}
-                · {activity.venue.campus === "NTHU" ? "清華" : "陽明交大"}
+                · {activity.venue.campus === "NTHU" ? "清華" : activity.venue.campus === "NYCU" ? "交大" : "其他"}
               </span>
             )}
           </p>
