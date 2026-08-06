@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { StatusBadge } from "@/components/StatusBadge";
 import { SectionHeader } from "@/components/SectionHeader";
 import { activities, getActivityBySlug } from "@/data/activities";
+import { partners } from "@/data/history";
 import {
   formatDate,
   getCalendarUrl,
@@ -44,6 +45,9 @@ export default async function ActivityDetailPage({ params }: PageProps) {
   const primaryCtaLabel = isPlayable ? "立即遊玩" : "立即報名";
   const showPrimaryCta =
     (isRegistrationOpen || isPlayable) && activity.registrationUrl;
+  const activityPartners = (activity.partnerIds ?? [])
+    .map((id) => partners.find((p) => p.id === id))
+    .filter((p): p is (typeof partners)[number] => Boolean(p));
 
   return (
     <div className="pb-12">
@@ -99,6 +103,22 @@ export default async function ActivityDetailPage({ params }: PageProps) {
               <SectionHeader title="活動介紹" />
               <p className="text-lg">{activity.description}</p>
             </section>
+
+            {activityPartners.length > 0 && (
+              <section className="card p-6">
+                <SectionHeader title="合作單位" />
+                <ul className="space-y-2">
+                  {activityPartners.map((p) => (
+                    <li key={p.id}>
+                      <p className="font-black">{p.name}</p>
+                      {p.note && (
+                        <p className="text-sm text-muted">{p.note}</p>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </section>
+            )}
 
             {(isRegistrationOpen || activity.registrationEndAt) && (
               <section className="card p-6">

@@ -122,6 +122,10 @@ export type Partner = {
   type: "sponsor" | "club" | "venue" | "equipment" | "media";
   logo?: string;
   url?: string;
+  /** If true, appear in homepage partners strip */
+  showOnHome?: boolean;
+  /** Short note for partners page / activity context */
+  note?: string;
 };
 
 export type HistoryYear = {

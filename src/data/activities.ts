@@ -208,10 +208,10 @@ export const activities: Activity[] = [
     year: 2026,
     index: 5,
     title: "日本麻將推廣賽",
-    subtitle: "日麻三場半莊 · 晉級決賽",
+    subtitle: "與日本麻將研究社合作",
     tagline: "免報名費 · 計入總錦標",
     description:
-      "免報名費，第一名獎品為全新日本麻將，前四名可獲小徑 T。4/11 於清大蒙民偉樓舉行；總錦標公告記為交通大學勝。",
+      "與日本麻將研究社合作舉辦。免報名費，第一名獎品為全新日本麻將，前四名可獲小徑 T。4/11 於清大蒙民偉樓舉行；總錦標公告記為交通大學勝。",
     heroImage: "/images/activities/japanese-mahjong.jpg",
     cardImage: "/images/activities/japanese-mahjong.jpg",
     startAt: "2026-04-11T13:30:00+08:00",
@@ -232,6 +232,7 @@ export const activities: Activity[] = [
     isScored: true,
     scoreWeight: 1,
     organizerIds: ["chumei-committee"],
+    partnerIds: ["p-jp-mahjong"],
     result: {
       status: "official",
       publishedAt: "2026-04-22T12:00:00+08:00",

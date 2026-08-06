@@ -26,6 +26,13 @@ export const partners: Partner[] = [
     id: "p-01",
     name: "竹梅籌備委員會",
     type: "club",
+    showOnHome: true,
+  },
+  {
+    id: "p-jp-mahjong",
+    name: "日本麻將研究社",
+    type: "club",
+    note: "協辦日本麻將推廣賽",
   },
 ];
 

@@ -29,6 +29,9 @@ export default function PartnersPage() {
                 {typeLabels[p.type]}
               </p>
               <p className="mt-2 text-lg font-black">{p.name}</p>
+              {p.note && (
+                <p className="mt-2 text-sm text-muted">{p.note}</p>
+              )}
             </div>
           ))}
         </div>

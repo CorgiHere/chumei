@@ -291,7 +291,9 @@ export default function HomePage() {
             className="md:items-center md:text-center [&_.text-link]:hidden"
           />
           <div className="mt-2 flex flex-wrap justify-center gap-4">
-            {partners.map((partner) => (
+            {partners
+              .filter((partner) => partner.showOnHome)
+              .map((partner) => (
               <div
                 key={partner.id}
                 className="rounded-xl border-2 border-black bg-light-gray px-6 py-4 font-black text-muted grayscale transition hover:bg-white hover:text-black hover:grayscale-0"
