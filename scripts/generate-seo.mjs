@@ -22,7 +22,7 @@ function extractSlugs(filePath, key = "slug") {
   return out;
 }
 
-const siteUrl = "https://corgihere.github.io/chumei";
+const siteUrl = "https://corgichen.github.io/chumei";
 
 const staticPaths = [
   "/",

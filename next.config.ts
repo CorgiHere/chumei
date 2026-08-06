@@ -1,8 +1,8 @@
 import type { NextConfig } from "next";
 
 const isGithubPages = process.env.GITHUB_PAGES === "true";
-const [owner = "CorgiHere", repoName = "chumei"] = (
-  process.env.GITHUB_REPOSITORY ?? "CorgiHere/chumei"
+const [owner = "CorgiChen", repoName = "chumei"] = (
+  process.env.GITHUB_REPOSITORY ?? "CorgiChen/chumei"
 ).split("/");
 const pagesHost = `${owner.toLowerCase()}.github.io`;
 

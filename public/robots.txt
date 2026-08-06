@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://corgihere.github.io/chumei/sitemap.xml
+Sitemap: https://corgichen.github.io/chumei/sitemap.xml
