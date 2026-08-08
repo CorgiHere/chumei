@@ -3,7 +3,12 @@ import { Noto_Sans_TC } from "next/font/google";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { siteConfig } from "@/data/site";
-import { absoluteAssetUrl, absoluteUrl, getSiteUrl } from "@/lib/seo";
+import {
+  absoluteAssetUrl,
+  absoluteUrl,
+  getSiteUrl,
+  SITE_BRAND_NAME,
+} from "@/lib/seo";
 import "./globals.css";
 
 const notoSansTC = Noto_Sans_TC({
@@ -19,7 +24,7 @@ export const metadata: Metadata = {
     template: `%s｜${siteConfig.yearName}`,
   },
   description: siteConfig.description,
-  applicationName: siteConfig.yearName,
+  applicationName: SITE_BRAND_NAME,
   authors: [{ name: "竹梅籌備委員會" }],
   creator: "竹梅籌備委員會",
   publisher: "竹梅籌備委員會",
@@ -41,7 +46,7 @@ export const metadata: Metadata = {
     title: `${siteConfig.yearName}｜竹梅賽官方網站`,
     description: siteConfig.description,
     url: absoluteUrl("/"),
-    siteName: siteConfig.yearName,
+    siteName: SITE_BRAND_NAME,
     type: "website",
     locale: "zh_TW",
     images: [

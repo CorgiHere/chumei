@@ -1,6 +1,9 @@
 import type { Metadata } from "next";
 import { siteConfig } from "@/data/site";
 
+/** Preferred Google Search site name (not the GitHub Pages default). */
+export const SITE_BRAND_NAME = "竹梅賽";
+
 /** Production site origin including path prefix (no trailing slash). */
 export function getSiteUrl(): string {
   return (
@@ -86,7 +89,7 @@ export function buildPageMetadata({
       title: displayTitle,
       description,
       url,
-      siteName: siteConfig.yearName,
+      siteName: SITE_BRAND_NAME,
       locale: "zh_TW",
       type,
       images: [
@@ -122,13 +125,18 @@ export function buildPageMetadata({
 }
 
 export function organizationJsonLd() {
+  const home = absoluteUrl("/");
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
+    "@id": `${home}#organization`,
     name: "竹梅籌備委員會",
-    alternateName: ["Chu Mei", "竹梅賽"],
-    url: absoluteUrl("/"),
-    logo: absoluteAssetUrl(siteConfig.logoUrl),
+    alternateName: [SITE_BRAND_NAME, "Chu Mei", siteConfig.yearName],
+    url: home,
+    logo: {
+      "@type": "ImageObject",
+      url: absoluteAssetUrl(siteConfig.logoUrl),
+    },
     email: siteConfig.contactEmail,
     sameAs: [
       siteConfig.instagramUrl,
@@ -140,19 +148,22 @@ export function organizationJsonLd() {
 }
 
 export function websiteJsonLd() {
+  const home = absoluteUrl("/");
   return {
     "@context": "https://schema.org",
     "@type": "WebSite",
-    name: siteConfig.yearName,
-    alternateName: "竹梅賽官方網站",
-    url: absoluteUrl("/"),
+    "@id": `${home}#website`,
+    name: SITE_BRAND_NAME,
+    alternateName: [
+      siteConfig.yearName,
+      "竹梅賽官方網站",
+      "Chu Mei",
+      "corgihere.github.io",
+    ],
+    url: home,
     description: siteConfig.description,
     inLanguage: "zh-Hant",
-    publisher: {
-      "@type": "Organization",
-      name: "竹梅籌備委員會",
-      logo: absoluteAssetUrl(siteConfig.logoUrl),
-    },
+    publisher: { "@id": `${home}#organization` },
   };
 }
 
