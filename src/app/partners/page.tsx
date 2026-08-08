@@ -7,9 +7,9 @@ import { withBasePath } from "@/lib/utils";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "合作夥伴",
+  title: "合作夥伴｜清大交大竹梅賽主辦與贊助",
   description:
-    "竹梅賽主辦單位、贊助商、協辦社團與合作單位。歡迎贊助與協辦洽詢。",
+    "2026 竹梅賽合作夥伴：清華大學、交通大學／陽明交通大學（清大／交大、NTHU／NYCU／NCTU）主辦單位、贊助商、協辦社團與合作單位。歡迎清交贊助與協辦洽詢。",
   path: "/partners",
 });
 

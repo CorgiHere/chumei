@@ -7,9 +7,9 @@ import { withBasePath } from "@/lib/utils";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "圖庫",
+  title: "圖庫｜清大交大竹梅賽活動照片",
   description:
-    "2026 竹梅賽活動照片、精彩時刻與幕後花絮。更多影像見 Instagram @chumei2026。",
+    "2026 竹梅賽圖庫：清華大學與交通大學／陽明交通大學（清大／交大、NTHU／NYCU／NCTU）清交活動照片、精彩時刻與幕後花絮。更多影像見 Instagram @chumei2026。",
   path: "/gallery",
   image: galleryItems[0]?.imageUrl,
 });

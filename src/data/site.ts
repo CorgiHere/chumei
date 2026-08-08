@@ -5,7 +5,7 @@ export const siteConfig: SiteConfig = {
   yearName: "2026 竹梅賽",
   tagline: "總錦標：交通大學 4：3 獲勝",
   description:
-    "只要是清交人就絕對不能錯過的竹梅！清交大學生自主籌辦的一系列好玩活動——看起來像正式大型錦標賽，但比賽項目完全不正常。跟梅竹賽沒有任何關係。",
+    "2026 竹梅賽（Chu Mei）官方網站｜國立清華大學（清大／NTHU）與國立交通大學、陽明交通大學（交大／NYCU／NCTU）學生自主籌辦的清交荒謬校際競技。Dinosaur 賽跑、酒精微積分、辦公椅錦標賽、麻將、刷條碼、兩校憑拳等活動資訊、賽程、比分與結果一次看。跟梅竹賽（Meichu）沒有任何關係。",
   nthuScore: 3,
   nycuScore: 4,
   instagramUrl: "https://www.instagram.com/chumei2026/",

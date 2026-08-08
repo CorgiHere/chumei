@@ -36,7 +36,7 @@ export async function generateMetadata({
   const title = `${siteConfig.yearName}${activity.title}｜報名、規則與結果`;
   return buildPageMetadata({
     title,
-    description: `查看 ${siteConfig.yearName}${activity.title}的日期、地點、參賽資格、比賽規則、報名資訊與最新結果。`,
+    description: `2026 竹梅賽「${activity.title}」：清華大學（清大／NTHU）與交通大學／陽明交通大學（交大／NYCU／NCTU）清交活動。日期、地點、參賽資格、比賽規則、報名資訊與最新結果——跟梅竹賽無關。`,
     path: `/activities/${activity.slug}`,
     image: activity.cardImage ?? activity.heroImage,
     absoluteTitle: true,

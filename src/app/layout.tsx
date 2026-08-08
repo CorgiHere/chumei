@@ -7,6 +7,7 @@ import {
   absoluteAssetUrl,
   absoluteUrl,
   getSiteUrl,
+  SEO_KEYWORDS,
   SITE_BRAND_NAME,
 } from "@/lib/seo";
 import "./globals.css";
@@ -20,7 +21,7 @@ const notoSansTC = Noto_Sans_TC({
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
-    default: `${siteConfig.yearName}｜竹梅賽官方網站`,
+    default: `${siteConfig.yearName}｜清大交大清交荒謬校際競技官方網站`,
     template: `%s｜${siteConfig.yearName}`,
   },
   description: siteConfig.description,
@@ -28,22 +29,12 @@ export const metadata: Metadata = {
   authors: [{ name: "竹梅籌備委員會" }],
   creator: "竹梅籌備委員會",
   publisher: "竹梅籌備委員會",
-  keywords: [
-    "竹梅賽",
-    "竹梅",
-    "Chu Mei",
-    "清華大學",
-    "交通大學",
-    "清交",
-    "校園活動",
-    "荒謬競技",
-    String(siteConfig.year),
-  ],
+  keywords: SEO_KEYWORDS,
   alternates: {
     canonical: absoluteUrl("/"),
   },
   openGraph: {
-    title: `${siteConfig.yearName}｜竹梅賽官方網站`,
+    title: `${siteConfig.yearName}｜清大 NTHU × 交大 NYCU／NCTU 竹梅賽`,
     description: siteConfig.description,
     url: absoluteUrl("/"),
     siteName: SITE_BRAND_NAME,
@@ -54,13 +45,13 @@ export const metadata: Metadata = {
         url: absoluteAssetUrl(siteConfig.logoUrl),
         width: 543,
         height: 543,
-        alt: "竹梅 Chu Mei",
+        alt: "2026 竹梅賽 Chu Mei｜清大 NTHU × 交大 NYCU／NCTU",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteConfig.yearName}｜竹梅賽官方網站`,
+    title: `${siteConfig.yearName}｜清大交大竹梅賽官方網站`,
     description: siteConfig.description,
     images: [absoluteAssetUrl(siteConfig.logoUrl)],
   },

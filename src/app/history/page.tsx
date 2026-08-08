@@ -8,9 +8,9 @@ import { formatDateOnly } from "@/lib/utils";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "歷屆竹梅",
+  title: "歷屆竹梅｜清大交大竹梅賽年度回顧",
   description:
-    "竹梅賽年度回顧、總比分與經典活動紀錄。目前收錄 2026 竹梅賽完整賽季。",
+    "竹梅賽年度回顧：清華大學與交通大學／陽明交通大學（清大／交大、NTHU／NYCU／NCTU）總比分與經典活動紀錄。目前收錄 2026 竹梅賽完整賽季。",
   path: "/history",
 });
 

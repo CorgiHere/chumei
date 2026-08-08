@@ -6,9 +6,9 @@ import { siteConfig } from "@/data/site";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "最新消息",
+  title: "最新消息｜清交竹梅賽公告賽果與報名",
   description:
-    "2026 竹梅賽最新公告、報名資訊、規則更新、賽果與物資領取通知。",
+    "2026 竹梅賽最新公告：清華大學、交通大學／陽明交通大學（清大／交大、NTHU／NYCU／NCTU）清交活動報名、規則更新、總錦標賽果與物資領取通知。",
   path: "/news",
 });
 

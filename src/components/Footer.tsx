@@ -14,7 +14,7 @@ export function Footer() {
             <div className="mb-3 flex items-center gap-3">
               <Image
                 src={withBasePath(siteConfig.logoUrl)}
-                alt="竹梅 Chu Mei"
+                alt="竹梅賽 Chu Mei 清大交大"
                 width={48}
                 height={48}
                 className="h-12 w-12 rounded-lg"
@@ -24,7 +24,7 @@ export function Footer() {
               </p>
             </div>
             <p className="text-sm leading-relaxed text-white/70">
-              看起來像正式大型錦標賽，但比賽項目完全不正常。清交學生自主籌辦。
+              2026 竹梅賽（Chu Mei）：清華大學（清大／NTHU）與交通大學、陽明交通大學（交大／NYCU／NCTU）學生自主籌辦的清交荒謬校際競技。看起來像正式大型錦標賽，但比賽項目完全不正常——跟梅竹賽無關。
             </p>
           </div>
 

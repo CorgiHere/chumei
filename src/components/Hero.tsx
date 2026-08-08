@@ -16,7 +16,7 @@ export function Hero() {
         <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="reveal-up order-1">
             <p className="mb-4 inline-block rounded-pill border border-brand-yellow px-3 py-1 text-xs font-bold tracking-wide text-brand-yellow">
-              2026 清交荒謬校際錦標
+              2026 清大 × 交大｜清交荒謬校際錦標
             </p>
             <h1 className="display-title-skew text-[clamp(3.5rem,12vw,8rem)] font-black text-white">
               竹梅賽
@@ -28,7 +28,7 @@ export function Hero() {
               強勢回歸
             </p>
             <p className="mt-6 hidden max-w-xl text-base text-white/75 md:block md:text-lg">
-              看起來像正式大型錦標賽，但比賽項目完全不正常。跟梅竹賽沒有任何關係。
+              國立清華大學（清大／NTHU）與國立交通大學、陽明交通大學（交大／NYCU／NCTU）學生自主籌辦。看起來像正式大型錦標賽，但比賽項目完全不正常——跟梅竹賽（Meichu）沒有任何關係。
             </p>
 
             <div className="mt-8 hidden flex-wrap gap-3 md:flex">
@@ -80,7 +80,7 @@ export function Hero() {
 
           <div className="order-3 md:hidden">
             <p className="mt-2 text-base text-white/75">
-              看起來像正式大型錦標賽，但比賽項目完全不正常。
+              清大（NTHU）× 交大（NYCU／NCTU）學生自辦。看起來像正式大型錦標賽，但比賽項目完全不正常——跟梅竹賽無關。
             </p>
             <div className="mt-6 border-y border-white/20 py-5">
               <p className="display-title text-3xl font-black">

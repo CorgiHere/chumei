@@ -4,9 +4,9 @@ import { siteConfig } from "@/data/site";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "聯絡我們",
+  title: "聯絡我們｜竹梅籌備委員會清交聯繫",
   description:
-    "聯絡竹梅籌備委員會：Email、Instagram、Facebook、Threads 與 Linktree。",
+    "聯絡 2026 竹梅賽竹梅籌備委員會（清華大學／交通大學清交活動）：Email、Instagram @chumei2026、Facebook、Threads 與 Linktree。清大／交大（NTHU／NYCU／NCTU）相關洽詢歡迎來信。",
   path: "/contact",
 });
 

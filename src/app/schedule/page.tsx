@@ -6,9 +6,9 @@ import { siteConfig } from "@/data/site";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "賽程",
+  title: "賽程｜清大交大竹梅賽日期地點時間表",
   description:
-    "2026 竹梅賽完整賽程表，含日期、時間、地點與報名狀態，快速掌握下一場荒謬競技。",
+    "2026 竹梅賽完整賽程表：清大（NTHU）、交大（NYCU／NCTU）清交活動日期、時間、地點與報名狀態。快速掌握下一場荒謬校際競技。",
   path: "/schedule",
 });
 
