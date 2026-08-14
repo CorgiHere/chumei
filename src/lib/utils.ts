@@ -112,3 +112,12 @@ export function withBasePath(path: string): string {
   if (path === base || path.startsWith(`${base}/`)) return path;
   return `${base}${path.startsWith("/") ? path : `/${path}`}`;
 }
+
+/** Internal app hrefs with trailing slash (required by next.config trailingSlash). */
+export function appPath(path: string): string {
+  if (!path.startsWith("/")) return path;
+  const [pathname, hash] = path.split("#");
+  const slashed =
+    pathname === "/" || pathname.endsWith("/") ? pathname : `${pathname}/`;
+  return hash ? `${slashed}#${hash}` : slashed;
+}

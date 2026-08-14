@@ -1,49 +1,46 @@
 import Link from "next/link";
 import { siteConfig } from "@/data/site";
-import { SectionHeader } from "./SectionHeader";
+import { appPath } from "@/lib/utils";
 
 export function KeepPlaying() {
   return (
-    <section className="section-space grid-bg">
+    <section className="section-space bg-charcoal">
       <div className="container-main">
-        <SectionHeader
-          index="01"
-          eyebrow="賽季後仍可參與"
-          title="還能繼續胡鬧"
-          subtitle="正賽已結束，線上體驗與物資資訊持續開放。"
-        />
-        <div className="grid gap-5 md:grid-cols-2">
-          <article className="rounded-xl border-4 border-black bg-black p-6 text-white md:p-8">
-            <p className="mb-2 text-xs font-bold text-brand-yellow">線上持續開放</p>
-            <h3 className="display-title text-3xl font-black">攻略校長旮拉給木</h3>
-            <p className="mt-3 text-sm text-white/70">
-              經典街機魂 × 校園迷因。打開瀏覽器就能挑戰。
-            </p>
+        <p className="mb-2.5 font-mono-ui text-xs tracking-[0.2em] text-brand-yellow">01</p>
+        <h2 className="section-title mb-3">
+          還能繼續<span className="mark">胡鬧</span>
+        </h2>
+        <p className="mb-9 max-w-[44em] text-[15px] text-muted">
+          正賽已結束，線上體驗與物資資訊持續開放。
+        </p>
+        <div className="grid gap-0.5 md:grid-cols-2">
+          <article className="flex flex-col gap-2.5 bg-dark-gray p-6">
+            <p className="font-mono-ui text-[11px] tracking-[0.1em] text-brand-yellow">線上持續開放</p>
+            <h3 className="m-0 text-xl font-black">攻略校長旮拉給木</h3>
+            <p className="m-0 text-sm text-muted">經典街機魂 × 校園迷因。打開瀏覽器就能挑戰。</p>
             <a
               href={siteConfig.galagaUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-primary mt-6 inline-flex text-sm"
+              className="btn-dark-outline mt-3 inline-flex self-start text-sm"
             >
-              立即遊玩 →
+              立即遊玩
             </a>
           </article>
-          <article className="rounded-xl border-4 border-brand-yellow bg-white p-6 md:p-8">
-            <p className="mb-2 text-xs font-bold text-brand-blue">物資／表單</p>
-            <h3 className="display-title text-3xl font-black">小徑 T</h3>
-            <p className="mt-3 text-sm text-muted">
-              領取與預購資訊整理在官方 Linktree，有問題可私訊 IG。
-            </p>
-            <div className="mt-6 flex flex-wrap gap-2">
+          <article className="flex flex-col gap-2.5 bg-dark-gray p-6">
+            <p className="font-mono-ui text-[11px] tracking-[0.1em] text-brand-yellow">物資／表單</p>
+            <h3 className="m-0 text-xl font-black">小徑 T</h3>
+            <p className="m-0 text-sm text-muted">領取與預購資訊整理在官方 Linktree。</p>
+            <div className="mt-3 flex flex-wrap gap-2">
               <a
                 href={siteConfig.linktreeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-secondary text-sm"
+                className="btn-dark-outline text-sm"
               >
-                查看 Linktree →
+                Linktree
               </a>
-              <Link href="/news/merch-tee-pickup" className="btn-outline text-sm">
+              <Link href={appPath("/news/merch-tee-pickup")} className="btn-dark-outline text-sm">
                 領取公告
               </Link>
             </div>

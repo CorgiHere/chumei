@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { Hero } from "@/components/Hero";
 import { LiveStatusStrip } from "@/components/LiveStatusStrip";
 import { KeepPlaying } from "@/components/KeepPlaying";
+import { SideExtras } from "@/components/SideExtras";
+import { AboutBand } from "@/components/AboutBand";
+import { JoinBand } from "@/components/JoinBand";
 import { Scoreboard } from "@/components/Scoreboard";
 import { ActivityCard } from "@/components/ActivityCard";
 import { SectionHeader } from "@/components/SectionHeader";
 import { HazardBar } from "@/components/HazardBar";
 import { JsonLd } from "@/components/JsonLd";
-import { activities, getActivityBySlug, getRecentResults } from "@/data/activities";
+import { activities, getRecentResults } from "@/data/activities";
 import { newsPosts } from "@/data/news";
-import { partners, galleryItems } from "@/data/history";
+import { galleryItems } from "@/data/history";
 import { siteConfig } from "@/data/site";
-import { formatDateOnly, getNewsCategoryLabel, withBasePath } from "@/lib/utils";
+import { formatDateOnly, getNewsCategoryLabel, withBasePath, appPath } from "@/lib/utils";
 import {
   buildPageMetadata,
   organizationJsonLd,
@@ -27,18 +29,7 @@ export const metadata: Metadata = buildPageMetadata({
   absoluteTitle: true,
 });
 
-const FEATURED_FEATURED = "dinosaur-race";
-const FEATURED_MID = ["alcohol-calculus", "office-chair-racing"] as const;
-const FEATURED_GRID = [
-  "taiwan-mahjong",
-  "barcode-racing",
-  "two-school-rps",
-] as const;
-
 export default function HomePage() {
-  const featured = getActivityBySlug(FEATURED_FEATURED);
-  const mid = FEATURED_MID.map((s) => getActivityBySlug(s)).filter(Boolean);
-  const grid = FEATURED_GRID.map((s) => getActivityBySlug(s)).filter(Boolean);
   const recentResults = getRecentResults().slice(0, 3);
   const sortedNews = [...newsPosts].sort(
     (a, b) =>
@@ -58,113 +49,95 @@ export default function HomePage() {
       <LiveStatusStrip />
       <KeepPlaying />
 
-      <section className="section-space bg-black">
+      <section className="section-space bg-charcoal">
         <div className="container-main">
+          <SectionHeader
+            index="02"
+            title="總錦標"
+            highlight="錦標"
+            subtitle="七場計分項目，交大以一分之差拿下。"
+            href="/scoreboard"
+            actionLabel="完整比分"
+            dark
+          />
           <Scoreboard showBreakdown />
         </div>
       </section>
 
-      <section className="section-space grid-bg">
+      <SideExtras />
+
+      <section className="section-space bg-ink">
         <div className="container-main">
           <SectionHeader
-            index="02"
-            eyebrow="正賽精選"
-            title={`${siteConfig.year} 活動精選`}
-            subtitle="荒謬競技，一本正經"
+            index="04"
+            title="七場對抗"
+            highlight="對抗"
+            subtitle="每一場的規則、獎品、當天發生了什麼，以及照片。對象皆為兩校全體教職員生。"
             href="/activities"
-            actionLabel={`查看全部 ${activities.length} 項活動`}
+            actionLabel={`全部 ${activities.length} 項`}
+            dark
           />
 
-          <div className="space-y-6">
-            {featured && (
-              <ActivityCard activity={featured} variant="featured" />
-            )}
-            <div className="grid gap-6 md:grid-cols-2">
-              {mid.map(
-                (activity) =>
-                  activity && (
-                    <ActivityCard
-                      key={activity.id}
-                      activity={activity}
-                      variant="grid"
-                    />
-                  ),
-              )}
-            </div>
-            <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-              {grid.map(
-                (activity) =>
-                  activity && (
-                    <ActivityCard
-                      key={activity.id}
-                      activity={activity}
-                      variant="grid"
-                    />
-                  ),
-              )}
-            </div>
-          </div>
-
-          <div className="mt-10 text-center">
-            <Link href="/activities" className="btn-primary">
-              查看全部 {activities.length} 項活動 →
-            </Link>
+          <div className="flex flex-col gap-0.5">
+            {activities
+              .filter((a) => a.isScored)
+              .sort(
+                (a, b) =>
+                  new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
+              )
+              .map((activity, i) => (
+                <ActivityCard
+                  key={activity.id}
+                  activity={activity}
+                  reverse={i % 2 === 1}
+                  indexOverride={i + 1}
+                />
+              ))}
           </div>
         </div>
       </section>
 
-      <section className="section-space bg-white">
+      <section className="section-space bg-ink">
         <div className="container-main">
           <SectionHeader
-            index="03"
-            eyebrow="公告板"
+            index="05"
             title="最新公告"
+            highlight="公告"
             href="/news"
             actionLabel="全部消息"
+            dark
           />
-          <div className="grid gap-5 lg:grid-cols-[1.4fr_1fr]">
+          <div className="grid gap-0.5 lg:grid-cols-[1.4fr_1fr]">
             {featuredNews && (
-              <article className="overflow-hidden rounded-xl border-4 border-black bg-black text-white">
+              <article className="bg-dark-gray p-6 text-chalk md:p-8">
                 <HazardBar animated={false} />
-                <div className="p-6 md:p-8">
-                  <p className="text-xs font-bold text-brand-yellow">
-                    {getNewsCategoryLabel(featuredNews.category)}
-                  </p>
-                  <h3 className="display-title mt-3 text-3xl font-black md:text-4xl">
-                    {featuredNews.title}
-                  </h3>
-                  <p className="mt-3 text-sm text-white/70">
-                    {featuredNews.summary}
-                  </p>
-                  <p className="mt-4 text-sm font-bold text-brand-yellow">
-                    {formatDateOnly(featuredNews.publishedAt)}
-                  </p>
-                  <Link
-                    href={`/news/${featuredNews.slug}`}
-                    className="btn-primary mt-6 inline-flex text-sm"
-                  >
-                    查看公告 →
-                  </Link>
-                </div>
+                <p className="mt-4 font-mono-ui text-xs tracking-[0.12em] text-brand-yellow">
+                  {getNewsCategoryLabel(featuredNews.category)}
+                </p>
+                <h3 className="display-title mt-3 text-3xl font-black md:text-4xl">
+                  {featuredNews.title}
+                </h3>
+                <p className="mt-3 text-sm text-muted">{featuredNews.summary}</p>
+                <p className="mt-4 font-mono-ui text-xs text-brand-yellow">
+                  {formatDateOnly(featuredNews.publishedAt)}
+                </p>
+                <Link
+                  href={appPath(`/news/${featuredNews.slug}`)}
+                  className="btn-primary mt-6 inline-flex text-sm"
+                >
+                  查看公告
+                </Link>
               </article>
             )}
-            <div className="grid gap-5">
+            <div className="grid gap-0.5">
               {sideNews.map((post) => (
-                <article
-                  key={post.id}
-                  className="rounded-xl border-4 border-brand-yellow bg-white p-5"
-                >
-                  <p className="text-xs font-bold text-brand-blue">
+                <article key={post.id} className="bg-dark-gray p-5">
+                  <p className="font-mono-ui text-[11px] tracking-[0.12em] text-brand-yellow">
                     {getNewsCategoryLabel(post.category)}
                   </p>
                   <h3 className="mt-2 text-xl font-black">{post.title}</h3>
-                  <p className="mt-2 line-clamp-2 text-sm text-muted">
-                    {post.summary}
-                  </p>
-                  <Link
-                    href={`/news/${post.slug}`}
-                    className="text-link mt-4 inline-block text-sm"
-                  >
+                  <p className="mt-2 line-clamp-2 text-sm text-muted">{post.summary}</p>
+                  <Link href={appPath(`/news/${post.slug}`)} className="text-link mt-4 inline-block">
                     閱讀 →
                   </Link>
                 </article>
@@ -175,50 +148,34 @@ export default function HomePage() {
       </section>
 
       {recentResults.length > 0 && (
-        <section className="section-space bg-charcoal text-white">
+        <section className="section-space grid-bg">
           <div className="container-main">
             <SectionHeader
-              index="04"
-              eyebrow="賽果速覽"
+              index="06"
               title="最近結果"
-              dark
+              highlight="結果"
               href="/scoreboard"
               actionLabel="完整比分"
             />
-            <div className="flex gap-4 overflow-x-auto pb-2 md:grid md:grid-cols-3 md:overflow-visible md:pb-0">
+            <div className="grid gap-0.5 md:grid-cols-3">
               {recentResults.map((activity) => {
                 const winner = activity.result?.winner;
                 const badge =
-                  winner === "NTHU"
-                    ? "清華勝"
-                    : winner === "NYCU"
-                      ? "交大勝"
-                      : "結果";
-                const badgeClass =
-                  winner === "NTHU"
-                    ? "bg-nthu"
-                    : winner === "NYCU"
-                      ? "bg-nycu"
-                      : "bg-brand-yellow text-black";
+                  winner === "NTHU" ? "清華勝" : winner === "NYCU" ? "交大勝" : "結果";
                 return (
-                  <article
-                    key={activity.id}
-                    className="min-w-[260px] shrink-0 rounded-xl border-2 border-brand-yellow p-5 md:min-w-0"
-                  >
-                    <span
-                      className={`inline-block rounded-pill px-2.5 py-1 text-xs font-black text-white ${badgeClass}`}
-                    >
+                  <article key={activity.id} className="bg-white p-5">
+                    <span className="bg-ink px-2 py-0.5 font-mono-ui text-[11px] tracking-[0.1em] text-chalk">
                       {badge}
                     </span>
-                    <h3 className="mt-3 text-xl font-black">{activity.title}</h3>
-                    <p className="mt-2 line-clamp-2 text-sm text-white/70">
+                    <h3 className="mt-3 text-xl font-black text-ink">{activity.title}</h3>
+                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[#3f3d38]">
                       {activity.result?.summary}
                     </p>
                     <Link
-                      href={`/activities/${activity.slug}#results`}
-                      className="btn-primary mt-5 inline-flex text-sm"
+                      href={appPath(`/activities/${activity.slug}#results`)}
+                      className="mt-5 inline-flex font-mono-ui text-[13px] font-semibold tracking-[0.08em] text-ink underline decoration-brand-yellow decoration-2 underline-offset-4 hover:decoration-ink"
                     >
-                      查看結果
+                      查看結果 →
                     </Link>
                   </article>
                 );
@@ -228,112 +185,42 @@ export default function HomePage() {
         </section>
       )}
 
-      <section className="section-space grid-bg">
+      <section className="section-space bg-ink">
         <div className="container-main">
           <SectionHeader
-            index="05"
-            eyebrow="影像"
+            index="07"
             title="精選回顧"
+            highlight="回顧"
             subtitle="活動影像整理中 · 更多花絮見 Instagram"
             href="/gallery"
             actionLabel="前往圖庫"
+            dark
           />
-          <div className="grid gap-4 md:grid-cols-2">
-            <a
-              href={siteConfig.instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group relative aspect-video overflow-hidden rounded-xl border-4 border-black bg-light-gray"
-            >
-              <Image
-                src={withBasePath(
-                  galleryItems[0]?.imageUrl ?? "/images/gallery/hero-poster.jpg",
-                )}
-                alt={galleryItems[0]?.alt ?? "活動影像整理中"}
-                fill
-                className="object-cover transition group-hover:scale-[1.03]"
-                sizes="(max-width: 768px) 100vw, 50vw"
-              />
-              <div className="absolute inset-x-0 bottom-0 bg-black/70 p-4 text-white">
-                <p className="text-xs font-bold text-brand-yellow">活動影像整理中</p>
-                <p className="font-black">
-                  {galleryItems[0]?.title ?? "追蹤 @chumei2026"}
-                </p>
-              </div>
-            </a>
-            <div className="grid gap-4">
-              {galleryItems.slice(1, 3).map((item) => (
-                <a
-                  key={item.id}
-                  href={item.instagramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="group relative aspect-video overflow-hidden rounded-xl border-4 border-black bg-light-gray md:aspect-auto md:min-h-[140px]"
-                >
-                  <Image
+          <div className="grid grid-cols-2 gap-3.5 md:grid-cols-4">
+            {galleryItems.slice(0, 10).map((item, i) => (
+              <a
+                key={item.id}
+                href={item.instagramUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`relative overflow-hidden ${(i === 0 || i === 5) ? "col-span-2 aspect-2/1" : "aspect-square"}`}
+              >
+                <div className="photo-frame absolute inset-0">
+                  <img
                     src={withBasePath(item.imageUrl)}
                     alt={item.alt}
-                    fill
-                    className="object-cover transition group-hover:scale-[1.03]"
-                    sizes="(max-width: 768px) 100vw, 50vw"
+                    className="h-full w-full object-cover"
                   />
-                  <div className="absolute inset-x-0 bottom-0 bg-black/65 p-3 text-sm font-bold text-white">
-                    {item.title}
-                  </div>
-                </a>
-              ))}
-            </div>
-          </div>
-          <div className="mt-8 text-center">
-            <a
-              href={siteConfig.instagramUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="btn-secondary"
-            >
-              @chumei2026 on Instagram
-            </a>
+                </div>
+              </a>
+            ))}
           </div>
         </div>
       </section>
 
-      <section className="section-space bg-white">
-        <div className="container-main text-center">
-          <SectionHeader
-            index="06"
-            eyebrow="主辦"
-            title="一起讓荒謬成真"
-            className="md:items-center md:text-center [&_.text-link]:hidden"
-          />
-          <div className="mt-2 flex flex-wrap justify-center gap-4">
-            {partners
-              .filter((partner) => partner.showOnHome)
-              .map((partner) => (
-              <div
-                key={partner.id}
-                className="flex flex-col items-center gap-3 rounded-xl border-2 border-black bg-light-gray px-8 py-6 font-black text-muted grayscale transition hover:bg-white hover:text-black hover:grayscale-0"
-              >
-                {partner.logo && (
-                  <Image
-                    src={withBasePath(partner.logo)}
-                    alt={partner.name}
-                    width={72}
-                    height={72}
-                    className="h-[72px] w-[72px] rounded-lg"
-                  />
-                )}
-                <p className="text-xs font-bold text-brand-blue">主辦單位</p>
-                <p>{partner.name}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-8">
-            <Link href="/partners" className="btn-outline text-sm">
-              合作提案 →
-            </Link>
-          </div>
-        </div>
-      </section>
+      <AboutBand />
+
+      <JoinBand />
     </>
   );
 }

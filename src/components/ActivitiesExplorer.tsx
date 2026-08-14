@@ -50,7 +50,7 @@ export function ActivitiesExplorer({ activities }: ActivitiesExplorerProps) {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="活動名稱、地點、關鍵字…"
-            className="w-full rounded-md border-2 border-black px-4 py-3 text-base outline-none focus:border-brand-blue"
+            className="w-full border-2 border-ink bg-white px-4 py-3 text-base text-ink outline-none focus:border-brand-yellow"
           />
         </label>
         <FilterChips
@@ -83,7 +83,7 @@ export function ActivitiesExplorer({ activities }: ActivitiesExplorerProps) {
           </button>
         </div>
       ) : (
-        <div className="grid gap-6">
+        <div className="grid gap-0.5">
           {filtered.map((activity) => (
             <ActivityCard key={activity.id} activity={activity} />
           ))}

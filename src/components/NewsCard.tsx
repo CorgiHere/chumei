@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { NewsPost } from "@/types";
-import { getNewsCategoryLabel, formatDate } from "@/lib/utils";
+import { getNewsCategoryLabel, formatDate, appPath } from "@/lib/utils";
 
 type NewsCardProps = {
   post: NewsPost;
@@ -10,7 +10,7 @@ export function NewsCard({ post }: NewsCardProps) {
   return (
     <article className="card p-5">
       <div className="mb-2 flex flex-wrap items-center gap-2">
-        <span className="rounded-full bg-brand-yellow px-2 py-0.5 text-xs font-bold">
+        <span className="rounded-full bg-brand-yellow px-2 py-0.5 font-mono-ui text-[11px] font-semibold text-ink">
           {getNewsCategoryLabel(post.category)}
         </span>
         {post.pinned && (
@@ -21,8 +21,8 @@ export function NewsCard({ post }: NewsCardProps) {
       </div>
       <h3 className="text-lg font-black">
         <Link
-          href={`/news/${post.slug}`}
-          className="hover:text-brand-blue"
+          href={appPath(`/news/${post.slug}`)}
+          className="hover:text-brand-yellow"
         >
           {post.title}
         </Link>

@@ -43,7 +43,7 @@ export const activities: Activity[] = [
     index: 2,
     title: "恐龍賽跑",
     subtitle: "第二屆清交恐龍賽跑",
-    tagline: "恐龍騎毛毛蟲",
+    tagline: "龍ㄟ賽　／　再辦一屆？龍ㄟ賽啦",
     description:
       "三人一組穿著恐龍裝騎毛毛蟲於跑道競速。第二屆清交恐龍賽跑於 3/29 清大操場完賽，冠軍由清華大學拿下。",
     heroImage: "/images/activities/dinosaur-race.jpg",
@@ -95,7 +95,7 @@ export const activities: Activity[] = [
     index: 3,
     title: "酒精微積分",
     subtitle: "外微不變乘內微",
-    tagline: "電神 × 酒鬼",
+    tagline: "微～好酒不見　／　誰是清交醉後的天才",
     description:
       "今朝有酒今朝醉，外微不變乘內微。報名費 200 元／人，須滿 18 歲。4/6 於交大綜合一館 B102 完賽，冠軍由交通大學拿下；賽後總錦標清交 1：1。",
     heroImage: "/images/activities/alcohol-calculus.jpg",

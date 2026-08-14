@@ -39,10 +39,10 @@ export function FilterChips({
               onClick={() => onChange(opt.id)}
               aria-pressed={active}
               className={cn(
-                "rounded-full border-2 px-3 py-1.5 text-sm font-bold transition",
+                "border-2 px-3 py-1.5 font-mono-ui text-xs tracking-[0.08em] font-semibold transition",
                 active
-                  ? "border-black bg-brand-yellow text-black"
-                  : "border-black/20 bg-white hover:border-black",
+                  ? "border-ink bg-brand-yellow text-ink"
+                  : "border-ink/20 bg-white hover:border-ink",
               )}
             >
               {opt.label}

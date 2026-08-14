@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Noto_Sans_TC } from "next/font/google";
+import { IBM_Plex_Mono, Noto_Sans_TC, Oswald } from "next/font/google";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { siteConfig } from "@/data/site";
@@ -16,6 +16,18 @@ const notoSansTC = Noto_Sans_TC({
   subsets: ["latin"],
   weight: ["400", "500", "700", "900"],
   variable: "--font-noto-sans-tc",
+});
+
+const ibmPlexMono = IBM_Plex_Mono({
+  subsets: ["latin"],
+  weight: ["400", "500", "600"],
+  variable: "--font-ibm-plex-mono",
+});
+
+const oswald = Oswald({
+  subsets: ["latin"],
+  weight: ["500", "600", "700"],
+  variable: "--font-oswald",
 });
 
 export const metadata: Metadata = {
@@ -69,8 +81,8 @@ export const metadata: Metadata = {
     google: "AOByrRSfqUZkDoAFPwsS9bJOn1TYCS3dX63AM105jn8",
   },
   icons: {
-    icon: [{ url: siteConfig.logoUrl, type: "image/png" }],
-    apple: [{ url: siteConfig.logoUrl }],
+    icon: [{ url: "/icon.png", type: "image/png" }],
+    apple: [{ url: "/apple-icon.png", type: "image/png" }],
   },
   category: "sports",
 };
@@ -81,7 +93,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-Hant" className={notoSansTC.variable}>
+    <html
+      lang="zh-Hant"
+      className={`${notoSansTC.variable} ${ibmPlexMono.variable} ${oswald.variable}`}
+    >
       <body className="flex min-h-screen flex-col">
         <Header />
         <main className="flex-1">{children}</main>

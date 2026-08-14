@@ -1,135 +1,79 @@
 import Image from "next/image";
 import Link from "next/link";
 import { siteConfig } from "@/data/site";
-import { withBasePath } from "@/lib/utils";
+import { withBasePath, appPath } from "@/lib/utils";
 import { HazardBar } from "./HazardBar";
 
 export function Footer() {
   return (
-    <footer className="mt-auto bg-black text-white">
-      <HazardBar />
+    <footer className="mt-auto bg-ink text-chalk">
+      <HazardBar animated={false} />
       <div className="container-main py-14">
-        <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-4">
-          <div>
+        <div className="mb-8 flex flex-wrap justify-between gap-8">
+          <div className="max-w-sm">
             <div className="mb-3 flex items-center gap-3">
               <Image
                 src={withBasePath(siteConfig.logoUrl)}
                 alt="竹梅賽 Chu Mei 清大交大"
-                width={48}
-                height={48}
-                className="h-12 w-12 rounded-lg"
+                width={42}
+                height={42}
+                className="h-[42px] w-[42px] rounded-[9px]"
               />
-              <p className="display-title-skew text-2xl font-black text-brand-yellow">
-                {siteConfig.yearName}
-              </p>
+              <p className="text-lg font-black">{siteConfig.yearName}</p>
             </div>
-            <p className="text-sm leading-relaxed text-white/70">
-              2026 竹梅賽（Chu Mei）：清華大學（清大／NTHU）與交通大學、陽明交通大學（交大／NYCU／NCTU）學生自主籌辦的清交荒謬校際競技。看起來像正式大型錦標賽，但比賽項目完全不正常——跟梅竹賽無關。
+            <p className="text-[13px] leading-relaxed text-muted">
+              清華大學與交通大學學生自主籌辦的荒謬校際競技。看起來像正式大型錦標賽，但比賽項目完全不正常——跟梅竹賽無關。
             </p>
           </div>
-
           <div>
-            <p className="mb-3 font-bold text-brand-yellow">快速連結</p>
-            <ul className="space-y-2 text-sm font-bold">
-              <li>
-                <Link href="/activities" className="hover:text-brand-yellow">
-                  活動總覽
-                </Link>
-              </li>
-              <li>
-                <Link href="/schedule" className="hover:text-brand-yellow">
-                  賽程
-                </Link>
-              </li>
-              <li>
-                <Link href="/scoreboard" className="hover:text-brand-yellow">
-                  比分與結果
-                </Link>
-              </li>
-              <li>
-                <Link href="/news" className="hover:text-brand-yellow">
-                  最新消息
-                </Link>
-              </li>
-            </ul>
+            <h5 className="mb-2.5 font-mono-ui text-[11px] font-medium tracking-[0.18em] text-brand-yellow">
+              賽事
+            </h5>
+            <Link href={appPath("/activities")} className="block py-0.5 font-mono-ui text-[13px] text-[#b6b3ab] no-underline hover:text-brand-yellow">
+              活動總覽
+            </Link>
+            <Link href={appPath("/schedule")} className="block py-0.5 font-mono-ui text-[13px] text-[#b6b3ab] no-underline hover:text-brand-yellow">
+              賽程
+            </Link>
+            <Link href={appPath("/scoreboard")} className="block py-0.5 font-mono-ui text-[13px] text-[#b6b3ab] no-underline hover:text-brand-yellow">
+              總錦標
+            </Link>
           </div>
-
           <div>
-            <p className="mb-3 font-bold text-brand-yellow">參與</p>
-            <ul className="space-y-2 text-sm font-bold">
-              <li>
-                <Link href="/join" className="hover:text-brand-yellow">
-                  加入竹梅
-                </Link>
-              </li>
-              <li>
-                <Link href="/partners" className="hover:text-brand-yellow">
-                  合作提案
-                </Link>
-              </li>
-              <li>
-                <Link href="/contact" className="hover:text-brand-yellow">
-                  聯絡我們
-                </Link>
-              </li>
-              <li>
-                <Link href="/gallery" className="hover:text-brand-yellow">
-                  圖庫
-                </Link>
-              </li>
-            </ul>
+            <h5 className="mb-2.5 font-mono-ui text-[11px] font-medium tracking-[0.18em] text-brand-yellow">
+              參與
+            </h5>
+            <Link href={appPath("/join")} className="block py-0.5 font-mono-ui text-[13px] text-[#b6b3ab] no-underline hover:text-brand-yellow">
+              加入我們
+            </Link>
+            <Link href={appPath("/partners")} className="block py-0.5 font-mono-ui text-[13px] text-[#b6b3ab] no-underline hover:text-brand-yellow">
+              合作提案
+            </Link>
+            <Link href={appPath("/contact")} className="block py-0.5 font-mono-ui text-[13px] text-[#b6b3ab] no-underline hover:text-brand-yellow">
+              聯絡
+            </Link>
           </div>
-
           <div>
-            <p className="mb-3 font-bold text-brand-yellow">社群</p>
-            <ul className="space-y-2 text-sm font-bold">
-              <li>
-                <a
-                  href={siteConfig.instagramUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-brand-yellow"
-                >
-                  Instagram
-                </a>
-              </li>
-              <li>
-                <a
-                  href={siteConfig.threadsUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-brand-yellow"
-                >
-                  Threads
-                </a>
-              </li>
-              <li>
-                <a
-                  href={siteConfig.facebookUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-brand-yellow"
-                >
-                  Facebook
-                </a>
-              </li>
-              <li>
-                <a
-                  href={siteConfig.linktreeUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="hover:text-brand-yellow"
-                >
-                  Linktree
-                </a>
-              </li>
-            </ul>
+            <h5 className="mb-2.5 font-mono-ui text-[11px] font-medium tracking-[0.18em] text-brand-yellow">
+              社群
+            </h5>
+            <a href={siteConfig.instagramUrl} target="_blank" rel="noopener noreferrer" className="block py-0.5 font-mono-ui text-[13px] text-[#b6b3ab] no-underline hover:text-brand-yellow">
+              Instagram
+            </a>
+            <a href={siteConfig.facebookUrl} target="_blank" rel="noopener noreferrer" className="block py-0.5 font-mono-ui text-[13px] text-[#b6b3ab] no-underline hover:text-brand-yellow">
+              Facebook
+            </a>
+            <a href={siteConfig.linktreeUrl} target="_blank" rel="noopener noreferrer" className="block py-0.5 font-mono-ui text-[13px] text-[#b6b3ab] no-underline hover:text-brand-yellow">
+              Linktree
+            </a>
           </div>
         </div>
-
-        <div className="mt-12 border-t border-white/15 pt-6 text-center text-xs text-white/50">
-          <p>© {siteConfig.year} 竹梅籌備委員會 · 清交學生自主籌辦</p>
-        </div>
+        <p className="border-t border-white/15 pt-5 text-[13px] leading-relaxed text-muted">
+          竹梅籌備委員會為學生自發團體，非學校組織。本站資訊以籌委會公告為準。
+        </p>
+        <p className="mt-4 font-mono-ui text-[11px] tracking-[0.06em] text-[#6e6c66]">
+          © {siteConfig.year} 竹梅籌備委員會
+        </p>
       </div>
     </footer>
   );

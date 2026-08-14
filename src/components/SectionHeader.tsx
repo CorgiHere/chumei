@@ -1,10 +1,11 @@
 import Link from "next/link";
-import { cn } from "@/lib/utils";
+import { cn, appPath } from "@/lib/utils";
 
 type SectionHeaderProps = {
   index?: string;
   eyebrow?: string;
   title: string;
+  highlight?: string;
   subtitle?: string;
   href?: string;
   actionLabel?: string;
@@ -17,6 +18,7 @@ export function SectionHeader({
   index,
   eyebrow,
   title,
+  highlight,
   subtitle,
   href,
   actionLabel = "查看全部",
@@ -24,72 +26,61 @@ export function SectionHeader({
   id,
   className,
 }: SectionHeaderProps) {
+  const renderedTitle = highlight ? (
+    <>
+      {title.replace(highlight, "")}
+          <span className="mark">{highlight}</span>
+    </>
+  ) : (
+    title
+  );
+
   return (
-    <div
-      className={cn(
-        "mb-8 flex flex-col gap-4 md:mb-10 md:flex-row md:items-end md:justify-between",
-        className,
-      )}
-      id={id}
-    >
-      <div>
-        <div className="mb-3 flex flex-wrap items-center gap-3">
-          {index && (
-            <span
-              className={cn(
-                "inline-flex h-10 w-10 items-center justify-center rounded-full text-sm font-black",
-                dark
-                  ? "bg-brand-blue text-white"
-                  : "bg-brand-blue text-white",
-              )}
-              aria-hidden
-            >
-              {index}
-            </span>
-          )}
-          {eyebrow && (
-            <span
-              className={cn(
-                "rounded-pill px-3 py-1 text-xs font-bold",
-                dark
-                  ? "bg-brand-yellow text-black"
-                  : "bg-brand-yellow text-black",
-              )}
-            >
-              {eyebrow}
-            </span>
-          )}
-        </div>
-        <h2
+    <div className={cn("band-head mb-9", className)} id={id}>
+      {index && (
+        <span
           className={cn(
-            "section-title display-title",
-            dark ? "text-white" : "text-ink",
+            "mb-2.5 block font-mono-ui text-xs tracking-[0.2em]",
+            dark ? "text-brand-yellow" : "text-ink",
           )}
         >
-          {title}
-        </h2>
-        {subtitle && (
-          <p
+          {index}
+        </span>
+      )}
+      {eyebrow && !index && <p className="eyebrow">{eyebrow}</p>}
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h2
             className={cn(
-              "mt-2 max-w-2xl text-base font-medium",
-              dark ? "text-white/70" : "text-muted",
+              "section-title m-0",
+              dark ? "text-chalk" : "text-ink",
             )}
           >
-            {subtitle}
-          </p>
+            {renderedTitle}
+          </h2>
+          {subtitle && (
+            <p
+              className={cn(
+                "mt-3 max-w-[44em] text-[15px]",
+                dark ? "text-[#afaca4]" : "text-[#3f3d38]",
+              )}
+            >
+              {subtitle}
+            </p>
+          )}
+        </div>
+        {href && (
+          <Link
+            href={appPath(href)}
+            className={cn(
+              "text-link shrink-0 self-start md:self-auto",
+              !dark && "text-ink border-b-brand-yellow",
+            )}
+          >
+            {actionLabel} →
+          </Link>
         )}
       </div>
-      {href && (
-        <Link
-          href={href}
-          className={cn(
-            "text-link shrink-0 self-start md:self-auto",
-            dark && "text-brand-yellow",
-          )}
-        >
-          {actionLabel} →
-        </Link>
-      )}
     </div>
   );
 }

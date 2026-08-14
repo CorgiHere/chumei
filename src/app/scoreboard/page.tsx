@@ -35,6 +35,7 @@ export default function ScoreboardPage() {
             dark
             eyebrow={siteConfig.yearName}
             title="比分與結果"
+            highlight="結果"
             subtitle="總錦標以 4/22 官方公告為準：交通大學 4：3 獲勝。"
           />
           <Scoreboard className="mx-auto max-w-2xl" />

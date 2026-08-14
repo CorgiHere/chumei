@@ -1,70 +1,39 @@
 import Link from "next/link";
 import { siteConfig } from "@/data/site";
+import { appPath } from "@/lib/utils";
 
 const items = [
-  {
-    label: "2026 總錦標交大 4：3",
-    href: "/scoreboard",
-    cta: "看賽果",
-    external: false,
-  },
-  {
-    label: "旮拉給木持續開放",
-    href: siteConfig.galagaUrl,
-    cta: "立即遊玩",
-    external: true,
-  },
-  {
-    label: "小徑 T 資訊見 Linktree",
-    href: siteConfig.linktreeUrl,
-    cta: "Linktree",
-    external: true,
-  },
+  `2026 總錦標 交大 ${siteConfig.nycuScore}：${siteConfig.nthuScore} 清華`,
+  "學生自發籌辦 · 非學校組織",
+  "旮拉給木持續開放",
+  "清大 × 交大 · NTHU × NYCU",
 ];
 
 export function LiveStatusStrip() {
+  const loop = [...items, ...items];
   return (
-    <section className="border-b-4 border-black bg-brand-yellow">
-      <div className="container-main py-3 md:py-4">
-        <ul className="flex flex-col gap-2 md:grid md:grid-cols-3 md:gap-3">
-          {items.map((item) => {
-            const className =
-              "flex w-full items-center justify-between gap-3 rounded-xl border-2 border-black bg-white px-4 py-3 transition hover:bg-light-gray";
-            const content = (
-              <>
-                <span className="min-w-0 text-sm font-black leading-snug">
-                  {item.label}
-                </span>
-                <span className="shrink-0 text-xs font-bold text-brand-blue">
-                  {item.cta} →
-                </span>
-              </>
-            );
-
-            if (item.external) {
-              return (
-                <li key={item.label} className="min-w-0">
-                  <a
-                    href={item.href}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className={className}
-                  >
-                    {content}
-                  </a>
-                </li>
-              );
-            }
-
-            return (
-              <li key={item.label} className="min-w-0">
-                <Link href={item.href} className={className}>
-                  {content}
-                </Link>
-              </li>
-            );
-          })}
-        </ul>
+    <section
+      className="overflow-hidden border-b-2 border-ink bg-brand-yellow text-ink"
+      aria-label="最新狀態"
+    >
+      <div className="ticker-track">
+        {loop.map((label, i) => (
+          <span
+            key={`${label}-${i}`}
+            className="inline-flex items-center whitespace-nowrap"
+          >
+            <span className="px-5 font-mono-ui" aria-hidden>
+              ◆
+            </span>
+            {label.startsWith("2026 總錦標") ? (
+              <Link href={appPath("/scoreboard")} className="no-underline">
+                {label}
+              </Link>
+            ) : (
+              label
+            )}
+          </span>
+        ))}
       </div>
     </section>
   );

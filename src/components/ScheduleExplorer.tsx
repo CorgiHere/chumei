@@ -7,8 +7,10 @@ import { FilterChips } from "@/components/FilterChips";
 import { StatusBadge } from "@/components/StatusBadge";
 import { isSameDay, isThisWeek } from "@/lib/activity-filters";
 import {
-  formatDate,
   getCalendarUrl,
+  getCampusLabel,
+  appPath,
+  cn,
 } from "@/lib/utils";
 
 type ScheduleMode = "all" | "today" | "week" | "upcoming" | "timeline";
@@ -68,7 +70,7 @@ export function ScheduleExplorer({ activities }: ScheduleExplorerProps) {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="rounded-lg border-2 border-dashed border-muted bg-white p-10 text-center">
+        <div className="border-2 border-dashed border-ink/20 bg-white p-10 text-center">
           <p className="font-bold">這個時段沒有活動。</p>
           <p className="mt-2 text-sm text-muted">
             改看「全部」或「即將到來」試試。
@@ -100,60 +102,84 @@ export function ScheduleExplorer({ activities }: ScheduleExplorerProps) {
 }
 
 function ScheduleItem({ activity }: { activity: Activity }) {
+  const campus = activity.venue.campus;
+  const rail =
+    campus === "NTHU"
+      ? "bg-brand-orange"
+      : campus === "NYCU"
+        ? "bg-nycu"
+        : "bg-brand-yellow";
+  const campusTone =
+    campus === "NTHU"
+      ? "text-brand-orange"
+      : campus === "NYCU"
+        ? "text-nycu"
+        : "text-muted";
+  const start = new Date(activity.startAt);
+  const mm = String(start.getMonth() + 1).padStart(2, "0");
+  const dd = String(start.getDate()).padStart(2, "0");
+  const hh = String(start.getHours()).padStart(2, "0");
+  const min = String(start.getMinutes()).padStart(2, "0");
+  const wd = ["日", "一", "二", "三", "四", "五", "六"][start.getDay()];
+  const place = campus === "OTHER" ? null : getCampusLabel(campus);
+
   return (
-    <article className="card p-5">
-      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-        <div className="min-w-0">
+    <article className="relative overflow-hidden border border-ink/10 bg-white">
+      <span className={cn("absolute inset-y-0 left-0 w-1.5", rail)} aria-hidden />
+      <div className="flex flex-col gap-4 py-5 pl-6 pr-5 md:flex-row md:items-stretch md:justify-between md:pl-7">
+        <div className="flex min-w-0 flex-1 gap-4 md:gap-5">
           <time
             dateTime={activity.startAt}
-            className="text-sm font-bold text-brand-blue"
+            className="flex h-fit shrink-0 flex-col bg-ink px-3 py-2 text-center text-chalk"
           >
-            {formatDate(activity.startAt)}
+            <span className="font-num text-2xl font-bold leading-none text-brand-yellow">
+              {mm}.{dd}
+            </span>
+            <span className="mt-1 font-mono-ui text-[10px] tracking-[0.12em] text-chalk/70">
+              （{wd}）{hh}:{min}
+            </span>
           </time>
-          <h2 className="mt-1 text-xl font-black">
-            <Link
-              href={`/activities/${activity.slug}`}
-              className="hover:text-brand-blue"
-            >
-              {activity.title}
-            </Link>
-          </h2>
-          {activity.tagline && (
-            <p className="mt-1 text-sm text-muted">
-              {activity.tagline}
+          <div className="min-w-0">
+            <h2 className="text-xl font-black leading-snug">
+              <Link
+                href={appPath(`/activities/${activity.slug}`)}
+                className="hover:text-brand-yellow"
+              >
+                {activity.title}
+              </Link>
+            </h2>
+            {activity.tagline && (
+              <p className="mt-1 text-sm text-muted">{activity.tagline}</p>
+            )}
+            <p className="mt-2 text-sm font-medium">
+              {activity.venue.name}
+              {place && (
+                <span className={cn("ml-1.5 font-mono-ui text-[11px] tracking-[0.12em]", campusTone)}>
+                  · {place}
+                </span>
+              )}
             </p>
-          )}
-          <p className="mt-2 text-sm font-medium">
-            {activity.venue.name}
-            {activity.venue.campus !== "OTHER" && (
-              <span className="text-muted">
-                {" "}
-                · {activity.venue.campus === "NTHU" ? "清華" : activity.venue.campus === "NYCU" ? "交大" : "其他"}
-              </span>
-            )}
-          </p>
-          <div className="mt-3 flex flex-wrap items-center gap-2">
-            <StatusBadge status={activity.status} />
-            {activity.isScored ? (
-              <span className="rounded-full border border-black px-2 py-0.5 text-xs font-bold">
-                計分項目
-              </span>
-            ) : (
-              <span className="rounded-full border border-dashed border-muted px-2 py-0.5 text-xs font-bold text-muted">
-                非計分
-              </span>
-            )}
-            {activity.audienceNotes?.[0] && (
-              <span className="text-xs text-muted">
-                {activity.audienceNotes[0]}
-              </span>
-            )}
+            <div className="mt-3 flex flex-wrap items-center gap-2">
+              <StatusBadge status={activity.status} />
+              {activity.isScored ? (
+                <span className="border border-ink bg-brand-yellow px-2 py-0.5 font-mono-ui text-[11px] font-semibold tracking-[0.08em] text-ink">
+                  計分項目
+                </span>
+              ) : (
+                <span className="border border-dashed border-ink/30 px-2 py-0.5 font-mono-ui text-[11px] font-semibold tracking-[0.08em] text-muted">
+                  非計分
+                </span>
+              )}
+              {activity.audienceNotes?.[0] && (
+                <span className="text-xs text-muted">{activity.audienceNotes[0]}</span>
+              )}
+            </div>
           </div>
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex flex-wrap items-center gap-2 md:flex-col md:items-stretch">
           <Link
-            href={`/activities/${activity.slug}`}
-            className="btn-primary text-sm"
+            href={appPath(`/activities/${activity.slug}`)}
+            className="btn-primary px-5 text-sm"
           >
             詳情
           </Link>
@@ -165,7 +191,7 @@ function ScheduleItem({ activity }: { activity: Activity }) {
             )}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-outline text-sm"
+            className="btn-outline px-5 text-sm"
           >
             加入行事曆
           </a>
@@ -174,7 +200,7 @@ function ScheduleItem({ activity }: { activity: Activity }) {
               href={activity.venue.mapUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-outline text-sm"
+              className="inline-flex min-h-12 items-center justify-center border-2 border-nycu px-5 font-mono-ui text-sm font-semibold tracking-[0.1em] text-nycu hover:bg-nycu hover:text-white"
             >
               地圖
             </a>

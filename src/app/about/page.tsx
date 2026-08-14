@@ -44,10 +44,10 @@ export default function AboutPage() {
 
           <section>
             <h2 className="mb-4 text-xl font-black">與梅竹賽的差異</h2>
-            <div className="overflow-hidden rounded-lg border-2 border-black bg-white">
+            <div className="overflow-hidden border-2 border-ink bg-white">
               <table className="w-full text-left text-sm md:text-base">
                 <thead>
-                  <tr className="border-b-2 border-black bg-brand-yellow">
+                  <tr className="border-b-2 border-ink bg-brand-yellow">
                     <th className="px-4 py-3">面向</th>
                     <th className="px-4 py-3">梅竹賽</th>
                     <th className="px-4 py-3">竹梅賽</th>

@@ -8,17 +8,16 @@ type StatusBadgeProps = {
 };
 
 const statusColors: Partial<Record<ActivityStatus, string>> = {
-  registration_open: "bg-brand-yellow text-black border-black",
-  registration_closing:
-    "bg-signal-lime text-black border-black hazard-stripe-animated bg-[length:48px_48px]",
-  finished: "bg-ink text-white border-ink",
-  upcoming: "bg-brand-blue text-white border-brand-blue",
-  ongoing: "bg-brand-blue text-white border-brand-blue",
-  postponed: "bg-brand-yellow text-black border-black",
+  registration_open: "bg-brand-yellow text-ink border-brand-yellow",
+  registration_closing: "bg-brand-yellow text-ink border-brand-yellow",
+  finished: "border-ink text-ink bg-transparent",
+  upcoming: "border-ink text-ink bg-transparent",
+  ongoing: "bg-brand-yellow text-ink border-brand-yellow",
+  postponed: "bg-brand-yellow text-ink border-brand-yellow",
   cancelled: "bg-danger text-white border-danger",
-  announced: "bg-white text-black border-black",
-  waitlist: "bg-white text-black border-black",
-  full: "bg-dark-gray text-white border-dark-gray",
+  announced: "border-ink/30 text-ink bg-transparent",
+  waitlist: "border-ink/30 text-ink bg-transparent",
+  full: "bg-dark-gray text-chalk border-muted",
 };
 
 export function StatusBadge({
@@ -33,7 +32,7 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex flex-col items-start rounded-pill border-2 px-3 py-1 text-xs font-bold leading-tight",
+        "inline-flex flex-col items-start border px-2.5 py-0.5 font-mono-ui text-[11px] font-semibold tracking-[0.1em] leading-tight",
         colorClass,
         className,
       )}

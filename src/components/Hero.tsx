@@ -1,110 +1,145 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { siteConfig } from "@/data/site";
-import { withBasePath } from "@/lib/utils";
+import { withBasePath, appPath } from "@/lib/utils";
+import { galleryItems } from "@/data/history";
 import { HazardBar } from "./HazardBar";
 
+const slides = galleryItems.slice(0, 5).map((item) => ({
+  src: item.imageUrl,
+  title: item.title,
+  alt: item.alt,
+}));
+
 export function Hero() {
-  const nthu = String(siteConfig.nthuScore).padStart(2, "0");
-  const nycu = String(siteConfig.nycuScore).padStart(2, "0");
+  const [index, setIndex] = useState(0);
+  const total = slides.length || 1;
+
+  useEffect(() => {
+    if (slides.length < 2) return;
+    const id = window.setInterval(() => {
+      setIndex((i) => (i + 1) % slides.length);
+    }, 5000);
+    return () => window.clearInterval(id);
+  }, []);
+
+  const current = slides[index] ?? slides[0];
 
   return (
-    <section className="relative overflow-hidden bg-black text-white">
+    <section className="relative bg-ink text-chalk">
       <HazardBar />
-      <div className="speed-lines" aria-hidden />
-      <div className="container-main relative flex min-h-[min(820px,calc(100vh-5rem))] flex-col justify-center py-12 md:py-16">
-        <div className="grid items-center gap-10 lg:grid-cols-[1.1fr_0.9fr]">
-          <div className="reveal-up order-1">
-            <p className="mb-4 inline-block rounded-pill border border-brand-yellow px-3 py-1 text-xs font-bold tracking-wide text-brand-yellow">
-              2026 清大 × 交大｜清交荒謬校際錦標
-            </p>
-            <h1 className="display-title-skew text-[clamp(3.5rem,12vw,8rem)] font-black text-white">
-              竹梅賽
-            </h1>
-            <p
-              className="offset-title mt-2 text-[clamp(2rem,6vw,4rem)] font-black text-brand-yellow"
-              data-text="強勢回歸"
-            >
-              強勢回歸
-            </p>
-            <p className="mt-6 hidden max-w-xl text-base text-white/75 md:block md:text-lg">
-              國立清華大學（清大／NTHU）與國立交通大學、陽明交通大學（交大／NYCU／NCTU）學生自主籌辦。看起來像正式大型錦標賽，但比賽項目完全不正常——跟梅竹賽（Meichu）沒有任何關係。
-            </p>
-
-            <div className="mt-8 hidden flex-wrap gap-3 md:flex">
-              <Link href="/scoreboard" className="btn-primary">
-                查看完整賽果 →
-              </Link>
-              <Link
-                href="/activities"
-                className="btn-dark-outline"
-              >
-                瀏覽全部活動
-              </Link>
-            </div>
-
-            <div className="mt-10 hidden border-t border-white/20 pt-6 md:block">
-              <p className="display-title text-3xl font-black md:text-4xl">
-                <span className="text-nthu">清華 {nthu}</span>
-                <span className="mx-3 text-brand-yellow">───</span>
-                <span className="text-[#7EB6FF]">{nycu} 交大</span>
-              </p>
-              <p className="mt-2 text-sm font-bold text-brand-yellow">
-                2026 總錦標 · 交大獲勝
-              </p>
-            </div>
+      <div className="container-main grid items-center gap-8 py-12 lg:grid-cols-2 lg:items-stretch lg:gap-12 lg:py-14">
+        <div className="flex flex-col justify-center">
+          <p className="eyebrow">
+            清華大學 × 交通大學　／　{siteConfig.yearName}
+          </p>
+          <h1 className="display-title mb-5 text-[clamp(30px,4.5vw,66px)]">
+            只要是清交人
+            <br />
+            就絕對不能
+            <br />
+            錯過的<span className="mark">竹梅</span>
+          </h1>
+          <p className="mb-8 max-w-[32em] text-[15px] text-[#afaca4]">
+            七場對抗，從恐龍賽跑到猜拳送機票。企劃、經費、獎品都是自己來。看起來像正式大型錦標賽，但比賽項目完全不正常——跟梅竹賽無關。
+          </p>
+          <div className="mb-8 flex flex-wrap gap-3">
+            <Link href={appPath("/scoreboard")} className="btn-primary">
+              查看完整賽果
+            </Link>
+            <Link href={appPath("/activities")} className="btn-dark-outline">
+              瀏覽全部活動
+            </Link>
           </div>
-
-          <div className="reveal-up-delay order-2">
-            <div className="relative mx-auto max-w-md lg:max-w-none">
-              <div
-                className="absolute -right-3 -top-3 h-full w-full rounded-[28px] bg-brand-blue"
-                aria-hidden
-              />
-              <div
-                className="absolute -bottom-3 -left-3 h-full w-full rounded-[28px] border-4 border-brand-yellow"
-                aria-hidden
-              />
-              <div className="relative overflow-hidden rounded-[28px] border-4 border-white bg-charcoal aspect-4/3 lg:aspect-3/4">
-                <Image
-                  src={withBasePath("/images/gallery/hero-poster.jpg")}
-                  alt="2026 竹梅賽主視覺"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 1024px) 90vw, 40vw"
-                  priority
-                />
-              </div>
+          <div className="flex flex-wrap border-t border-white/15">
+            <div className="mr-6 border-r border-white/15 pr-6 pt-3.5">
+              <b className="font-num block text-[26px] leading-none font-bold">07</b>
+              <span className="font-mono-ui text-[11px] tracking-[0.12em] text-muted">
+                計分對抗
+              </span>
             </div>
-          </div>
-
-          <div className="order-3 md:hidden">
-            <p className="mt-2 text-base text-white/75">
-              清大（NTHU）× 交大（NYCU／NCTU）學生自辦。看起來像正式大型錦標賽，但比賽項目完全不正常——跟梅竹賽無關。
-            </p>
-            <div className="mt-6 border-y border-white/20 py-5">
-              <p className="display-title text-3xl font-black">
-                清華 {siteConfig.nthuScore}：{siteConfig.nycuScore} 交大
-              </p>
-              <p className="mt-1 text-sm font-bold text-brand-yellow">
-                總錦標 · 交大獲勝
-              </p>
+            <div className="mr-6 border-r border-white/15 pr-6 pt-3.5">
+              <b className="font-num block text-[26px] leading-none font-bold">
+                {siteConfig.nthuScore}：{siteConfig.nycuScore}
+              </b>
+              <span className="font-mono-ui text-[11px] tracking-[0.12em] text-muted">
+                清華／交大
+              </span>
             </div>
-            <div className="mt-6 flex flex-col gap-3">
-              <Link href="/scoreboard" className="btn-primary">
-                查看賽果
-              </Link>
-              <Link
-                href="/activities"
-                className="btn-dark-outline"
-              >
-                全部活動
-              </Link>
+            <div className="pt-3.5">
+              <b className="font-num block text-[26px] leading-none font-bold">
+                學生自辦
+              </b>
+              <span className="font-mono-ui text-[11px] tracking-[0.12em] text-muted">
+                非學校組織
+              </span>
             </div>
           </div>
         </div>
+
+        <div className="relative aspect-[4/3] overflow-hidden bg-ink lg:aspect-auto lg:min-h-0">
+          {slides.map((slide, i) => (
+            <div
+              key={slide.src}
+              className={`absolute inset-0 bg-[#F2F0EA] p-2 shadow-[0_14px_34px_-18px_rgba(0,0,0,.9)] transition-opacity duration-700 ${
+                i === index ? "opacity-100" : "opacity-0"
+              }`}
+            >
+              <div className="relative h-full w-full">
+                <img
+                  src={withBasePath(slide.src)}
+                  alt={slide.alt}
+                  className="h-full w-full object-cover"
+                />
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+              </div>
+            </div>
+          ))}
+          {current && (
+            <div className="absolute bottom-4 left-4 z-10 flex max-w-[calc(100%-60px)] flex-wrap items-baseline gap-3 lg:bottom-5 lg:left-5">
+              <span className="text-[19px] font-black leading-tight">{current.title}</span>
+            </div>
+          )}
+          {slides.length > 1 && (
+            <>
+              <div className="absolute right-4 top-4 z-10 hidden gap-0.5 sm:flex lg:right-5 lg:top-5">
+                <button
+                  type="button"
+                  className="h-[38px] w-[38px] border-2 border-brand-yellow bg-black/55 font-mono-ui text-[15px] text-brand-yellow hover:bg-brand-yellow hover:text-ink"
+                  onClick={() => setIndex((i) => (i - 1 + total) % total)}
+                  aria-label="上一張"
+                >
+                  ‹
+                </button>
+                <button
+                  type="button"
+                  className="h-[38px] w-[38px] border-2 border-brand-yellow bg-black/55 font-mono-ui text-[15px] text-brand-yellow hover:bg-brand-yellow hover:text-ink"
+                  onClick={() => setIndex((i) => (i + 1) % total)}
+                  aria-label="下一張"
+                >
+                  ›
+                </button>
+              </div>
+              <div className="absolute right-4 bottom-4 z-10 flex gap-1.5 lg:right-5 lg:bottom-5">
+                {slides.map((_, i) => (
+                  <button
+                    key={i}
+                    type="button"
+                    aria-label={`第 ${i + 1} 張`}
+                    aria-selected={i === index}
+                    className={`h-1 w-[30px] border-0 p-0 ${
+                      i === index ? "bg-brand-yellow" : "bg-chalk/40"
+                    }`}
+                    onClick={() => setIndex(i)}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
       </div>
-      <HazardBar />
     </section>
   );
 }

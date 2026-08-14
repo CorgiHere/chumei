@@ -3,6 +3,7 @@ import { cn } from "@/lib/utils";
 type PageIntroProps = {
   eyebrow?: string;
   title: string;
+  highlight?: string;
   subtitle?: string;
   dark?: boolean;
   className?: string;
@@ -11,37 +12,26 @@ type PageIntroProps = {
 export function PageIntro({
   eyebrow,
   title,
+  highlight,
   subtitle,
   dark = false,
   className,
 }: PageIntroProps) {
   return (
     <header className={cn("mb-8", className)}>
-      {eyebrow && (
-        <p
-          className={cn(
-            "mb-2 text-sm font-bold",
-            dark ? "text-brand-yellow" : "text-brand-blue",
-          )}
-        >
-          {eyebrow}
-        </p>
-      )}
-      <h1
-        className={cn(
-          "display-title text-h1 font-black",
-          dark && "text-white",
+      {eyebrow && <p className="eyebrow">{eyebrow}</p>}
+      <h1 className={cn("display-title text-h1 font-black", dark ? "text-chalk" : "text-ink")}>
+        {highlight ? (
+          <>
+            {title.replace(highlight, "")}
+            <span className="mark">{highlight}</span>
+          </>
+        ) : (
+          title
         )}
-      >
-        {title}
       </h1>
       {subtitle && (
-        <p
-          className={cn(
-            "mt-3 max-w-2xl text-base md:text-lg",
-            dark ? "text-white/70" : "text-muted",
-          )}
-        >
+        <p className={cn("mt-3 max-w-2xl text-[15px]", dark ? "text-[#afaca4]" : "text-muted")}>
           {subtitle}
         </p>
       )}
