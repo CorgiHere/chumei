@@ -11,12 +11,11 @@ import { cn, withBasePath, appPath } from "@/lib/utils";
 const navItems = [
   { href: appPath("/"), label: "首頁", n: "01" },
   { href: appPath("/activities"), label: "活動總覽", n: "02" },
-  { href: appPath("/schedule"), label: "賽程", n: "03" },
-  { href: appPath("/scoreboard"), label: "總錦標", n: "04" },
-  { href: appPath("/news"), label: "最新消息", n: "05" },
-  { href: appPath("/gallery"), label: "現場", n: "06" },
+  { href: appPath("/scoreboard"), label: "總錦標", n: "03" },
+  { href: appPath("/news"), label: "最新消息", n: "04" },
+  { href: appPath("/gallery"), label: "現場", n: "05" },
+  { href: appPath("/history"), label: "歷屆", n: "06" },
   { href: appPath("/about"), label: "關於", n: "07" },
-  { href: appPath("/join"), label: "加入我們", n: "08" },
 ];
 
 export function Header() {

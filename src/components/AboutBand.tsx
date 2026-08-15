@@ -5,9 +5,6 @@ export function AboutBand() {
   return (
     <section className="section-space bg-charcoal" id="about-band">
       <div className="container-main">
-        <p className="mb-2.5 font-mono-ui text-xs tracking-[0.2em] text-brand-yellow">
-          05 ／ 關於
-        </p>
         <h2 className="section-title mb-9">
           我們是<span className="mark">誰</span>
         </h2>
@@ -46,9 +43,15 @@ export function AboutBand() {
           <br />
           <span className="mark">沒有共識</span>
         </p>
-        <p className="mt-8">
+        <p className="mt-8 flex flex-wrap gap-x-6 gap-y-2">
           <Link href={appPath("/about")} className="text-link">
             關於竹梅 →
+          </Link>
+          <Link href={appPath("/history")} className="text-link">
+            歷屆紀錄 →
+          </Link>
+          <Link href={appPath("/join")} className="text-link">
+            加入籌備 →
           </Link>
         </p>
       </div>

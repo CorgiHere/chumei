@@ -40,7 +40,7 @@ export function JoinBand({ headingLevel = "h2" }: JoinBandProps) {
     <section className="section-space bg-brand-yellow text-ink" id="join">
       <div className="container-main">
         <p className="mb-2.5 font-mono-ui text-xs tracking-[0.2em] text-ink/55">
-          06 ／ 招募
+          招募
         </p>
         <Heading className="section-title mb-3 text-ink">
           加入<span className="bg-ink px-[0.08em] text-brand-yellow">我們</span>

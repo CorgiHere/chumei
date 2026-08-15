@@ -3,19 +3,17 @@ import Link from "next/link";
 import { Hero } from "@/components/Hero";
 import { LiveStatusStrip } from "@/components/LiveStatusStrip";
 import { KeepPlaying } from "@/components/KeepPlaying";
-import { SideExtras } from "@/components/SideExtras";
 import { AboutBand } from "@/components/AboutBand";
-import { JoinBand } from "@/components/JoinBand";
 import { Scoreboard } from "@/components/Scoreboard";
 import { ActivityCard } from "@/components/ActivityCard";
 import { SectionHeader } from "@/components/SectionHeader";
 import { HazardBar } from "@/components/HazardBar";
 import { JsonLd } from "@/components/JsonLd";
-import { activities, getRecentResults } from "@/data/activities";
+import { activities } from "@/data/activities";
 import { newsPosts } from "@/data/news";
 import { galleryItems } from "@/data/history";
 import { siteConfig } from "@/data/site";
-import { formatDateOnly, getNewsCategoryLabel, withBasePath, appPath, cn } from "@/lib/utils";
+import { formatDateOnly, getNewsCategoryLabel, withBasePath, appPath } from "@/lib/utils";
 import { buildPageMetadata, gamesEventJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
@@ -25,8 +23,12 @@ export const metadata: Metadata = buildPageMetadata({
   absoluteTitle: true,
 });
 
+const FEATURED_SLUGS = ["dinosaur-race", "alcohol-calculus", "two-school-rps"];
+
 export default function HomePage() {
-  const recentResults = getRecentResults().slice(0, 3);
+  const featuredActivities = FEATURED_SLUGS.map((slug) =>
+    activities.find((a) => a.slug === slug),
+  ).filter((a): a is NonNullable<typeof a> => Boolean(a));
   const sortedNews = [...newsPosts].sort(
     (a, b) =>
       new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
@@ -43,12 +45,10 @@ export default function HomePage() {
       <JsonLd data={gamesEventJsonLd()} />
       <Hero />
       <LiveStatusStrip />
-      <KeepPlaying />
 
       <section className="section-space bg-charcoal">
         <div className="container-main">
           <SectionHeader
-            index="02"
             title="總錦標"
             highlight="錦標"
             subtitle="七場計分項目，交大以一分之差拿下。"
@@ -60,35 +60,28 @@ export default function HomePage() {
         </div>
       </section>
 
-      <SideExtras />
+      <KeepPlaying />
 
       <section className="section-space bg-ink">
         <div className="container-main">
           <SectionHeader
-            index="04"
-            title="七場對抗"
-            highlight="對抗"
-            subtitle="每一場的規則、獎品、當天發生了什麼，以及照片。對象皆為兩校全體教職員生。"
+            title="三場代表"
+            highlight="代表"
+            subtitle="開季恐龍、酒精微積分、收官兩校憑拳。其餘場次與非計分項目見活動總覽。"
             href="/activities"
             actionLabel={`全部 ${activities.length} 項`}
             dark
           />
 
           <div className="flex flex-col gap-0.5">
-            {activities
-              .filter((a) => a.isScored)
-              .sort(
-                (a, b) =>
-                  new Date(a.startAt).getTime() - new Date(b.startAt).getTime(),
-              )
-              .map((activity, i) => (
-                <ActivityCard
-                  key={activity.id}
-                  activity={activity}
-                  reverse={i % 2 === 1}
-                  indexOverride={i + 1}
-                />
-              ))}
+            {featuredActivities.map((activity, i) => (
+              <ActivityCard
+                key={activity.id}
+                activity={activity}
+                reverse={i % 2 === 1}
+                indexOverride={i + 1}
+              />
+            ))}
           </div>
         </div>
       </section>
@@ -96,7 +89,6 @@ export default function HomePage() {
       <section className="section-space bg-ink">
         <div className="container-main">
           <SectionHeader
-            index="05"
             title="最新公告"
             highlight="公告"
             href="/news"
@@ -143,71 +135,21 @@ export default function HomePage() {
         </div>
       </section>
 
-      {recentResults.length > 0 && (
-        <section className="section-space grid-bg">
-          <div className="container-main">
-            <SectionHeader
-              index="06"
-              title="最近結果"
-              highlight="結果"
-              href="/scoreboard"
-              actionLabel="完整比分"
-            />
-            <div className="grid gap-4 md:grid-cols-3">
-              {recentResults.map((activity) => {
-                const winner = activity.result?.winner;
-                const badge =
-                  winner === "NTHU" ? "清大勝" : winner === "NYCU" ? "交大勝" : "結果";
-                return (
-                  <article key={activity.id} className="border-2 border-ink bg-white p-5">
-                    <span
-                      className={cn(
-                        "px-2 py-0.5 font-mono-ui text-[11px] tracking-widest text-white",
-                        winner === "NTHU"
-                          ? "bg-nthu"
-                          : winner === "NYCU"
-                            ? "bg-nycu"
-                            : "bg-ink",
-                      )}
-                    >
-                      {badge}
-                    </span>
-                    <h3 className="mt-3 text-xl font-black text-ink">{activity.title}</h3>
-                    <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-[#3f3d38]">
-                      {activity.result?.summary}
-                    </p>
-                    <Link
-                      href={appPath(`/activities/${activity.slug}#results`)}
-                      className="mt-5 inline-flex font-mono-ui text-[13px] font-semibold tracking-[0.08em] text-ink underline decoration-brand-yellow decoration-2 underline-offset-4 hover:decoration-ink"
-                    >
-                      查看結果 →
-                    </Link>
-                  </article>
-                );
-              })}
-            </div>
-          </div>
-        </section>
-      )}
-
       <section className="section-space bg-ink">
         <div className="container-main">
           <SectionHeader
-            index="07"
             title="精選回顧"
             highlight="回顧"
-            subtitle="活動影像整理中 · 更多花絮見 Instagram"
+            subtitle="站內精選照片。更多花絮見 Instagram。"
             href="/gallery"
             actionLabel="前往圖庫"
             dark
           />
           <div className="grid grid-cols-2 gap-3.5 md:grid-cols-4">
             {galleryItems.slice(0, 10).map((item, i) => (
-              <a
+              <Link
                 key={item.id}
-                href={item.instagramUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+                href={appPath("/gallery")}
                 className={`relative overflow-hidden ${(i === 0 || i === 5) ? "col-span-2 aspect-2/1" : "aspect-square"}`}
               >
                 <div className="photo-frame absolute inset-0">
@@ -217,15 +159,13 @@ export default function HomePage() {
                     className="h-full w-full object-cover"
                   />
                 </div>
-              </a>
+              </Link>
             ))}
           </div>
         </div>
       </section>
 
       <AboutBand />
-
-      <JoinBand />
     </>
   );
 }

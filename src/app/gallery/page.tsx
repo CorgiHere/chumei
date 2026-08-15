@@ -18,7 +18,7 @@ export default function GalleryPage() {
   return (
     <div className="grid-bg py-12">
       <div className="container-main">
-        <SectionHeader title="圖庫" subtitle="活動照片與精彩回顧" />
+        <SectionHeader title="圖庫" subtitle="站內保存的活動照片。更多花絮見 Instagram。" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {galleryItems.map((item) => (
             <figure key={item.id} className="card overflow-hidden">

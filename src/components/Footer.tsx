@@ -41,6 +41,9 @@ export function Footer() {
             <Link href={appPath("/scoreboard")} className="block py-0.5 font-mono-ui text-[13px] text-[#b6b3ab] no-underline hover:text-brand-yellow">
               總錦標
             </Link>
+            <Link href={appPath("/history")} className="block py-0.5 font-mono-ui text-[13px] text-[#b6b3ab] no-underline hover:text-brand-yellow">
+              歷屆
+            </Link>
           </div>
           <div>
             <h5 className="mb-2.5 font-mono-ui text-[11px] font-medium tracking-[0.18em] text-brand-yellow">

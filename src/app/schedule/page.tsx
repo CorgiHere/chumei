@@ -19,7 +19,7 @@ export default function SchedulePage() {
         <PageIntro
           eyebrow={siteConfig.yearName}
           title="賽程"
-          subtitle="依今日、本週、即將到來或時間軸瀏覽活動。可加入行事曆、開啟地圖。"
+          subtitle="正賽已結束。此頁是完整時間軸：日期、校區與地圖。活動規則與賽果請看活動總覽。"
         />
         <ScheduleExplorer activities={activities} />
       </div>

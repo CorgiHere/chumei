@@ -50,70 +50,53 @@ const items = [
 
 export function SideExtras() {
   return (
-    <section className="section-space bg-ink">
-      <div className="container-main">
-        <p className="mb-2.5 font-mono-ui text-xs tracking-[0.2em] text-brand-yellow">
-          03 ／ 周邊與其他
-        </p>
-        <h2 className="section-title mb-3">
-          不算<span className="mark">比賽</span>的部分
-        </h2>
-        <p className="mb-9 max-w-[44em] text-[15px] text-muted">
-          周邊、抽獎，以及一個已經辦到第二屆、但不算在總錦標裡的活動。
-        </p>
-        <div className="grid gap-0.5 sm:grid-cols-2 xl:grid-cols-4">
-          {items.map((item) => {
-            const media = (
-              <div className="photo-frame mb-1 aspect-square">
-                <img
-                  src={withBasePath(item.image)}
-                  alt={item.alt}
-                  className="h-full w-full object-cover"
-                />
-              </div>
-            );
-            const body = (
-              <>
-                {media}
-                <p className="font-mono-ui text-[11px] tracking-widest text-brand-yellow">
-                  {item.tag}
-                </p>
-                <h3 className="m-0 text-xl font-black">{item.title}</h3>
-                <p
-                  className="m-0 text-sm text-muted"
-                  {...(item.keepOrder ? { "data-keep-order": "" } : {})}
-                >
-                  {item.body}
-                </p>
-                <p
-                  className={`m-0 font-mono-ui text-[11px] tracking-[0.08em] ${
-                    item.pending ? "text-brand-yellow" : "text-brand-yellow"
-                  }`}
-                >
-                  {item.meta}
-                </p>
-              </>
-            );
-            const className =
-              "flex flex-col gap-2.5 bg-dark-gray p-6 text-chalk no-underline transition hover:bg-[#242424]";
-            return item.internal ? (
-              <Link key={item.title} href={appPath(item.href)} className={className}>
-                {body}
-              </Link>
-            ) : (
-              <a
-                key={item.title}
-                href={item.href}
-                target="_blank"
-                rel="noopener noreferrer"
-                className={className}
-              >
-                {body}
-              </a>
-            );
-          })}
-        </div>
-      </div>
-    </section>
+    <div className="grid gap-0.5 sm:grid-cols-2 xl:grid-cols-4">
+      {items.map((item) => {
+        const media = (
+          <div className="photo-frame mb-1 aspect-square">
+            <img
+              src={withBasePath(item.image)}
+              alt={item.alt}
+              className="h-full w-full object-cover"
+            />
+          </div>
+        );
+        const body = (
+          <>
+            {media}
+            <p className="font-mono-ui text-[11px] tracking-widest text-brand-yellow">
+              {item.tag}
+            </p>
+            <h3 className="m-0 text-xl font-black">{item.title}</h3>
+            <p
+              className="m-0 text-sm text-muted"
+              {...(item.keepOrder ? { "data-keep-order": "" } : {})}
+            >
+              {item.body}
+            </p>
+            <p className="m-0 font-mono-ui text-[11px] tracking-[0.08em] text-brand-yellow">
+              {item.meta}
+            </p>
+          </>
+        );
+        const className =
+          "flex flex-col gap-2.5 bg-dark-gray p-6 text-chalk no-underline transition hover:bg-[#242424]";
+        return item.internal ? (
+          <Link key={item.title} href={appPath(item.href)} className={className}>
+            {body}
+          </Link>
+        ) : (
+          <a
+            key={item.title}
+            href={item.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className={className}
+          >
+            {body}
+          </a>
+        );
+      })}
+    </div>
   );
 }
