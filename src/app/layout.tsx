@@ -33,7 +33,7 @@ const oswald = Oswald({
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
   title: {
-    default: `${siteConfig.yearName}｜清大交大清交荒謬校際競技官方網站`,
+    default: "竹梅賽｜2026 清大 × 交大",
     template: `%s｜${siteConfig.yearName}`,
   },
   description: siteConfig.description,
@@ -46,7 +46,7 @@ export const metadata: Metadata = {
     canonical: absoluteUrl("/"),
   },
   openGraph: {
-    title: `${siteConfig.yearName}｜清大 NTHU × 交大 NYCU／NCTU 竹梅賽`,
+    title: "竹梅賽｜2026 清大 NTHU × 交大 NYCU",
     description: siteConfig.description,
     url: absoluteUrl("/"),
     siteName: SITE_BRAND_NAME,
@@ -57,13 +57,13 @@ export const metadata: Metadata = {
         url: absoluteAssetUrl(siteConfig.logoUrl),
         width: 543,
         height: 543,
-        alt: "2026 竹梅賽 Chu Mei｜清大 NTHU × 交大 NYCU／NCTU",
+        alt: "竹梅賽｜清大 × 交大",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: `${siteConfig.yearName}｜清大交大竹梅賽官方網站`,
+    title: "竹梅賽｜2026 清大交大官方網站",
     description: siteConfig.description,
     images: [absoluteAssetUrl(siteConfig.logoUrl)],
   },
@@ -81,8 +81,19 @@ export const metadata: Metadata = {
     google: "AOByrRSfqUZkDoAFPwsS9bJOn1TYCS3dX63AM105jn8",
   },
   icons: {
-    icon: [{ url: "/icon.png", type: "image/png" }],
-    apple: [{ url: "/apple-icon.png", type: "image/png" }],
+    icon: [
+      {
+        url: absoluteAssetUrl("/favicon.png"),
+        type: "image/png",
+        sizes: "32x32",
+      },
+      {
+        url: absoluteAssetUrl("/images/brand/chumei-logo.png"),
+        type: "image/png",
+      },
+    ],
+    shortcut: absoluteAssetUrl("/favicon.png"),
+    apple: [{ url: absoluteAssetUrl("/apple-icon.png"), type: "image/png" }],
   },
   category: "sports",
 };
@@ -94,7 +105,7 @@ export default function RootLayout({
 }>) {
   return (
     <html
-      lang="zh-Hant"
+      lang="zh-TW"
       className={`${notoSansTC.variable} ${ibmPlexMono.variable} ${oswald.variable}`}
     >
       <body className="flex min-h-screen flex-col">

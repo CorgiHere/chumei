@@ -20,10 +20,11 @@ import {
   buildPageMetadata,
   organizationJsonLd,
   websiteJsonLd,
+  gamesEventJsonLd,
 } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: `${siteConfig.yearName}｜清大 NTHU × 交大 NYCU／NCTU 竹梅賽官方網站`,
+  title: "竹梅賽｜2026 清大 × 交大官方網站",
   description: siteConfig.description,
   path: "/",
   absoluteTitle: true,
@@ -44,7 +45,7 @@ export default function HomePage() {
 
   return (
     <>
-      <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
+      <JsonLd data={[organizationJsonLd(), websiteJsonLd(), gamesEventJsonLd()]} />
       <Hero />
       <LiveStatusStrip />
       <KeepPlaying />

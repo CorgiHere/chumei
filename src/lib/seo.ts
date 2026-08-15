@@ -13,6 +13,9 @@ export const SEO_KEYWORDS = [
   "Chu Mei",
   "Chumei",
   "chu mei",
+  "竹梅精神",
+  "友誼賽",
+  "竹梅賽籌備委員會",
   "清大",
   "清華",
   "清華大學",
@@ -186,6 +189,7 @@ export function organizationJsonLd() {
       "Chu Mei",
       "Chumei",
       siteConfig.yearName,
+      "竹梅賽籌備委員會",
       "清交竹梅籌備委員會",
       "清大交大竹梅賽",
     ],
@@ -198,6 +202,7 @@ export function organizationJsonLd() {
     },
     email: siteConfig.contactEmail,
     sameAs: [
+      "https://www.holychumei.org/",
       siteConfig.instagramUrl,
       siteConfig.facebookUrl,
       siteConfig.threadsUrl,
@@ -231,8 +236,35 @@ export function websiteJsonLd() {
       { "@type": "Thing", name: "國立陽明交通大學" },
       { "@type": "Thing", name: "清交校際活動" },
     ],
-    inLanguage: "zh-Hant",
+    inLanguage: "zh-TW",
     publisher: { "@id": `${home}#organization` },
+  };
+}
+
+export function gamesEventJsonLd() {
+  const home = absoluteUrl("/");
+  return {
+    "@context": "https://schema.org",
+    "@type": "SportsEvent",
+    name: "2026 竹梅賽",
+    alternateName: ["Chu Mei 2026", "清交竹梅賽"],
+    description: siteConfig.description,
+    startDate: "2026-03-22",
+    endDate: "2026-06-01",
+    eventStatus: "https://schema.org/EventCompleted",
+    eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+    image: [absoluteAssetUrl(siteConfig.logoUrl)],
+    url: home,
+    organizer: { "@id": `${home}#organization` },
+    location: {
+      "@type": "Place",
+      name: "新竹：國立清華大學、國立交通大學／國立陽明交通大學",
+      address: {
+        "@type": "PostalAddress",
+        addressLocality: "新竹",
+        addressCountry: "TW",
+      },
+    },
   };
 }
 

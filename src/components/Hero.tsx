@@ -33,7 +33,7 @@ export function Hero() {
       <div className="container-main grid items-center gap-8 py-12 lg:grid-cols-2 lg:items-stretch lg:gap-12 lg:py-14">
         <div className="flex flex-col justify-center">
           <p className="eyebrow">
-            清華大學 × 交通大學　／　{siteConfig.yearName}
+            國立清華大學 × 國立交通大學　／　{siteConfig.yearName}
           </p>
           <h1 className="display-title mb-5 text-[clamp(30px,4.5vw,66px)]">
             只要是清交人
@@ -43,7 +43,7 @@ export function Hero() {
             錯過的<span className="mark">竹梅</span>
           </h1>
           <p className="mb-8 max-w-[32em] text-[15px] text-[#afaca4]">
-            七場對抗，從恐龍賽跑到猜拳送機票。企劃、經費、獎品都是自己來。看起來像正式大型錦標賽，但比賽項目完全不正常——跟梅竹賽無關。
+            竹梅賽致力於振興竹梅精神，深化清大與交大兩校友誼。從恐龍賽跑開始，七場對抗到猜拳送機票；企劃、經費、獎品都是自己來。
           </p>
           <div className="mb-8 flex flex-wrap gap-3">
             <Link href={appPath("/scoreboard")} className="btn-primary">

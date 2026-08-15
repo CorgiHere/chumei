@@ -5,9 +5,9 @@ import { siteConfig } from "@/data/site";
 import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "關於竹梅賽｜梅竹賽的差異",
+  title: "關於竹梅賽",
   description:
-    "竹梅賽是什麼？國立清華大學（清大／NTHU）與國立交通大學、陽明交通大學（交大／NYCU／NCTU）學生自辦的清交荒謬校際競技。說明竹梅賽與梅竹賽（Meichu）的差異、活動理念與竹梅精神——跟梅竹賽沒有任何關係。",
+    "竹梅賽是什麼？振興竹梅精神，深化國立清華大學與國立陽明交通大學／交通大學兩校友誼。學生自辦趣味盛事：恐龍賽跑、辦公椅、兩校憑拳。",
   path: "/about",
 });
 
@@ -34,7 +34,7 @@ export default function AboutPage() {
           <section>
             <h2 className="text-xl font-black">竹梅賽是什麼？</h2>
             <p className="mt-3">
-              竹梅賽是學生自行發起的校際競賽，舉辦荒謬、創意且高度參與式校園活動的學生文化平台。由國立清華大學（清大／NTHU）與國立交通大學、國立陽明交通大學（交大／NYCU，亦常寫作 NCTU）學生自主籌辦——清交人一本正經地胡鬧，看起來像正式大型錦標賽，但比賽項目完全不正常。
+              竹梅賽是學生自行發起的校際趣味盛事，致力於振興竹梅精神、深化國立清華大學與國立交通大學、國立陽明交通大學兩校友誼。由清交學生自主籌辦，從恐龍賽跑開始，透過周邊賽事建立專屬於新竹的校園文化。
             </p>
             <p className="mt-3 text-muted">
               官網負責報名、規則、賽程與結果；Instagram @chumei2026
@@ -93,7 +93,7 @@ export default function AboutPage() {
               ))}
             </div>
             <p className="mt-4">
-              最重要的品牌反差是：看起來像正式大型錦標賽，但比賽項目完全不正常。
+              從恐龍賽跑開始，透過有趣的周邊賽事建立專屬於新竹的活潑文化。
             </p>
           </section>
 

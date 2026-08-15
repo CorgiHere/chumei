@@ -14,7 +14,7 @@ export function Footer() {
             <div className="mb-3 flex items-center gap-3">
               <Image
                 src={withBasePath(siteConfig.logoUrl)}
-                alt="竹梅賽 Chu Mei 清大交大"
+                alt="竹梅賽"
                 width={42}
                 height={42}
                 className="h-[42px] w-[42px] rounded-[9px]"
@@ -22,7 +22,7 @@ export function Footer() {
               <p className="text-lg font-black">{siteConfig.yearName}</p>
             </div>
             <p className="text-[13px] leading-relaxed text-muted">
-              清華大學與交通大學學生自主籌辦的荒謬校際競技。看起來像正式大型錦標賽，但比賽項目完全不正常——跟梅竹賽無關。
+              竹梅賽致力於振興竹梅精神，深化國立清華大學與國立交通大學兩校友誼。學生自辦，從恐龍賽跑到兩校憑拳。
             </p>
           </div>
           <div>
