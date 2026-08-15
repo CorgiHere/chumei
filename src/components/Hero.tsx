@@ -65,7 +65,7 @@ export function Hero() {
                 {siteConfig.nthuScore}：{siteConfig.nycuScore}
               </b>
               <span className="font-mono-ui text-[11px] tracking-[0.12em] text-muted">
-                清華／交大
+                清大／交大
               </span>
             </div>
             <div className="pt-3.5">

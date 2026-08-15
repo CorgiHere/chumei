@@ -105,13 +105,13 @@ function ScheduleItem({ activity }: { activity: Activity }) {
   const campus = activity.venue.campus;
   const rail =
     campus === "NTHU"
-      ? "bg-brand-orange"
+      ? "bg-nthu"
       : campus === "NYCU"
         ? "bg-nycu"
         : "bg-brand-yellow";
   const campusTone =
     campus === "NTHU"
-      ? "text-brand-orange"
+      ? "text-nthu"
       : campus === "NYCU"
         ? "text-nycu"
         : "text-muted";

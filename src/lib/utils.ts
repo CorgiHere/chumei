@@ -66,7 +66,7 @@ export function formatDateOnly(iso: string): string {
 export function getCampusLabel(campus: "NTHU" | "NYCU" | "OTHER"): string {
   switch (campus) {
     case "NTHU":
-      return "清華";
+      return "清大";
     case "NYCU":
       return "交大";
     default:

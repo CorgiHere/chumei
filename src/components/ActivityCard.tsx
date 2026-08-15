@@ -32,8 +32,8 @@ function feeLabel(activity: Activity) {
 }
 
 function winnerLabel(activity: Activity) {
-  if (activity.result?.winner === "NTHU") return "清華 勝";
-  if (activity.result?.winner === "NYCU") return "交通 勝";
+  if (activity.result?.winner === "NTHU") return "清大 勝";
+  if (activity.result?.winner === "NYCU") return "交大 勝";
   return null;
 }
 
@@ -110,7 +110,12 @@ export function ActivityCard({
             </span>
           )}
           {winner && (
-            <span className="bg-brand-yellow px-2.5 py-0.5 font-mono-ui text-[11px] font-semibold tracking-[0.1em] text-ink">
+            <span
+              className={cn(
+                "px-2.5 py-0.5 font-mono-ui text-[11px] font-semibold tracking-[0.1em] text-white",
+                activity.result?.winner === "NTHU" ? "bg-nthu" : "bg-nycu",
+              )}
+            >
               {winner}
             </span>
           )}

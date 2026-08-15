@@ -3,6 +3,14 @@ import Link from "next/link";
 import { PageIntro } from "@/components/PageIntro";
 import { siteConfig } from "@/data/site";
 import { buildPageMetadata } from "@/lib/seo";
+import { appPath } from "@/lib/utils";
+import {
+  FacebookIcon,
+  InstagramIcon,
+  JoinIcon,
+  LinktreeIcon,
+  MailIcon,
+} from "@/components/BrandIcons";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "關於竹梅賽",
@@ -133,34 +141,47 @@ export default function AboutPage() {
                 href={siteConfig.instagramUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-primary text-sm"
+                className="btn-primary h-12 w-12 p-0"
+                aria-label="Instagram"
+                title="Instagram"
               >
-                Instagram
+                <InstagramIcon className="h-5 w-5" />
               </a>
               <a
                 href={siteConfig.facebookUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-outline text-sm"
+                className="btn-outline h-12 w-12 p-0"
+                aria-label="Facebook"
+                title="Facebook"
               >
-                Facebook
+                <FacebookIcon className="h-5 w-5" />
               </a>
               <a
                 href={siteConfig.linktreeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-outline text-sm"
+                className="btn-outline h-12 w-12 p-0"
+                aria-label="Linktree"
+                title="Linktree"
               >
-                Linktree
+                <LinktreeIcon className="h-5 w-5" />
               </a>
               <Link
-                href="/contact"
-                className="btn-outline text-sm"
+                href={appPath("/contact")}
+                className="btn-outline h-12 w-12 p-0"
+                aria-label="聯絡我們"
+                title="聯絡我們"
               >
-                聯絡我們
+                <MailIcon className="h-5 w-5" />
               </Link>
-              <Link href="/join" className="btn-outline text-sm">
-                加入竹梅
+              <Link
+                href={appPath("/join")}
+                className="btn-outline h-12 w-12 p-0"
+                aria-label="加入竹梅"
+                title="加入竹梅"
+              >
+                <JoinIcon className="h-5 w-5" />
               </Link>
             </div>
           </section>

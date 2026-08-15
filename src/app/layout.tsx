@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import { IBM_Plex_Mono, Noto_Sans_TC, Oswald } from "next/font/google";
-import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
+import { SiteChrome } from "@/components/SiteChrome";
+import { JsonLd } from "@/components/JsonLd";
 import { siteConfig } from "@/data/site";
 import {
   absoluteAssetUrl,
   absoluteUrl,
   getSiteUrl,
+  organizationJsonLd,
   SEO_KEYWORDS,
   SITE_BRAND_NAME,
+  websiteJsonLd,
 } from "@/lib/seo";
 import "./globals.css";
 
@@ -38,6 +40,9 @@ export const metadata: Metadata = {
   },
   description: siteConfig.description,
   applicationName: SITE_BRAND_NAME,
+  appleWebApp: {
+    title: SITE_BRAND_NAME,
+  },
   authors: [{ name: "竹梅籌備委員會" }],
   creator: "竹梅籌備委員會",
   publisher: "竹梅籌備委員會",
@@ -109,9 +114,8 @@ export default function RootLayout({
       className={`${notoSansTC.variable} ${ibmPlexMono.variable} ${oswald.variable}`}
     >
       <body className="flex min-h-screen flex-col">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />
+        <SiteChrome>{children}</SiteChrome>
       </body>
     </html>
   );

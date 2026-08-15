@@ -25,8 +25,8 @@ export function Scoreboard({
       <div className={cn("border-2 border-brand-yellow bg-charcoal", className)}>
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3.5 bg-brand-yellow px-4 py-6 text-ink md:px-5">
           <div className="flex min-w-0 flex-col gap-0.5">
-            <p className="display-title text-[clamp(19px,3.2vw,32px)] leading-tight">
-              清華大學
+            <p className="display-title text-[clamp(19px,3.2vw,32px)] leading-tight text-nthu">
+              清大
             </p>
             <p className="font-num text-[clamp(38px,7vw,68px)] leading-none font-bold">
               {siteConfig.nthuScore}
@@ -34,8 +34,8 @@ export function Scoreboard({
           </div>
           <p className="font-num text-[15px] tracking-[0.16em] opacity-65">VS</p>
           <div className="flex min-w-0 flex-col items-end gap-0.5 text-right">
-            <p className="display-title text-[clamp(19px,3.2vw,32px)] leading-tight">
-              交通大學
+            <p className="display-title text-[clamp(19px,3.2vw,32px)] leading-tight text-nycu">
+              交大
             </p>
             <p className="font-num text-[clamp(38px,7vw,68px)] leading-none font-bold">
               {siteConfig.nycuScore}
@@ -58,7 +58,7 @@ export function Scoreboard({
                   className={cn(
                     "py-0.5 text-center font-mono-ui text-[11px] tracking-[0.1em]",
                     nthuWin
-                      ? "bg-brand-yellow font-semibold text-ink"
+                      ? "bg-nthu font-semibold text-white"
                       : "text-[#4A4842]",
                   )}
                 >
@@ -74,7 +74,7 @@ export function Scoreboard({
                   className={cn(
                     "py-0.5 text-center font-mono-ui text-[11px] tracking-[0.1em]",
                     nycuWin
-                      ? "bg-brand-yellow font-semibold text-ink"
+                      ? "bg-nycu font-semibold text-white"
                       : "text-[#4A4842]",
                   )}
                 >
@@ -103,13 +103,13 @@ export function Scoreboard({
         )}
       >
         <div className="text-center">
-          <p className="mb-1 font-mono-ui text-xs tracking-[0.12em] text-muted">清華</p>
-          <p className="font-num font-bold">{siteConfig.nthuScore}</p>
+          <p className="mb-1 font-mono-ui text-xs tracking-[0.12em] text-nthu">清大</p>
+          <p className="font-num font-bold text-nthu">{siteConfig.nthuScore}</p>
         </div>
         <span className="font-num text-brand-yellow">:</span>
         <div className="text-center">
-          <p className="mb-1 font-mono-ui text-xs tracking-[0.12em] text-muted">交大</p>
-          <p className="font-num font-bold">{siteConfig.nycuScore}</p>
+          <p className="mb-1 font-mono-ui text-xs tracking-[0.12em] text-nycu">交大</p>
+          <p className="font-num font-bold text-nycu">{siteConfig.nycuScore}</p>
         </div>
       </div>
     </div>

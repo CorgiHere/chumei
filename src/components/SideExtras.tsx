@@ -12,6 +12,7 @@ const items = [
     alt: "黑色小徑T正面特寫，黃色警示膠帶框住路牌圖樣",
     href: "/news/merch-tee-pickup",
     internal: true,
+    keepOrder: true,
   },
   {
     tag: "獨立活動・第二屆",
@@ -78,7 +79,12 @@ export function SideExtras() {
                   {item.tag}
                 </p>
                 <h3 className="m-0 text-xl font-black">{item.title}</h3>
-                <p className="m-0 text-sm text-muted">{item.body}</p>
+                <p
+                  className="m-0 text-sm text-muted"
+                  {...(item.keepOrder ? { "data-keep-order": "" } : {})}
+                >
+                  {item.body}
+                </p>
                 <p
                   className={`m-0 font-mono-ui text-[11px] tracking-[0.08em] ${
                     item.pending ? "text-brand-yellow" : "text-brand-yellow"

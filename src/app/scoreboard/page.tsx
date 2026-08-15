@@ -40,7 +40,7 @@ export default function ScoreboardPage() {
           />
           <Scoreboard className="mx-auto max-w-2xl" />
           <p className="mt-6 text-center text-white/70">
-            已完成計分 {finished.length}／{scored.length} 場 · 清華{" "}
+            已完成計分 {finished.length}／{scored.length} 場 · 清大{" "}
             {siteConfig.nthuScore}：{siteConfig.nycuScore} 交大
           </p>
         </div>
@@ -69,8 +69,8 @@ export default function ScoreboardPage() {
                 <thead>
                   <tr className="border-b-2 border-black bg-brand-yellow text-left">
                     <th className="px-4 py-3">活動</th>
-                    <th className="px-4 py-3">清華</th>
-                    <th className="px-4 py-3">交大</th>
+                    <th className="px-4 py-3 text-nthu">清大</th>
+                    <th className="px-4 py-3 text-nycu">交大</th>
                     <th className="px-4 py-3">勝方</th>
                     <th className="px-4 py-3">狀態</th>
                     <th className="px-4 py-3">日期</th>
@@ -126,7 +126,7 @@ export default function ScoreboardPage() {
                   </div>
                   <div className="mt-3 flex gap-4 text-lg font-black">
                     <span className="text-nthu">
-                      清華 {a.result?.nthuScore ?? "—"}
+                      清大 {a.result?.nthuScore ?? "—"}
                     </span>
                     <span className="text-nycu">
                       交大 {a.result?.nycuScore ?? "—"}
@@ -208,7 +208,7 @@ export default function ScoreboardPage() {
                       </span>
                     </p>
                     <p className="mt-2 text-sm text-muted">
-                      清華 · 交大
+                      清大 · 交大
                     </p>
                   </div>
                 ))}
@@ -231,7 +231,7 @@ function winnerLabel(
 ): string {
   switch (winner) {
     case "NTHU":
-      return "清華勝";
+      return "清大勝";
     case "NYCU":
       return "交大勝";
     case "DRAW":

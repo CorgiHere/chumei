@@ -3,7 +3,7 @@ import { siteConfig } from "@/data/site";
 import { appPath } from "@/lib/utils";
 
 const items = [
-  `2026 總錦標 交大 ${siteConfig.nycuScore}：${siteConfig.nthuScore} 清華`,
+  `2026 總錦標 交大 ${siteConfig.nycuScore}：${siteConfig.nthuScore} 清大`,
   "學生自發籌辦 · 非學校組織",
   "旮拉給木持續開放",
   "清大 × 交大 · NTHU × NYCU",

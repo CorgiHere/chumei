@@ -15,13 +15,8 @@ import { activities, getRecentResults } from "@/data/activities";
 import { newsPosts } from "@/data/news";
 import { galleryItems } from "@/data/history";
 import { siteConfig } from "@/data/site";
-import { formatDateOnly, getNewsCategoryLabel, withBasePath, appPath } from "@/lib/utils";
-import {
-  buildPageMetadata,
-  organizationJsonLd,
-  websiteJsonLd,
-  gamesEventJsonLd,
-} from "@/lib/seo";
+import { formatDateOnly, getNewsCategoryLabel, withBasePath, appPath, cn } from "@/lib/utils";
+import { buildPageMetadata, gamesEventJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "竹梅賽｜2026 清大 × 交大官方網站",
@@ -45,7 +40,7 @@ export default function HomePage() {
 
   return (
     <>
-      <JsonLd data={[organizationJsonLd(), websiteJsonLd(), gamesEventJsonLd()]} />
+      <JsonLd data={gamesEventJsonLd()} />
       <Hero />
       <LiveStatusStrip />
       <KeepPlaying />
@@ -158,14 +153,23 @@ export default function HomePage() {
               href="/scoreboard"
               actionLabel="完整比分"
             />
-            <div className="grid gap-0.5 md:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-3">
               {recentResults.map((activity) => {
                 const winner = activity.result?.winner;
                 const badge =
-                  winner === "NTHU" ? "清華勝" : winner === "NYCU" ? "交大勝" : "結果";
+                  winner === "NTHU" ? "清大勝" : winner === "NYCU" ? "交大勝" : "結果";
                 return (
-                  <article key={activity.id} className="bg-white p-5">
-                    <span className="bg-ink px-2 py-0.5 font-mono-ui text-[11px] tracking-[0.1em] text-chalk">
+                  <article key={activity.id} className="border-2 border-ink bg-white p-5">
+                    <span
+                      className={cn(
+                        "px-2 py-0.5 font-mono-ui text-[11px] tracking-[0.1em] text-white",
+                        winner === "NTHU"
+                          ? "bg-nthu"
+                          : winner === "NYCU"
+                            ? "bg-nycu"
+                            : "bg-ink",
+                      )}
+                    >
                       {badge}
                     </span>
                     <h3 className="mt-3 text-xl font-black text-ink">{activity.title}</h3>

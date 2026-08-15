@@ -5,7 +5,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import { siteConfig } from "@/data/site";
-import { getOpenRegistrationActivities } from "@/data/activities";
+import { SchoolOrderToggle } from "@/components/SchoolOrderToggle";
 import { cn, withBasePath, appPath } from "@/lib/utils";
 
 const navItems = [
@@ -21,7 +21,6 @@ const navItems = [
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
-  const hasOpenRegistration = getOpenRegistrationActivities().length > 0;
 
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
@@ -77,12 +76,7 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
-          <Link
-            href={hasOpenRegistration ? appPath("/activities") : appPath("/join")}
-            className="hidden border-2 border-brand-yellow px-3 py-[7px] font-mono-ui text-xs tracking-[0.1em] text-brand-yellow hover:bg-brand-yellow hover:text-ink sm:inline-flex"
-          >
-            {hasOpenRegistration ? "開放報名" : "加入我們"}
-          </Link>
+          <SchoolOrderToggle className="hidden sm:inline-flex" />
 
           <button
             type="button"
@@ -127,6 +121,9 @@ export function Header() {
                 <span className="text-2xl font-black">{item.label}</span>
               </Link>
             ))}
+            <div className="pt-6">
+              <SchoolOrderToggle />
+            </div>
           </div>
         </nav>
       )}

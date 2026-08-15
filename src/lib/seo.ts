@@ -225,7 +225,6 @@ export function websiteJsonLd() {
       "Chumei",
       "清交竹梅賽",
       "清大交大竹梅賽",
-      "corgihere.github.io",
     ],
     url: home,
     description: siteConfig.description,

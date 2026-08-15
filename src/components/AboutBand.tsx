@@ -28,7 +28,7 @@ export function AboutBand() {
             <h4 className="mb-2.5 font-mono-ui text-xs font-medium tracking-[0.14em] text-brand-yellow">
               為什麼有兩個名字
             </h4>
-            <p className="m-0 text-[15px] text-[#b6b3ab]">
+            <p className="m-0 text-[15px] text-[#b6b3ab]" data-keep-order>
               小徑的兩端，清大那頭寫「清交小徑」，交大那頭寫「交清小徑」，各自表述。這個網站也一樣。
             </p>
           </div>
