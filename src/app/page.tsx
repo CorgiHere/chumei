@@ -162,7 +162,7 @@ export default function HomePage() {
                   <article key={activity.id} className="border-2 border-ink bg-white p-5">
                     <span
                       className={cn(
-                        "px-2 py-0.5 font-mono-ui text-[11px] tracking-[0.1em] text-white",
+                        "px-2 py-0.5 font-mono-ui text-[11px] tracking-widest text-white",
                         winner === "NTHU"
                           ? "bg-nthu"
                           : winner === "NYCU"

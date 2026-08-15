@@ -1,6 +1,6 @@
 # 竹梅賽官網 — 開發進度紀錄
 
-> 更新日期：2026-08-06  
+> 更新日期：2026-08-15  
 > 線上網址：https://corgihere.github.io/chumei/  
 > Repo：https://github.com/CorgiHere/chumei  
 > 產品規範：[`AGENT.md`](./AGENT.md)  
@@ -18,8 +18,9 @@
 | 輸出 | Static Export（`output: "export"`） |
 | 部署 | GitHub Actions → GitHub Pages |
 | 內容來源 | `src/data/*` 靜態資料（活動、消息、場地、歷屆、站台） |
+| 內部連結 | `appPath()`（`trailingSlash: true`） |
 | 路徑處理 | Pages 建置（`GITHUB_PAGES=true`）設 `basePath`／`assetPrefix`＝`/chumei`；見下方注意事項 |
-| 字體 | Noto Sans TC（400–900） |
+| 字體 | Noto Sans TC、IBM Plex Mono、Oswald |
 | 規範文件 | `AGENT.md`、`DESIGN_SPEC.md` |
 
 ### GitHub Pages `basePath` 注意事項（重要）
@@ -28,7 +29,7 @@ Pages 站點掛在 `https://…/chumei/`，路徑前綴由 Next 設定處理。*
 
 | 用途 | 做法 | 範例 |
 |------|------|------|
-| 頁面導覽（`Link`／`href`） | 只用 app 路徑；Next 會自動加 `basePath` | `href="/activities"` → 輸出 `/chumei/activities/` |
+| 頁面導覽（`Link`／`href`） | `appPath("/activities")`（結尾 `/`）；Next 再加 `basePath` | `appPath("/activities")` → `/chumei/activities/` |
 | 靜態圖（`Image`／`<img>`） | 用 `withBasePath()`（`src/lib/utils.ts`） | `src={withBasePath("/images/…")}` → `/chumei/images/…` |
 
 錯誤示範：`href={withBasePath("/activities")}` 會變成 `/chumei/chumei/activities/` → **404**。  
@@ -39,13 +40,15 @@ Pages 站點掛在 `https://…/chumei/`，路徑前綴由 Next 設定處理。*
 ```text
 src/
 ├─ app/                 # 路由頁面（靜態產生）
-│  ├─ page.tsx          # 首頁（DESIGN_SPEC Phase 2）
+│  ├─ page.tsx          # 首頁
+│  ├─ not-found.tsx
+│  ├─ icon.png / apple-icon.png
 │  ├─ activities/       # 活動總覽 + [slug]
 │  ├─ schedule/ scoreboard/ news/ history/ about/
 │  └─ gallery/ join/ partners/ contact/
-├─ components/          # UI（Header／Footer／Hero／ActivityCard…）
+├─ components/          # Header（含清交／交清切換）、Hero、ActivityCard、Scoreboard…
 ├─ data/                # activities / news / history / venues / site
-├─ lib/                 # utils、activity-filters
+├─ lib/                 # utils、seo、activity-filters
 └─ types/
 ```
 
@@ -61,16 +64,19 @@ src/
 
 | 模組 | 狀態 | 備註 |
 |------|------|------|
-| 專案骨架＋GitHub Pages | ✅ 完成 | Actions 自動部署；`basePath` 用法見 §1 |
-| Design Tokens／背景間距 | ✅ Phase 1 | 依 `DESIGN_SPEC` 更新 `globals.css` |
-| Header／Footer／Section／Badge／Card | ✅ Phase 1 | 黑底 Header、四欄 Footer、Featured／Grid 卡 |
-| 首頁重構 | ✅ Phase 2 | Hero、狀態條、還能繼續胡鬧、精選 6 卡… |
-| 活動總覽／詳情／賽程／比分／消息 | 🟡 待 Phase 3 | 功能可用，視覺尚未全面套用新版 |
-| 歷屆／關於／圖庫等 | 🟡 待 Phase 4 | |
-| 真實照片／OG／無障礙抽檢 | ❌ Phase 5 | |
-| CMS／後台 | ❌ 未做 | |
+| 專案骨架＋GitHub Pages | ✅ | Actions；`basePath` 見 §1 |
+| 視覺（v7 黑黃＋校色） | ✅ | 圓角 0、清華紫／交通藍、黃輔色 |
+| Header／Footer／卡片／賽程 | ✅ | 導覽含首頁；手機選單 01–08 |
+| 首頁 | ✅ | Hero 雙欄對齊、跑馬燈、七場對抗、精選回顧照片格 |
+| 活動／賽程／比分／消息 | ✅ | 功能＋視覺已套用 |
+| 關於／圖庫／加入 | ✅ | 籌備團隊社群改圖示 |
+| 真實照片 | ✅ | `public/images/activities`、`gallery`、`side` JPEG |
+| Favicon | ✅ | 黃底 Chu Mei PNG；metadata 用絕對路徑（含 `/chumei`） |
+| 清交／交清切換 | ✅ | Header；`localStorage`；說明文案 `data-keep-order` |
+| SEO | ✅ | JSON-LD 全站；sitemap 完整 URL |
+| CMS／自訂網域 | ❌ | 未做 |
 
-**粗估完成度：資訊架構約 90%；DESIGN_SPEC Phase 1–2 約完成；全站視覺改版約 40%。**
+**粗估：資訊架構與全站視覺已可上線。剩餘為 CMS、自訂網域、GSC 收錄。**
 
 ---
 
@@ -79,17 +85,17 @@ src/
 > 已對齊 [@chumei2026](https://www.instagram.com/chumei2026/)，總錦標以 [4/22 公告](https://www.instagram.com/p/DXbxyXpEvby/) 為準。  
 > **正式活動名稱與賽果不得擅自修改。**
 
-### 計分項目（清華 3 ： 4 交大）
+### 計分項目（清大 3 ： 4 交大）
 
 | 活動 | 結果 |
 |------|------|
-| 恐龍賽跑 | 清華 |
+| 恐龍賽跑 | 清大 |
 | 酒精微積分 | 交大 |
-| 辦公椅錦標賽 | 清華 |
+| 辦公椅錦標賽 | 清大 |
 | 日本麻將推廣賽 | 交大 |
 | 四人臺灣麻將 | 交大 |
 | 刷條碼競速賽 | 交大 |
-| 兩校憑拳 | 清華 |
+| 兩校憑拳 | 清大 |
 
 ### 命名原則
 
@@ -128,11 +134,13 @@ src/
 8. **精選回顧**：大＋小媒體格，標「活動影像整理中」
 9. **合作夥伴**：低張力灰階容器
 
-### Phase 3–5 — 待辦
+### Phase 3–5
 
-- Phase 3：Activities／Detail／Schedule／Scoreboard／News 視覺對齊
-- Phase 4：History／About／Gallery／Join／Partners／Contact
-- Phase 5：進一步壓縮／裁切、alt、手機抽檢、無障礙、CWV、OG、404
+視覺已大致套到活動卡、賽程、比分、關於、圖庫。其餘：
+
+- 賽程 ICS 深化、圖庫燈箱、篩選 URL
+- 無障礙與 CWV 抽檢
+- 自訂網域（利於搜尋站名，避免 Google 顯示 GitHub Pages documentation）
 
 ### 活動圖片來源（Instagram）
 
@@ -157,20 +165,23 @@ src/
 ### P0
 
 - [x] IG 對齊賽果與總錦標
-- [x] DESIGN_SPEC Phase 1–2（共用元件＋首頁）
+- [x] DESIGN_SPEC 共用元件＋首頁＋後續頁視覺
 - [x] 替換活動 SVG 為 Instagram／官方遊戲圖
 - [x] 條碼達人改用專屬宣傳影片截圖（DXdvNT9knSJ）
 - [x] 修正 Pages 雙重 `basePath`（導覽 404）與圖片缺前綴
+- [x] Favicon 絕對路徑、sitemap 完整 URL
+- [x] 清交／交清切換、清大／交大校色
 - [ ] 確認 Linktree／旮拉給木／小徑 T 連結
+- [ ] Search Console 改送 `https://corgihere.github.io/chumei/sitemap.xml`
 
 ### P1
 
-- [ ] Phase 3 核心頁視覺
 - [ ] 賽程 ICS、圖庫燈箱、篩選 URL sync
+- [ ] 自訂網域（搜尋站名）
 
 ### P2
 
-- [ ] CMS／Sheet 同步、分年頁、自訂網域
+- [ ] CMS／Sheet 同步、分年頁
 
 ---
 
@@ -193,8 +204,10 @@ Push `main` 後 Actions 自動部署 Pages（workflow 會設 `GITHUB_PAGES=true`
 ### SEO 注意
 
 - 共用 helper：`src/lib/seo.ts`（canonical／OG／Twitter／JSON-LD）
-- 靜態 export 用 `public/robots.txt`、`public/sitemap.xml`（`npm run seo` 產生）
-- 正式網址：`https://corgihere.github.io/chumei/`（`siteConfig.siteUrl`）
+- 靜態 export 用 `public/robots.txt`、`public/sitemap.xml`、`public/sitemap.txt`（`npm run seo`）
+- GSC 必須提交：`https://corgihere.github.io/chumei/sitemap.xml`（根路徑 `/sitemap.xml` 在 github.io 為 404）
+- 全站 WebSite／Organization JSON-LD 在 `layout.tsx`；站名偏好「竹梅賽」
+- `github.io` 子路徑搜尋結果可能仍顯示 GitHub Pages 站名，自訂網域較穩
 
 ---
 
@@ -203,8 +216,6 @@ Push `main` 後 Actions 自動部署 Pages（workflow 會設 `GITHUB_PAGES=true`
 | 日期 | 內容 |
 |------|------|
 | 2026-08-06 | 初版全站＋Pages；IG 賽果對齊；總錦標交大 4：3 |
-| 2026-08-06 | 更新 AGENT／DEVELOPMENT 規範對照 |
-| 2026-08-06 | **DESIGN_SPEC Phase 1–2**：Tokens、共用元件、首頁重構；`npm run build` 通過 |
-| 2026-08-06 | 以 Instagram 貼文圖替換各活動主視覺；圖庫改為實拍照 |
-| 2026-08-06 | **修正 Pages 404**：`Link` 不再包 `withBasePath`；`Image` 改用 `withBasePath` |
-| 2026-08-06 | **全站 SEO**：metadataBase／OG／Twitter／canonical／JSON-LD；`public/sitemap.xml`＋`robots.txt` |
+| 2026-08-06 | DESIGN_SPEC Phase 1–2；IG 主視覺；basePath／SEO |
+| 2026-08-14 | v7 視覺、真實 JPEG、Hero 對齊、跑馬燈文案、Chu Mei favicon |
+| 2026-08-15 | 清華紫／交通藍、清大勝標籤、清交／交清切換、導覽首頁、GSC sitemap 路徑、站名 schema |

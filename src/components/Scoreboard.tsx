@@ -56,7 +56,7 @@ export function Scoreboard({
               >
                 <span
                   className={cn(
-                    "py-0.5 text-center font-mono-ui text-[11px] tracking-[0.1em]",
+                    "py-0.5 text-center font-mono-ui text-[11px] tracking-widest",
                     nthuWin
                       ? "bg-nthu font-semibold text-white"
                       : "text-[#4A4842]",
@@ -72,7 +72,7 @@ export function Scoreboard({
                 </Link>
                 <span
                   className={cn(
-                    "py-0.5 text-center font-mono-ui text-[11px] tracking-[0.1em]",
+                    "py-0.5 text-center font-mono-ui text-[11px] tracking-widest",
                     nycuWin
                       ? "bg-nycu font-semibold text-white"
                       : "text-[#4A4842]",

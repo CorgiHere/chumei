@@ -17,7 +17,7 @@ export function Footer() {
                 alt="竹梅賽"
                 width={42}
                 height={42}
-                className="h-[42px] w-[42px] rounded-[9px]"
+                className="h-10.5 w-10.5 rounded-[9px]"
               />
               <p className="text-lg font-black">{siteConfig.yearName}</p>
             </div>
@@ -29,6 +29,9 @@ export function Footer() {
             <h5 className="mb-2.5 font-mono-ui text-[11px] font-medium tracking-[0.18em] text-brand-yellow">
               賽事
             </h5>
+            <Link href={appPath("/")} className="block py-0.5 font-mono-ui text-[13px] text-[#b6b3ab] no-underline hover:text-brand-yellow">
+              首頁
+            </Link>
             <Link href={appPath("/activities")} className="block py-0.5 font-mono-ui text-[13px] text-[#b6b3ab] no-underline hover:text-brand-yellow">
               活動總覽
             </Link>

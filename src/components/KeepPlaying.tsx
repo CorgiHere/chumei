@@ -15,7 +15,7 @@ export function KeepPlaying() {
         </p>
         <div className="grid gap-0.5 md:grid-cols-2">
           <article className="flex flex-col gap-2.5 bg-dark-gray p-6">
-            <p className="font-mono-ui text-[11px] tracking-[0.1em] text-brand-yellow">線上持續開放</p>
+            <p className="font-mono-ui text-[11px] tracking-widest text-brand-yellow">線上持續開放</p>
             <h3 className="m-0 text-xl font-black">攻略校長旮拉給木</h3>
             <p className="m-0 text-sm text-muted">經典街機魂 × 校園迷因。打開瀏覽器就能挑戰。</p>
             <a
@@ -28,7 +28,7 @@ export function KeepPlaying() {
             </a>
           </article>
           <article className="flex flex-col gap-2.5 bg-dark-gray p-6">
-            <p className="font-mono-ui text-[11px] tracking-[0.1em] text-brand-yellow">物資／表單</p>
+            <p className="font-mono-ui text-[11px] tracking-widest text-brand-yellow">物資／表單</p>
             <h3 className="m-0 text-xl font-black">小徑 T</h3>
             <p className="m-0 text-sm text-muted">領取與預購資訊整理在官方 Linktree。</p>
             <div className="mt-3 flex flex-wrap gap-2">

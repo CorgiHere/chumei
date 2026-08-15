@@ -32,7 +32,7 @@ export function StatusBadge({
   return (
     <span
       className={cn(
-        "inline-flex flex-col items-start border px-2.5 py-0.5 font-mono-ui text-[11px] font-semibold tracking-[0.1em] leading-tight",
+        "inline-flex flex-col items-start border px-2.5 py-0.5 font-mono-ui text-[11px] font-semibold tracking-widest leading-tight",
         colorClass,
         className,
       )}

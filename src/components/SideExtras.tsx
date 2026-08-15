@@ -75,7 +75,7 @@ export function SideExtras() {
             const body = (
               <>
                 {media}
-                <p className="font-mono-ui text-[11px] tracking-[0.1em] text-brand-yellow">
+                <p className="font-mono-ui text-[11px] tracking-widest text-brand-yellow">
                   {item.tag}
                 </p>
                 <h3 className="m-0 text-xl font-black">{item.title}</h3>

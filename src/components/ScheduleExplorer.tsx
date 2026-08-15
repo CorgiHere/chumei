@@ -200,7 +200,7 @@ function ScheduleItem({ activity }: { activity: Activity }) {
               href={activity.venue.mapUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-12 items-center justify-center border-2 border-nycu px-5 font-mono-ui text-sm font-semibold tracking-[0.1em] text-nycu hover:bg-nycu hover:text-white"
+              className="inline-flex min-h-12 items-center justify-center border-2 border-nycu px-5 font-mono-ui text-sm font-semibold tracking-widest text-nycu hover:bg-nycu hover:text-white"
             >
               地圖
             </a>

@@ -10,7 +10,7 @@ export function SchoolOrderToggle({ className }: { className?: string }) {
     <div
       data-keep-order
       className={cn(
-        "inline-flex border-2 border-brand-yellow font-mono-ui text-xs tracking-[0.1em]",
+        "inline-flex border-2 border-brand-yellow font-mono-ui text-xs tracking-widest",
         className,
       )}
       role="group"
@@ -19,7 +19,7 @@ export function SchoolOrderToggle({ className }: { className?: string }) {
       <button
         type="button"
         className={cn(
-          "px-2.5 py-[7px]",
+          "px-2.5 py-1.75",
           order === "qingjiao"
             ? "bg-brand-yellow text-ink"
             : "bg-transparent text-brand-yellow hover:bg-brand-yellow/15",
@@ -32,7 +32,7 @@ export function SchoolOrderToggle({ className }: { className?: string }) {
       <button
         type="button"
         className={cn(
-          "px-2.5 py-[7px]",
+          "px-2.5 py-1.75",
           order === "jiaoqing"
             ? "bg-brand-yellow text-ink"
             : "bg-transparent text-brand-yellow hover:bg-brand-yellow/15",

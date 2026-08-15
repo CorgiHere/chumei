@@ -1307,6 +1307,12 @@ Description:
 - 活動主視覺
 - 官網網址
 
+## 12.4 GitHub Pages 與 Search Console
+
+- Canonical／sitemap 的 loc 必須含 `/chumei/`。
+- Search Console 提交 sitemap 請用完整網址 `https://corgihere.github.io/chumei/sitemap.xml`，不要用網站根目錄的 `/sitemap.xml`。
+- 搜尋結果站名以 WebSite JSON-LD 的 `name`（竹梅賽）為準；`github.io` 子路徑可能仍被 Google 顯示成 GitHub Pages documentation，自訂網域較有效。
+
 ---
 
 # 13. 效能要求
@@ -1599,19 +1605,23 @@ AI Agent 在執行任何網站修改時，必須遵守以下流程：
 
 ---
 
-# 21. 實作現況對照（2026-08-06）
+# 21. 實作現況對照（2026-08-15）
 
-本節描述目前 repo 實作，方便 Agent 對齊，**不取代**上方規範。細節進度見 [`DEVELOPMENT.md`](./DEVELOPMENT.md)。
+本節描述目前 repo 實作，**不取代**上方規範。細節見 [`DEVELOPMENT.md`](./DEVELOPMENT.md)。
 
 | 項目 | 現況 |
 |------|------|
 | 技術棧 | Next.js 16 static export、React 19、Tailwind 4、GitHub Pages |
 | 內容存放 | `src/data/*`（無 CMS） |
-| Pages 路徑 | `basePath`＝`/chumei`；`Link` 勿再包 `withBasePath`；`Image` 須用 `withBasePath`（見 `DEVELOPMENT.md`） |
-| SEO | 每頁 metadata（title／description／canonical／OG／Twitter）；活動／消息含 JSON-LD；`public/sitemap.xml`＋`robots.txt` |
-| 2026 總錦標 | 清華 3 ： 4 交大（交大獲勝） |
+| Pages 路徑 | `basePath`＝`/chumei`；`Link` 用 `appPath()`；圖片用 `withBasePath()` |
+| UI 校名 | 標籤用「清大／交大」；校色清華紫 `#7d2b8e`、交通藍 `#003087` |
+| 清交／交清 | Header 切換，寫入 `localStorage`；對照說明加 `data-keep-order` |
+| 導覽 | 首頁、活動總覽、賽程、總錦標、最新消息、現場、關於、加入我們（手機 01–08） |
+| SEO | 全站 Organization／WebSite JSON-LD；`public/sitemap.xml`＋`sitemap.txt`＋`robots.txt` |
+| Favicon | `public/favicon.png`；metadata 用 `absoluteAssetUrl` |
+| 2026 總錦標 | 清大 3 ： 4 交大（交大獲勝） |
 | 計分七場 | 恐龍、酒精微積分、辦公椅、日麻、台麻、刷條碼、兩校憑拳 |
-| 賽季狀態 | 正賽已結束；旮拉給木仍可玩；首頁 CTA 為賽季結束版 |
-| 歷屆 | 僅收錄有資料的 2026；無虛構屆次、無天干地支命名 |
+| 賽季狀態 | 正賽已結束；旮拉給木仍可玩 |
+| 歷屆 | 僅 2026；無虛構屆次 |
 | 內容核對 | 已對齊 @chumei2026；總錦標圖 https://www.instagram.com/p/DXbxyXpEvby/ |
-| 主要缺口 | ICS／分享、CMS、圖庫深化、Phase 3–5 視覺 |
+| 主要缺口 | ICS／CMS、自訂網域、GSC 正確提交 sitemap 與重新收錄 |

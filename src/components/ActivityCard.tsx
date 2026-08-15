@@ -39,7 +39,7 @@ function winnerLabel(activity: Activity) {
 
 function Photo({ src, alt }: { src: string; alt: string }) {
   return (
-    <div className="absolute inset-4 bg-[#F2F0EA] p-2 md:inset-[26px]">
+    <div className="absolute inset-4 bg-[#F2F0EA] p-2 md:inset-6.5">
       <img
         src={withBasePath(src)}
         alt={alt}
@@ -102,7 +102,7 @@ export function ActivityCard({
       >
         <Photo src={src} alt={`${activity.title}主視覺`} />
       </div>
-      <div className="p-6 md:p-[30px]">
+      <div className="p-6 md:p-7.5">
         <div className="mb-3 flex flex-wrap items-center gap-3">
           {no != null && (
             <span className="font-mono-ui text-xs tracking-[0.14em] text-muted">
@@ -112,7 +112,7 @@ export function ActivityCard({
           {winner && (
             <span
               className={cn(
-                "px-2.5 py-0.5 font-mono-ui text-[11px] font-semibold tracking-[0.1em] text-white",
+                "px-2.5 py-0.5 font-mono-ui text-[11px] font-semibold tracking-widest text-white",
                 activity.result?.winner === "NTHU" ? "bg-nthu" : "bg-nycu",
               )}
             >
@@ -120,7 +120,7 @@ export function ActivityCard({
             </span>
           )}
           {ghost && (
-            <span className="border border-brand-yellow px-2.5 py-0.5 font-mono-ui text-[11px] font-semibold tracking-[0.1em] text-brand-yellow">
+            <span className="border border-brand-yellow px-2.5 py-0.5 font-mono-ui text-[11px] font-semibold tracking-widest text-brand-yellow">
               {ghost}
             </span>
           )}
@@ -129,20 +129,20 @@ export function ActivityCard({
           {activity.title}
         </h3>
         {sub && (
-          <p className="mb-[18px] font-mono-ui text-xs tracking-[0.04em] text-muted">
+          <p className="mb-4.5 font-mono-ui text-xs tracking-[0.04em] text-muted">
             {sub}
           </p>
         )}
         <dl className="mt-0 grid grid-cols-[64px_1fr] gap-x-3.5 gap-y-1.5 border-t border-white/15 pt-4 text-sm">
-          <dt className="pt-0.5 font-mono-ui text-[11px] tracking-[0.1em] text-muted">
+          <dt className="pt-0.5 font-mono-ui text-[11px] tracking-widest text-muted">
             日期
           </dt>
           <dd className="m-0 text-[#cfccc4]">{formatDateOnly(activity.startAt)}</dd>
-          <dt className="pt-0.5 font-mono-ui text-[11px] tracking-[0.1em] text-muted">
+          <dt className="pt-0.5 font-mono-ui text-[11px] tracking-widest text-muted">
             地點
           </dt>
           <dd className="m-0 text-[#cfccc4]">{activity.venue.name}</dd>
-          <dt className="pt-0.5 font-mono-ui text-[11px] tracking-[0.1em] text-muted">
+          <dt className="pt-0.5 font-mono-ui text-[11px] tracking-widest text-muted">
             費用
           </dt>
           <dd className={cn("m-0", feePending ? "font-mono-ui text-xs text-brand-yellow" : "text-[#cfccc4]")}>
@@ -150,7 +150,7 @@ export function ActivityCard({
           </dd>
           {prize && (
             <>
-              <dt className="pt-0.5 font-mono-ui text-[11px] tracking-[0.1em] text-muted">
+              <dt className="pt-0.5 font-mono-ui text-[11px] tracking-widest text-muted">
                 獎品
               </dt>
               <dd className="m-0 text-[#cfccc4]">{prize}</dd>
