@@ -1,4 +1,9 @@
 User-agent: *
 Allow: /
 
+User-agent: Googlebot
+Allow: /
+
+# Search Console must use this full URL (not /sitemap.xml on github.io root)
 Sitemap: https://corgihere.github.io/chumei/sitemap.xml
+Sitemap: https://corgihere.github.io/chumei/sitemap.txt

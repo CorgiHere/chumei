@@ -76,17 +76,36 @@ ${urls
 </urlset>
 `;
 
+const sitemapIndex = `<?xml version="1.0" encoding="UTF-8"?>
+<sitemapindex xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <sitemap>
+    <loc>${siteUrl}/sitemap.xml</loc>
+    <lastmod>${today}</lastmod>
+  </sitemap>
+</sitemapindex>
+`;
+
+const sitemapTxt = `${urls.map((u) => u.loc).join("\n")}\n`;
+
 const robots = `User-agent: *
 Allow: /
 
+User-agent: Googlebot
+Allow: /
+
+# Search Console must use this full URL (not /sitemap.xml on github.io root)
 Sitemap: ${siteUrl}/sitemap.xml
+Sitemap: ${siteUrl}/sitemap.txt
 `;
 
 const publicDir = join(root, "public");
 mkdirSync(publicDir, { recursive: true });
+writeFileSync(join(publicDir, ".nojekyll"), "", "utf8");
 writeFileSync(join(publicDir, "sitemap.xml"), sitemap, "utf8");
+writeFileSync(join(publicDir, "sitemap-index.xml"), sitemapIndex, "utf8");
+writeFileSync(join(publicDir, "sitemap.txt"), sitemapTxt, "utf8");
 writeFileSync(join(publicDir, "robots.txt"), robots, "utf8");
 
 console.log(
-  `SEO files written: ${urls.length} URLs → public/sitemap.xml, public/robots.txt`,
+  `SEO files written: ${urls.length} URLs → public/sitemap.xml, sitemap.txt, sitemap-index.xml, robots.txt`,
 );
