@@ -13,6 +13,7 @@ type FilterChipsProps = {
   onChange: (id: string) => void;
   label?: string;
   className?: string;
+  dark?: boolean;
 };
 
 export function FilterChips({
@@ -21,6 +22,7 @@ export function FilterChips({
   onChange,
   label,
   className,
+  dark = false,
 }: FilterChipsProps) {
   return (
     <div className={cn("space-y-2", className)}>
@@ -41,8 +43,10 @@ export function FilterChips({
               className={cn(
                 "border-2 px-3 py-1.5 font-mono-ui text-xs tracking-[0.08em] font-semibold transition",
                 active
-                  ? "border-ink bg-brand-yellow text-ink"
-                  : "border-ink/20 bg-white hover:border-ink",
+                  ? "border-brand-yellow bg-brand-yellow text-ink"
+                  : dark
+                    ? "border-white/20 bg-transparent text-chalk hover:border-brand-yellow"
+                    : "border-ink/20 bg-white hover:border-ink",
               )}
             >
               {opt.label}

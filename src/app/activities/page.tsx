@@ -16,21 +16,22 @@ export const metadata: Metadata = buildPageMetadata({
 
 export default function ActivitiesPage() {
   return (
-    <div className="grid-bg py-12">
+    <div className="bg-ink py-12 text-chalk">
       <div className="container-main">
         <PageIntro
           eyebrow={`${siteConfig.yearName}`}
           title="活動總覽"
           subtitle="搜尋、篩選全部當屆活動。計分與非計分、線上與實體一次找齊。"
+          dark
         />
         <p className="mb-8 -mt-4 text-sm text-muted">
           要對日期與地圖，請看{" "}
-          <Link href={appPath("/schedule")} className="font-bold text-ink underline decoration-brand-yellow">
+          <Link href={appPath("/schedule")} className="text-link">
             賽程
           </Link>
           。
         </p>
-        <ActivitiesExplorer activities={activities} />
+        <ActivitiesExplorer activities={activities} dark />
       </div>
     </div>
   );
