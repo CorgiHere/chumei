@@ -202,7 +202,7 @@ export function organizationJsonLd() {
     },
     email: siteConfig.contactEmail,
     sameAs: [
-      "https://www.holychumei.org/",
+      "https://chumei.org/",
       siteConfig.instagramUrl,
       siteConfig.facebookUrl,
       siteConfig.threadsUrl,

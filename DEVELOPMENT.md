@@ -16,7 +16,7 @@
 | 語言 | TypeScript |
 | UI | React 19 + Tailwind CSS 4 |
 | 輸出 | Static Export（`output: "export"`） |
-| 部署 | GitHub Pages（`/chumei`）＋ Cloudflare Pages（`www.holychumei.org`） |
+| 部署 | GitHub Pages（`/chumei`）＋ Cloudflare Pages（`chumei.org`） |
 | 內容來源 | `src/data/*` 靜態資料（活動、消息、場地、歷屆、站台） |
 | 內部連結 | `appPath()`（`trailingSlash: true`） |
 | 路徑處理 | Pages 建置（`GITHUB_PAGES=true`）設 `basePath`／`assetPrefix`＝`/chumei`；見下方注意事項 |
@@ -191,7 +191,7 @@ npm install
 npm run dev      # http://localhost:3000（無 basePath）
 npm run seo      # 產生 public/sitemap.xml、robots.txt
 npm run build    # prebuild 會先跑 seo，輸出至 out/
-npm run build:cloudflare   # 正式站建置（根路徑、holychumei.org sitemap）
+npm run build:cloudflare   # 正式站建置（根路徑、chumei.org sitemap）
 npm run deploy:cloudflare  # 本機建置 + wrangler pages deploy（需 wrangler login）
 
 # 模擬 GitHub Pages 建置（驗證 /chumei 前綴）
@@ -207,7 +207,7 @@ Push `main` 後 Actions 會同時部署 GitHub Pages（`deploy.yml`）與 Cloudf
 
 - 共用 helper：`src/lib/seo.ts`（canonical／OG／Twitter／JSON-LD）
 - 靜態 export 用 `public/robots.txt`、`public/sitemap.xml`、`public/sitemap.txt`（`npm run seo`）
-- GSC（Cloudflare）：`https://www.holychumei.org/sitemap.xml`
+- GSC（Cloudflare）：`https://chumei.org/sitemap.xml`
 - GSC（GitHub Pages）：`https://corgihere.github.io/chumei/sitemap.xml`（根路徑 `/sitemap.xml` 在 github.io 為 404）
 - 全站 WebSite／Organization JSON-LD 在 `layout.tsx`；站名偏好「竹梅賽」
 - `github.io` 子路徑搜尋結果可能仍顯示 GitHub Pages 站名，自訂網域較穩

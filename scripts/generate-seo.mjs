@@ -26,7 +26,7 @@ function resolveSiteUrl() {
     return `https://${owner.toLowerCase()}.github.io/${repoName}`;
   }
 
-  return "https://www.holychumei.org";
+  return "https://chumei.org";
 }
 
 // Register ts-node-less loader: parse TS data files with regex (no TS runtime needed)

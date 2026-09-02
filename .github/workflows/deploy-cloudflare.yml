@@ -29,7 +29,7 @@ jobs:
         run: npm run build
         env:
           DEPLOY_TARGET: cloudflare
-          NEXT_PUBLIC_SITE_URL: https://www.holychumei.org
+          NEXT_PUBLIC_SITE_URL: https://chumei.org
 
       - name: Publish to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3

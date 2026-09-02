@@ -14,7 +14,7 @@ const pagesHost = `${owner.toLowerCase()}.github.io`;
 const defaultSiteUrl = isGithubPages
   ? `https://${pagesHost}/${repoName}`
   : isCloudflare
-    ? "https://www.holychumei.org"
+    ? "https://chumei.org"
     : "http://localhost:3000";
 
 const siteUrl = (process.env.NEXT_PUBLIC_SITE_URL ?? defaultSiteUrl).replace(

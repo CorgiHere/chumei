@@ -28,7 +28,7 @@ npm run build  # 靜態輸出到 out/
 
 ### Cloudflare Pages（正式站）
 
-正式網域：`https://www.holychumei.org`（根路徑，無 `/chumei` 前綴）
+正式網域：`https://chumei.org`（根路徑，無 `/chumei` 前綴）
 
 **GitHub Actions（建議）** — push `main` 後自動部署。請在 repo Secrets 設定：
 
@@ -46,7 +46,7 @@ npx wrangler login
 npm run deploy:cloudflare
 ```
 
-Cloudflare 儀表板 → Pages → `chumei` → Custom domains → 綁定 `holychumei.org` / `www.holychumei.org`。
+Cloudflare 儀表板 → Pages → `chumei` → Custom domains → 綁定 `chumei.org`（可選 `www.chumei.org` 轉址到根網域）。
 
 ### GitHub Pages（備用鏡像）
 
@@ -59,7 +59,7 @@ Push `main` 後仍會部署到 `https://corgihere.github.io/chumei/`（workflow�
 
 ### Search Console
 
-- Cloudflare：`https://www.holychumei.org/sitemap.xml`
+- Cloudflare：`https://chumei.org/sitemap.xml`
 - GitHub Pages：`https://corgihere.github.io/chumei/sitemap.xml`（勿送根目錄 `/sitemap.xml`）
 
 ## 技術棧
