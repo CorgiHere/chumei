@@ -1,0 +1,5 @@
+# Cloudflare Pages — Next.js static export (out/)
+# Deploy: npx wrangler pages deploy out --project-name=chumei
+name = "chumei"
+compatibility_date = "2024-09-23"
+pages_build_output_dir = "out"

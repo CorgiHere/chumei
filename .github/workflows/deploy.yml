@@ -30,6 +30,7 @@ jobs:
       - name: Build static site
         run: npm run build
         env:
+          DEPLOY_TARGET: github
           GITHUB_PAGES: "true"
           GITHUB_REPOSITORY: ${{ github.repository }}
 

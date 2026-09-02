@@ -6,6 +6,8 @@
     "dev": "next dev",
     "prebuild": "node scripts/generate-seo.mjs",
     "build": "next build",
+    "build:cloudflare": "node scripts/build-cloudflare.mjs",
+    "deploy:cloudflare": "node scripts/build-cloudflare.mjs && npx wrangler pages deploy out --project-name=chumei",
     "start": "next start",
     "lint": "eslint",
     "seo": "node scripts/generate-seo.mjs"

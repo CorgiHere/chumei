@@ -1,6 +1,6 @@
 /**
- * Writes public/robots.txt and public/sitemap.xml for static export (GitHub Pages).
- * Run before `next build`.
+ * Writes public/robots.txt and public/sitemap.xml for static export.
+ * Run before `next build`. Site origin from NEXT_PUBLIC_SITE_URL or SITE_URL.
  */
 import { writeFileSync, mkdirSync } from "node:fs";
 import { dirname, join } from "node:path";
@@ -10,6 +10,24 @@ import { createRequire } from "node:module";
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const root = join(__dirname, "..");
 const require = createRequire(import.meta.url);
+
+function resolveSiteUrl() {
+  const fromEnv =
+    process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || "";
+  if (fromEnv) return fromEnv.replace(/\/$/, "");
+
+  const deployTarget = process.env.DEPLOY_TARGET ?? "";
+  const isGithubPages =
+    deployTarget === "github" || process.env.GITHUB_PAGES === "true";
+  if (isGithubPages) {
+    const [owner = "CorgiHere", repoName = "chumei"] = (
+      process.env.GITHUB_REPOSITORY ?? "CorgiHere/chumei"
+    ).split("/");
+    return `https://${owner.toLowerCase()}.github.io/${repoName}`;
+  }
+
+  return "https://www.holychumei.org";
+}
 
 // Register ts-node-less loader: parse TS data files with regex (no TS runtime needed)
 function extractSlugs(filePath, key = "slug") {
@@ -22,7 +40,7 @@ function extractSlugs(filePath, key = "slug") {
   return out;
 }
 
-const siteUrl = "https://corgihere.github.io/chumei";
+const siteUrl = resolveSiteUrl();
 
 const staticPaths = [
   "/",
@@ -44,7 +62,12 @@ const newsSlugs = extractSlugs(join(root, "src/data/news.ts"));
 const urls = [
   ...staticPaths.map((path) => ({
     loc: path === "/" ? `${siteUrl}/` : `${siteUrl}${path}`,
-    priority: path === "/" ? "1.0" : path === "/activities/" || path === "/scoreboard/" ? "0.9" : "0.7",
+    priority:
+      path === "/"
+        ? "1.0"
+        : path === "/activities/" || path === "/scoreboard/"
+          ? "0.9"
+          : "0.7",
     changefreq: path === "/news/" || path === "/" ? "weekly" : "monthly",
   })),
   ...activitySlugs.map((slug) => ({
@@ -93,7 +116,6 @@ Allow: /
 User-agent: Googlebot
 Allow: /
 
-# Search Console must use this full URL (not /sitemap.xml on github.io root)
 Sitemap: ${siteUrl}/sitemap.xml
 Sitemap: ${siteUrl}/sitemap.txt
 `;
@@ -107,5 +129,5 @@ writeFileSync(join(publicDir, "sitemap.txt"), sitemapTxt, "utf8");
 writeFileSync(join(publicDir, "robots.txt"), robots, "utf8");
 
 console.log(
-  `SEO files written: ${urls.length} URLs → public/sitemap.xml, sitemap.txt, sitemap-index.xml, robots.txt`,
+  `SEO files written (${siteUrl}): ${urls.length} URLs → public/sitemap.xml, sitemap.txt, sitemap-index.xml, robots.txt`,
 );
