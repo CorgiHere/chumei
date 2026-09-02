@@ -87,14 +87,10 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
+      { url: "/favicon.ico", sizes: "any" },
       { url: "/favicon.png", type: "image/png", sizes: "32x32" },
-      {
-        url: "/images/brand/chumei-logo.png",
-        type: "image/png",
-        sizes: "543x543",
-      },
     ],
-    shortcut: "/favicon.png",
+    shortcut: "/favicon.ico",
     apple: [{ url: "/apple-icon.png", type: "image/png" }],
   },
   category: "sports",
