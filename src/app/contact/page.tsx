@@ -12,9 +12,9 @@ export const metadata: Metadata = buildPageMetadata({
 
 export default function ContactPage() {
   return (
-    <div className="grid-bg py-12">
+    <div className="bg-ink py-12 text-chalk">
       <div className="container-main max-w-xl">
-        <SectionHeader title="聯絡我們" />
+        <SectionHeader title="聯絡我們" dark />
 
         <div className="card space-y-6 p-6">
           <div>
@@ -30,7 +30,7 @@ export default function ContactPage() {
               <dd>
                 <a
                   href={`mailto:${siteConfig.contactEmail}`}
-                  className="text-brand-blue"
+                  className="text-link"
                 >
                   {siteConfig.contactEmail}
                 </a>
@@ -43,7 +43,7 @@ export default function ContactPage() {
                   href={siteConfig.instagramUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-brand-blue"
+                  className="text-link"
                 >
                   @chumei2026
                 </a>
@@ -56,7 +56,7 @@ export default function ContactPage() {
                   href={siteConfig.facebookUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-brand-blue"
+                  className="text-link"
                 >
                   竹梅籌備委員會
                 </a>
@@ -69,7 +69,7 @@ export default function ContactPage() {
                   href={siteConfig.threadsUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-brand-blue"
+                  className="text-link"
                 >
                   @chumei2026
                 </a>
@@ -82,7 +82,7 @@ export default function ContactPage() {
                   href={siteConfig.linktreeUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="text-brand-blue"
+                  className="text-link"
                 >
                   linktr.ee/chumei2026
                 </a>

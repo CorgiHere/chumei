@@ -19,9 +19,10 @@ const CATEGORIES: { id: "all" | NewsCategory; label: string }[] = [
 
 type NewsExplorerProps = {
   posts: NewsPost[];
+  dark?: boolean;
 };
 
-export function NewsExplorer({ posts }: NewsExplorerProps) {
+export function NewsExplorer({ posts, dark = false }: NewsExplorerProps) {
   const [category, setCategory] = useState<"all" | NewsCategory>("all");
 
   const sorted = useMemo(() => {
@@ -66,6 +67,7 @@ export function NewsExplorer({ posts }: NewsExplorerProps) {
           options={CATEGORIES}
           value={category}
           onChange={(id) => setCategory(id as "all" | NewsCategory)}
+          dark={dark}
         />
       </div>
 
@@ -74,7 +76,13 @@ export function NewsExplorer({ posts }: NewsExplorerProps) {
       </p>
 
       {listPosts.length === 0 ? (
-        <div className="rounded-lg border-2 border-dashed border-muted bg-white p-10 text-center">
+        <div
+          className={
+            dark
+              ? "border-2 border-dashed border-white/20 bg-dark-gray p-10 text-center"
+              : "rounded-lg border-2 border-dashed border-muted bg-white p-10 text-center"
+          }
+        >
           <p className="font-bold">這個分類目前沒有消息。</p>
         </div>
       ) : (

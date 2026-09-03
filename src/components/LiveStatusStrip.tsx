@@ -13,7 +13,7 @@ export function LiveStatusStrip() {
   const loop = [...items, ...items];
   return (
     <section
-      className="overflow-hidden border-b-2 border-ink bg-brand-yellow text-ink"
+      className="overflow-hidden border-b-2 border-white/15 bg-ink text-brand-yellow"
       aria-label="最新狀態"
     >
       <div className="ticker-track">

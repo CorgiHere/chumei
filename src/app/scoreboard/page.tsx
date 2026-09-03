@@ -47,7 +47,7 @@ export default function ScoreboardPage() {
         <div className="hazard-stripe-animated h-2" aria-hidden />
       </section>
 
-      <div className="grid-bg py-12">
+      <div className="bg-ink py-12 text-chalk">
         <div className="container-main space-y-14">
           <section>
             <h2 className="section-title display-title mb-2">計分項目</h2>
@@ -57,7 +57,7 @@ export default function ScoreboardPage() {
                 href="https://www.instagram.com/p/DXbxyXpEvby/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-bold text-brand-blue"
+                className="text-link font-bold"
               >
                 總錦標公告
               </a>
@@ -65,9 +65,9 @@ export default function ScoreboardPage() {
             </p>
 
             <div className="hidden overflow-x-auto md:block">
-              <table className="w-full border-collapse overflow-hidden rounded-lg border-2 border-black bg-white">
+              <table className="w-full border-collapse overflow-hidden border-2 border-white/20 bg-dark-gray">
                 <thead>
-                  <tr className="border-b-2 border-black bg-brand-yellow text-left">
+                  <tr className="border-b-2 border-brand-yellow bg-brand-yellow text-left text-ink">
                     <th className="px-4 py-3">活動</th>
                     <th className="px-4 py-3 text-nthu">清大</th>
                     <th className="px-4 py-3 text-nycu">交大</th>
@@ -81,7 +81,7 @@ export default function ScoreboardPage() {
                   {scored.map((a) => (
                     <tr
                       key={a.id}
-                      className="border-b border-light-gray last:border-0"
+                      className="border-b border-white/15 last:border-0"
                     >
                       <td className="px-4 py-3 font-bold">{a.title}</td>
                       <td className="px-4 py-3 font-black text-nthu">
@@ -106,7 +106,7 @@ export default function ScoreboardPage() {
                               ? `/activities/${a.slug}#results`
                               : `/activities/${a.slug}`
                           }
-                          className="text-sm font-bold text-brand-blue"
+                          className="text-link text-sm font-bold"
                         >
                           {a.result ? "查看結果" : "活動詳情"}
                         </Link>
@@ -137,7 +137,7 @@ export default function ScoreboardPage() {
                   </p>
                   <Link
                     href={`/activities/${a.slug}`}
-                    className="btn-outline mt-3 inline-flex text-sm"
+                    className="btn-dark-outline mt-3 inline-flex text-sm"
                   >
                     查看詳情
                   </Link>
@@ -195,7 +195,7 @@ export default function ScoreboardPage() {
               <div className="grid gap-4 sm:grid-cols-2">
                 {pastYears.map((year) => (
                   <div key={year.year} className="card p-5">
-                    <p className="text-sm font-bold text-brand-blue">
+                    <p className="text-sm font-bold text-brand-yellow">
                       {year.name}
                     </p>
                     <p className="mt-2 text-3xl font-black">
@@ -214,7 +214,7 @@ export default function ScoreboardPage() {
                 ))}
               </div>
               <div className="mt-6 text-center">
-                <Link href="/history" className="btn-outline text-sm">
+                <Link href="/history" className="btn-dark-outline text-sm">
                   查看歷屆竹梅
                 </Link>
               </div>

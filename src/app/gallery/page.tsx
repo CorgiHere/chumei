@@ -16,9 +16,13 @@ export const metadata: Metadata = buildPageMetadata({
 
 export default function GalleryPage() {
   return (
-    <div className="grid-bg py-12">
+    <div className="bg-ink py-12 text-chalk">
       <div className="container-main">
-        <SectionHeader title="圖庫" subtitle="站內保存的活動照片。更多花絮見 Instagram。" />
+        <SectionHeader
+          title="圖庫"
+          subtitle="站內保存的活動照片。更多花絮見 Instagram。"
+          dark
+        />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {galleryItems.map((item) => (
             <figure key={item.id} className="card overflow-hidden">
@@ -47,7 +51,7 @@ export default function GalleryPage() {
           更多照片請追蹤{" "}
           <a
             href={siteConfig.instagramUrl}
-            className="font-bold text-brand-blue"
+            className="text-link font-bold"
             target="_blank"
             rel="noopener noreferrer"
           >

@@ -37,25 +37,25 @@ export function JoinBand({ headingLevel = "h2" }: JoinBandProps) {
   const signup = siteConfig.linktreeUrl;
 
   return (
-    <section className="section-space bg-brand-yellow text-ink" id="join">
+    <section className="section-space bg-ink text-chalk" id="join">
       <div className="container-main">
-        <p className="mb-2.5 font-mono-ui text-xs tracking-[0.2em] text-ink/55">
+        <p className="mb-2.5 font-mono-ui text-xs tracking-[0.2em] text-brand-yellow">
           招募
         </p>
-        <Heading className="section-title mb-3 text-ink">
-          加入<span className="bg-ink px-[0.08em] text-brand-yellow">我們</span>
+        <Heading className="section-title mb-3 text-chalk">
+          加入<span className="mark">我們</span>
         </Heading>
-        <p className="mb-10 max-w-[44em] text-[15px] text-ink/70">
+        <p className="mb-10 max-w-[44em] text-[15px] text-muted">
           下一季已經在想了，缺人。不用有經驗，但要有那種「這個想法很爛，做吧」的判斷力。
         </p>
-        <div className="border-t-2 border-ink">
+        <div className="border-t-2 border-white/20">
           {roles.map((role) => (
             <a
               key={role.n}
               href={signup}
               target="_blank"
               rel="noopener noreferrer"
-              className="grid items-center gap-1.5 border-b-2 border-ink py-5 no-underline hover:bg-ink hover:text-brand-yellow md:grid-cols-[56px_1fr_2.1fr_auto] md:gap-5"
+              className="grid items-center gap-1.5 border-b-2 border-white/20 py-5 no-underline hover:bg-dark-gray hover:text-brand-yellow md:grid-cols-[56px_1fr_2.1fr_auto] md:gap-5"
             >
               <span className="hidden font-mono-ui text-xs tracking-[0.12em] opacity-50 md:block">
                 {role.n}
@@ -73,7 +73,7 @@ export function JoinBand({ headingLevel = "h2" }: JoinBandProps) {
             href={signup}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-secondary"
+            className="btn-primary"
           >
             填報名表
           </a>
@@ -81,7 +81,7 @@ export function JoinBand({ headingLevel = "h2" }: JoinBandProps) {
             href={siteConfig.instagramUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="font-mono-ui text-xs tracking-[0.08em] text-ink/70 no-underline hover:text-ink"
+            className="font-mono-ui text-xs tracking-[0.08em] text-muted no-underline hover:text-brand-yellow"
           >
             或私訊 @chumei2026
           </a>

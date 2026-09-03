@@ -129,17 +129,17 @@ export default async function ActivityDetailPage({ params }: PageProps) {
         </div>
       </section>
 
-      <div className="container-main grid-bg py-12">
+      <div className="container-main bg-ink py-12 text-chalk">
         <div className="grid gap-10 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-10">
             <section>
-              <SectionHeader title="活動介紹" />
+              <SectionHeader title="活動介紹" dark />
               <p className="text-lg">{activity.description}</p>
             </section>
 
             {activityPartners.length > 0 && (
               <section className="card p-6">
-                <SectionHeader title="合作單位" />
+                <SectionHeader title="合作單位" dark />
                 <ul className="space-y-2">
                   {activityPartners.map((p) => (
                     <li key={p.id}>
@@ -155,7 +155,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
 
             {(isRegistrationOpen || activity.registrationEndAt) && (
               <section className="card p-6">
-                <SectionHeader title="報名資訊" />
+                <SectionHeader title="報名資訊" dark />
                 <dl className="grid gap-3 text-sm">
                   <div>
                     <dt className="font-bold">報名狀態</dt>
@@ -200,7 +200,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
             )}
 
             <section>
-              <SectionHeader title="比賽規則" />
+              <SectionHeader title="比賽規則" dark />
               <div className="space-y-4">
                 {activity.rules.map((rule) => (
                   <div key={rule.title} className="card p-5">
@@ -213,7 +213,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
 
             {activity.result?.status === "official" && (
               <section id="results">
-                <SectionHeader title="比賽結果" />
+                <SectionHeader title="比賽結果" dark />
                 <div className="card p-6">
                   {activity.result.summary && (
                     <p className="mb-4">{activity.result.summary}</p>
@@ -223,7 +223,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
                       {activity.result.rankings.map((r) => (
                         <li
                           key={r.rank}
-                          className="flex items-center justify-between border-b border-light-gray py-2"
+                          className="flex items-center justify-between border-b border-white/15 py-2"
                         >
                           <span>
                             第 {r.rank} 名 · {r.teamName}（
@@ -258,7 +258,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
                   href={activity.venue.mapUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-outline mt-4 w-full text-sm"
+                  className="btn-dark-outline mt-4 w-full text-sm"
                 >
                   開啟地圖
                 </a>
@@ -290,7 +290,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
         </div>
 
         <div className="mt-10">
-          <Link href="/activities" className="btn-outline text-sm">
+          <Link href="/activities" className="btn-dark-outline text-sm">
             ← 返回活動總覽
           </Link>
         </div>

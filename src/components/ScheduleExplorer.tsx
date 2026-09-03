@@ -25,9 +25,10 @@ const MODES = [
 
 type ScheduleExplorerProps = {
   activities: Activity[];
+  dark?: boolean;
 };
 
-export function ScheduleExplorer({ activities }: ScheduleExplorerProps) {
+export function ScheduleExplorer({ activities, dark = false }: ScheduleExplorerProps) {
   const [mode, setMode] = useState<ScheduleMode>("all");
 
   const sorted = useMemo(
@@ -66,34 +67,47 @@ export function ScheduleExplorer({ activities }: ScheduleExplorerProps) {
           options={MODES}
           value={mode}
           onChange={(id) => setMode(id as ScheduleMode)}
+          dark={dark}
         />
       </div>
 
       {filtered.length === 0 ? (
-        <div className="border-2 border-dashed border-ink/20 bg-white p-10 text-center">
+        <div
+          className={cn(
+            "border-2 border-dashed p-10 text-center",
+            dark
+              ? "border-white/20 bg-dark-gray"
+              : "border-ink/20 bg-white",
+          )}
+        >
           <p className="font-bold">這個時段沒有活動。</p>
           <p className="mt-2 text-sm text-muted">
             改看「全部」或「即將到來」試試。
           </p>
         </div>
       ) : mode === "timeline" ? (
-        <ol className="relative space-y-0 border-l-4 border-black pl-6">
+        <ol className={cn("relative space-y-0 pl-6", dark ? "border-l-4 border-brand-yellow" : "border-l-4 border-black")}>
           {filtered.map((activity, index) => (
             <li key={activity.id} className="relative pb-10 last:pb-0">
               <span
-                className="absolute left-[-1.9rem] top-1 flex h-6 w-6 items-center justify-center rounded-full border-2 border-black bg-brand-yellow text-xs font-black"
+                className={cn(
+                  "absolute left-[-1.9rem] top-1 flex h-6 w-6 items-center justify-center text-xs font-black",
+                  dark
+                    ? "border-2 border-brand-yellow bg-ink text-brand-yellow"
+                    : "rounded-full border-2 border-black bg-brand-yellow",
+                )}
                 aria-hidden
               >
                 {index + 1}
               </span>
-              <ScheduleItem activity={activity} />
+              <ScheduleItem activity={activity} dark={dark} />
             </li>
           ))}
         </ol>
       ) : (
         <div className="space-y-4">
           {filtered.map((activity) => (
-            <ScheduleItem key={activity.id} activity={activity} />
+            <ScheduleItem key={activity.id} activity={activity} dark={dark} />
           ))}
         </div>
       )}
@@ -101,7 +115,7 @@ export function ScheduleExplorer({ activities }: ScheduleExplorerProps) {
   );
 }
 
-function ScheduleItem({ activity }: { activity: Activity }) {
+function ScheduleItem({ activity, dark = false }: { activity: Activity; dark?: boolean }) {
   const campus = activity.venue.campus;
   const rail =
     campus === "NTHU"
@@ -124,7 +138,12 @@ function ScheduleItem({ activity }: { activity: Activity }) {
   const place = campus === "OTHER" ? null : getCampusLabel(campus);
 
   return (
-    <article className="relative overflow-hidden border border-ink/10 bg-white">
+    <article
+      className={cn(
+        "relative overflow-hidden border",
+        dark ? "border-white/15 bg-dark-gray" : "border-ink/10 bg-white",
+      )}
+    >
       <span className={cn("absolute inset-y-0 left-0 w-1.5", rail)} aria-hidden />
       <div className="flex flex-col gap-4 py-5 pl-6 pr-5 md:flex-row md:items-stretch md:justify-between md:pl-7">
         <div className="flex min-w-0 flex-1 gap-4 md:gap-5">
@@ -191,7 +210,7 @@ function ScheduleItem({ activity }: { activity: Activity }) {
             )}
             target="_blank"
             rel="noopener noreferrer"
-            className="btn-outline px-5 text-sm"
+            className={cn("px-5 text-sm", dark ? "btn-dark-outline" : "btn-outline")}
           >
             加入行事曆
           </a>

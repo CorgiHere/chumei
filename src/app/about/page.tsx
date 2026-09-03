@@ -30,12 +30,13 @@ const spirits = [
 
 export default function AboutPage() {
   return (
-    <div className="grid-bg py-12">
+    <div className="bg-ink py-12 text-chalk">
       <div className="container-main max-w-3xl">
         <PageIntro
           eyebrow={siteConfig.yearName}
           title="關於竹梅"
           subtitle="正式錦標賽的架子，完全不正經的項目——這就是竹梅賽。"
+          dark
         />
 
         <div className="space-y-10 text-base md:text-lg">
@@ -52,27 +53,27 @@ export default function AboutPage() {
 
           <section>
             <h2 className="mb-4 text-xl font-black">與梅竹賽的差異</h2>
-            <div className="overflow-hidden border-2 border-ink bg-white">
+            <div className="overflow-hidden border-2 border-white/20 bg-dark-gray">
               <table className="w-full text-left text-sm md:text-base">
                 <thead>
-                  <tr className="border-b-2 border-ink bg-brand-yellow">
+                  <tr className="border-b-2 border-brand-yellow bg-brand-yellow text-ink">
                     <th className="px-4 py-3">面向</th>
                     <th className="px-4 py-3">梅竹賽</th>
                     <th className="px-4 py-3">竹梅賽</th>
                   </tr>
                 </thead>
                 <tbody>
-                  <tr className="border-b border-light-gray">
+                  <tr className="border-b border-white/15">
                     <td className="px-4 py-3 font-bold">性質</td>
                     <td className="px-4 py-3">正式校際體育賽</td>
                     <td className="px-4 py-3">學生自辦趣味對抗</td>
                   </tr>
-                  <tr className="border-b border-light-gray">
+                  <tr className="border-b border-white/15">
                     <td className="px-4 py-3 font-bold">項目</td>
                     <td className="px-4 py-3">球類、棋藝等正式項目</td>
                     <td className="px-4 py-3">恐龍賽跑、辦公椅、猜拳…</td>
                   </tr>
-                  <tr className="border-b border-light-gray">
+                  <tr className="border-b border-white/15">
                     <td className="px-4 py-3 font-bold">資訊風格</td>
                     <td className="px-4 py-3">正式賽事資訊</td>
                     <td className="px-4 py-3">正式資訊 × 荒謬文案</td>
@@ -94,7 +95,7 @@ export default function AboutPage() {
               {spirits.map((s) => (
                 <span
                   key={s}
-                  className="rounded-full border-2 border-black bg-white px-3 py-1 text-sm font-bold"
+                  className="rounded-full border-2 border-white/20 bg-dark-gray px-3 py-1 text-sm font-bold"
                 >
                   {s}
                 </span>
@@ -113,7 +114,7 @@ export default function AboutPage() {
               。活動、比分與消息會隨賽事進度更新；更完整的年度回顧見{" "}
               <Link
                 href="/history"
-                className="font-bold text-brand-blue underline"
+                className="text-link font-bold"
               >
                 歷屆竹梅
               </Link>
@@ -131,7 +132,7 @@ export default function AboutPage() {
               Email：{" "}
               <a
                 href={`mailto:${siteConfig.contactEmail}`}
-                className="font-bold text-brand-blue"
+                className="text-link font-bold"
               >
                 {siteConfig.contactEmail}
               </a>
@@ -151,7 +152,7 @@ export default function AboutPage() {
                 href={siteConfig.facebookUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-outline h-12 w-12 p-0"
+                className="btn-dark-outline h-12 w-12 p-0"
                 aria-label="Facebook"
                 title="Facebook"
               >
@@ -161,7 +162,7 @@ export default function AboutPage() {
                 href={siteConfig.linktreeUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="btn-outline h-12 w-12 p-0"
+                className="btn-dark-outline h-12 w-12 p-0"
                 aria-label="Linktree"
                 title="Linktree"
               >
@@ -169,7 +170,7 @@ export default function AboutPage() {
               </a>
               <Link
                 href={appPath("/contact")}
-                className="btn-outline h-12 w-12 p-0"
+                className="btn-dark-outline h-12 w-12 p-0"
                 aria-label="聯絡我們"
                 title="聯絡我們"
               >
@@ -177,7 +178,7 @@ export default function AboutPage() {
               </Link>
               <Link
                 href={appPath("/join")}
-                className="btn-outline h-12 w-12 p-0"
+                className="btn-dark-outline h-12 w-12 p-0"
                 aria-label="加入竹梅"
                 title="加入竹梅"
               >

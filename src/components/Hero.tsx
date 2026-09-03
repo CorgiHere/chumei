@@ -79,7 +79,7 @@ export function Hero() {
           </div>
         </div>
 
-        <div className="relative aspect-[4/3] overflow-hidden bg-ink lg:aspect-auto lg:min-h-0">
+        <div className="relative aspect-4/3 overflow-hidden bg-ink lg:aspect-auto lg:min-h-0">
           {slides.map((slide, i) => (
             <div
               key={slide.src}
@@ -93,7 +93,7 @@ export function Hero() {
                   alt={slide.alt}
                   className="h-full w-full object-cover"
                 />
-                <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
+                <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/70 to-transparent" />
               </div>
             </div>
           ))}
@@ -107,7 +107,7 @@ export function Hero() {
               <div className="absolute right-4 top-4 z-10 hidden gap-0.5 sm:flex lg:right-5 lg:top-5">
                 <button
                   type="button"
-                  className="h-[38px] w-[38px] border-2 border-brand-yellow bg-black/55 font-mono-ui text-[15px] text-brand-yellow hover:bg-brand-yellow hover:text-ink"
+                  className="h-9.5 w-9.5 border-2 border-brand-yellow bg-black/55 font-mono-ui text-[15px] text-brand-yellow hover:bg-brand-yellow hover:text-ink"
                   onClick={() => setIndex((i) => (i - 1 + total) % total)}
                   aria-label="上一張"
                 >
@@ -115,7 +115,7 @@ export function Hero() {
                 </button>
                 <button
                   type="button"
-                  className="h-[38px] w-[38px] border-2 border-brand-yellow bg-black/55 font-mono-ui text-[15px] text-brand-yellow hover:bg-brand-yellow hover:text-ink"
+                  className="h-9.5 w-9.5 border-2 border-brand-yellow bg-black/55 font-mono-ui text-[15px] text-brand-yellow hover:bg-brand-yellow hover:text-ink"
                   onClick={() => setIndex((i) => (i + 1) % total)}
                   aria-label="下一張"
                 >
@@ -129,7 +129,7 @@ export function Hero() {
                     type="button"
                     aria-label={`第 ${i + 1} 張`}
                     aria-selected={i === index}
-                    className={`h-1 w-[30px] border-0 p-0 ${
+                    className={`h-1 w-7.5 border-0 p-0 ${
                       i === index ? "bg-brand-yellow" : "bg-chalk/40"
                     }`}
                     onClick={() => setIndex(i)}

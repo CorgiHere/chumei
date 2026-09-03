@@ -3,7 +3,7 @@ import { appPath } from "@/lib/utils";
 
 export function AboutBand() {
   return (
-    <section className="section-space bg-charcoal" id="about-band">
+    <section className="section-space bg-ink text-chalk" id="about-band">
       <div className="container-main">
         <h2 className="section-title mb-9">
           我們是<span className="mark">誰</span>

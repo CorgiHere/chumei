@@ -46,7 +46,7 @@ export default function HomePage() {
       <Hero />
       <LiveStatusStrip />
 
-      <section className="section-space bg-charcoal">
+      <section className="section-space bg-ink">
         <div className="container-main">
           <SectionHeader
             title="總錦標"

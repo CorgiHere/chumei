@@ -21,12 +21,13 @@ export default function HistoryPage() {
   );
 
   return (
-    <div className="grid-bg py-12">
+    <div className="bg-ink py-12 text-chalk">
       <div className="container-main">
         <PageIntro
           eyebrow="Campus Culture Archive"
           title="歷屆竹梅"
           subtitle="保存荒謬項目、經典瞬間與清交共同記憶。目前收錄 2026 竹梅賽。"
+          dark
         />
 
         <div className="space-y-6">
@@ -46,7 +47,7 @@ export default function HistoryPage() {
                 <div className="p-6 md:p-8">
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
-                      <p className="text-sm font-bold text-brand-blue">
+                      <p className="text-sm font-bold text-brand-yellow">
                         {isCurrent ? "本屆進行中" : `${year.year}`}
                       </p>
                       <h2 className="mt-1 text-2xl font-black md:text-3xl">
@@ -56,7 +57,7 @@ export default function HistoryPage() {
                         {year.tagline}
                       </p>
                     </div>
-                    <div className="rounded-md border-2 border-black bg-white px-4 py-2 text-center">
+                    <div className="border-2 border-white/20 bg-dark-gray px-4 py-2 text-center">
                       <p className="text-xs font-bold text-muted">
                         總比分
                       </p>
@@ -72,7 +73,7 @@ export default function HistoryPage() {
                     </div>
                   </div>
 
-                  <div className="mt-5 h-3 overflow-hidden rounded-full border-2 border-black">
+                  <div className="mt-5 h-3 overflow-hidden border-2 border-white/20">
                     <div
                       className="h-full bg-nthu"
                       style={{ width: `${nthuPct}%` }}
@@ -93,7 +94,7 @@ export default function HistoryPage() {
                     {year.highlights.map((h) => (
                       <span
                         key={h}
-                        className="rounded-full border-2 border-black bg-brand-yellow/30 px-3 py-1 text-sm font-bold"
+                        className="border-2 border-white/20 bg-dark-gray px-3 py-1 text-sm font-bold"
                       >
                         {h}
                       </span>
@@ -110,7 +111,7 @@ export default function HistoryPage() {
                       </Link>
                       <Link
                         href="/scoreboard"
-                        className="btn-outline text-sm"
+                        className="btn-dark-outline text-sm"
                       >
                         目前比分
                       </Link>
@@ -127,24 +128,24 @@ export default function HistoryPage() {
           <p className="mb-6 text-muted">
             本屆已登場與進行中的項目一覽。
           </p>
-          <ol className="relative space-y-8 border-l-4 border-black pl-6">
+          <ol className="relative space-y-8 border-l-4 border-brand-yellow pl-6">
             {yearTimeline.map((activity) => (
               <li key={activity.id} className="relative">
                 <span
-                  className="absolute left-[-1.9rem] top-0 flex h-6 w-6 items-center justify-center rounded-full border-2 border-black bg-brand-yellow text-[10px] font-black"
+                  className="absolute left-[-1.9rem] top-0 flex h-6 w-6 items-center justify-center border-2 border-brand-yellow bg-ink text-[10px] font-black text-brand-yellow"
                   aria-hidden
                 >
                   {activity.index
                     ? String(activity.index).padStart(2, "0")
                     : "•"}
                 </span>
-                <p className="text-sm font-bold text-brand-blue">
+                <p className="text-sm font-bold text-brand-yellow">
                   {formatDateOnly(activity.startAt)}
                 </p>
                 <h3 className="text-xl font-black">
                   <Link
                     href={`/activities/${activity.slug}`}
-                    className="hover:text-brand-blue"
+                    className="hover:text-brand-yellow"
                   >
                     {activity.title}
                   </Link>
@@ -167,7 +168,7 @@ export default function HistoryPage() {
           <Link href="/gallery" className="btn-primary">
             查看圖庫
           </Link>
-          <Link href="/about" className="btn-outline">
+          <Link href="/about" className="btn-dark-outline">
             關於竹梅
           </Link>
         </div>

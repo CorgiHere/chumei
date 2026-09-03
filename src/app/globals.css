@@ -140,22 +140,8 @@
   }
 
   .grid-bg {
-    background-color: var(--color-paper);
-    color: var(--color-ink);
-    --color-muted: #3f3d38;
-    background-image:
-      linear-gradient(var(--color-grid) 1px, transparent 1px),
-      linear-gradient(90deg, var(--color-grid) 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
-
-  .grid-bg .text-link {
-    color: var(--color-ink);
-    border-bottom-color: var(--hi);
-  }
-
-  .grid-bg .text-link:hover {
-    border-bottom-color: var(--color-ink);
+    background-color: var(--color-ink);
+    color: var(--color-chalk);
   }
 
   .hazard-stripe,
@@ -273,12 +259,6 @@
     border-radius: 0;
     box-shadow: none;
     color: var(--color-chalk);
-  }
-
-  .grid-bg .card {
-    background: #fff;
-    color: var(--color-ink);
-    border: 1px solid rgba(10, 10, 10, 0.12);
   }
 
   .photo-frame {

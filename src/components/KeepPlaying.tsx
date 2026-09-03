@@ -3,7 +3,7 @@ import { SideExtras } from "@/components/SideExtras";
 
 export function KeepPlaying() {
   return (
-    <section className="section-space bg-charcoal">
+    <section className="section-space bg-ink text-chalk">
       <div className="container-main">
         <h2 className="section-title mb-3">
           還能繼續<span className="mark">胡鬧</span>

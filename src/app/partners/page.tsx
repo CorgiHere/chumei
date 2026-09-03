@@ -24,9 +24,9 @@ const typeLabels = {
 
 export default function PartnersPage() {
   return (
-    <div className="grid-bg py-12">
+    <div className="bg-ink py-12 text-chalk">
       <div className="container-main">
-        <SectionHeader title="合作夥伴" />
+        <SectionHeader title="合作夥伴" dark />
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {partners.map((p) => (

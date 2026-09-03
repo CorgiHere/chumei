@@ -44,7 +44,7 @@ export default async function NewsDetailPage({ params }: PageProps) {
   if (!post) notFound();
 
   return (
-    <article className="grid-bg py-12">
+    <article className="bg-ink py-12 text-chalk">
       <JsonLd
         data={[
           newsArticleJsonLd({
@@ -79,7 +79,7 @@ export default async function NewsDetailPage({ params }: PageProps) {
           className="prose-chumei mt-8 text-lg"
           dangerouslySetInnerHTML={{ __html: post.content }}
         />
-        <Link href="/news" className="btn-outline mt-10 text-sm">
+        <Link href="/news" className="btn-dark-outline mt-10 text-sm">
           ← 返回消息列表
         </Link>
       </div>

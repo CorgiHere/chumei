@@ -87,12 +87,13 @@ export const metadata: Metadata = {
   },
   icons: {
     icon: [
-      { url: "/favicon.png?v=2026", type: "image/png", sizes: "192x192" },
-      { url: "/favicon.png?v=2026", type: "image/png", sizes: "32x32" },
-      { url: "/favicon.ico?v=2026", sizes: "any" },
+      { url: "/favicon-96x96.png", type: "image/png", sizes: "96x96" },
+      { url: "/favicon-48x48.png", type: "image/png", sizes: "48x48" },
+      { url: "/favicon.png", type: "image/png", sizes: "192x192" },
+      { url: "/favicon.ico", sizes: "any" },
     ],
-    shortcut: "/favicon.png?v=2026",
-    apple: [{ url: "/apple-icon.png", type: "image/png" }],
+    shortcut: "/favicon.ico",
+    apple: [{ url: "/apple-icon.png", type: "image/png", sizes: "180x180" }],
   },
   category: "sports",
 };
