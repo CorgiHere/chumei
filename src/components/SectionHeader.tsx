@@ -9,6 +9,7 @@ type SectionHeaderProps = {
   subtitle?: string;
   href?: string;
   actionLabel?: string;
+  /** Kept for call-site clarity; site is dark-first. */
   dark?: boolean;
   id?: string;
   className?: string;
@@ -22,14 +23,14 @@ export function SectionHeader({
   subtitle,
   href,
   actionLabel = "查看全部",
-  dark = false,
+  dark = true,
   id,
   className,
 }: SectionHeaderProps) {
   const renderedTitle = highlight ? (
     <>
       {title.replace(highlight, "")}
-          <span className="mark">{highlight}</span>
+      <span className="mark">{highlight}</span>
     </>
   ) : (
     title
@@ -59,12 +60,7 @@ export function SectionHeader({
             {renderedTitle}
           </h2>
           {subtitle && (
-            <p
-              className={cn(
-                "mt-3 max-w-[44em] text-[15px]",
-                dark ? "text-[#afaca4]" : "text-[#3f3d38]",
-              )}
-            >
+            <p className="mt-3 max-w-[44em] text-[15px] text-muted">
               {subtitle}
             </p>
           )}
@@ -72,10 +68,7 @@ export function SectionHeader({
         {href && (
           <Link
             href={appPath(href)}
-            className={cn(
-              "text-link shrink-0 self-start md:self-auto",
-              !dark && "text-ink border-b-brand-yellow",
-            )}
+            className="text-link shrink-0 self-start md:self-auto"
           >
             {actionLabel} →
           </Link>

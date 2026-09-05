@@ -42,8 +42,8 @@ export function Hero() {
             <br />
             錯過的<span className="mark">竹梅</span>
           </h1>
-          <p className="mb-8 max-w-[32em] text-[15px] text-[#afaca4]">
-            竹梅賽致力於振興竹梅精神，深化清大與交大兩校友誼。從恐龍賽跑開始，七場對抗到猜拳送機票；企劃、經費、獎品都是自己來。
+          <p className="mb-8 max-w-[32em] text-[15px] text-muted">
+            竹梅賽致力於在清交大搞一些蝦趴事，為無聊的新竹帶來最好玩的活動，籌備恐龍賽跑開始、大草坪大尖叫、酒精微積分、辦公椅競速、刷條碼競速到猜拳送機票等。
           </p>
           <div className="mb-8 flex flex-wrap gap-3">
             <Link href={appPath("/scoreboard")} className="btn-primary">

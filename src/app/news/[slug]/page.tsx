@@ -44,7 +44,7 @@ export default async function NewsDetailPage({ params }: PageProps) {
   if (!post) notFound();
 
   return (
-    <article className="bg-ink py-12 text-chalk">
+    <article className="bg-ink section-space text-chalk">
       <JsonLd
         data={[
           newsArticleJsonLd({
@@ -63,7 +63,7 @@ export default async function NewsDetailPage({ params }: PageProps) {
         ]}
       />
       <div className="container-main max-w-3xl">
-        <span className="rounded-full bg-brand-yellow px-2 py-0.5 text-xs font-bold">
+        <span className="bg-brand-yellow px-2 py-0.5 font-mono-ui text-[11px] font-semibold tracking-[0.08em] text-ink">
           {getNewsCategoryLabel(post.category)}
         </span>
         <h1 className="display-title mt-4 text-h1 font-black">

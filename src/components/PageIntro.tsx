@@ -5,6 +5,7 @@ type PageIntroProps = {
   title: string;
   highlight?: string;
   subtitle?: string;
+  /** Kept for call-site clarity; site is dark-first so chalk is the default. */
   dark?: boolean;
   className?: string;
 };
@@ -14,13 +15,18 @@ export function PageIntro({
   title,
   highlight,
   subtitle,
-  dark = false,
+  dark = true,
   className,
 }: PageIntroProps) {
   return (
     <header className={cn("mb-8", className)}>
       {eyebrow && <p className="eyebrow">{eyebrow}</p>}
-      <h1 className={cn("display-title text-h1 font-black", dark ? "text-chalk" : "text-ink")}>
+      <h1
+        className={cn(
+          "display-title text-h1 font-black",
+          dark ? "text-chalk" : "text-ink",
+        )}
+      >
         {highlight ? (
           <>
             {title.replace(highlight, "")}
@@ -31,7 +37,7 @@ export function PageIntro({
         )}
       </h1>
       {subtitle && (
-        <p className={cn("mt-3 max-w-2xl text-[15px]", dark ? "text-[#afaca4]" : "text-muted")}>
+        <p className={cn("mt-3 max-w-2xl text-[15px] text-muted")}>
           {subtitle}
         </p>
       )}

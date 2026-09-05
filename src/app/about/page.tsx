@@ -15,7 +15,7 @@ import {
 export const metadata: Metadata = buildPageMetadata({
   title: "關於竹梅賽",
   description:
-    "竹梅賽是什麼？振興竹梅精神，深化國立清華大學與國立陽明交通大學／交通大學兩校友誼。學生自辦趣味盛事：恐龍賽跑、辦公椅、兩校憑拳。",
+    "竹梅賽致力於在清交大搞一些蝦趴事，為無聊的新竹帶來最好玩的活動。學生自發組成，與梅竹沒有任何關係。",
   path: "/about",
 });
 
@@ -30,7 +30,7 @@ const spirits = [
 
 export default function AboutPage() {
   return (
-    <div className="bg-ink py-12 text-chalk">
+    <div className="bg-ink section-space text-chalk">
       <div className="container-main max-w-3xl">
         <PageIntro
           eyebrow={siteConfig.yearName}
@@ -43,11 +43,10 @@ export default function AboutPage() {
           <section>
             <h2 className="text-xl font-black">竹梅賽是什麼？</h2>
             <p className="mt-3">
-              竹梅賽是學生自行發起的校際趣味盛事，致力於振興竹梅精神、深化國立清華大學與國立交通大學、國立陽明交通大學兩校友誼。由清交學生自主籌辦，從恐龍賽跑開始，透過周邊賽事建立專屬於新竹的校園文化。
+              竹梅賽致力於在清交大搞一些蝦趴事，為無聊的新竹帶來最好玩的活動，籌備恐龍賽跑開始、大草坪大尖叫、酒精微積分、辦公椅競速、刷條碼競速到猜拳送機票等。
             </p>
             <p className="mt-3 text-muted">
-              官網負責報名、規則、賽程與結果；Instagram @chumei2026
-              負責現場花絮與迷因。新竹清交校園活動資訊，以本站為準。
+              竹梅籌備委員會是清大與交大學生自發組成的團體，目標是做一些好玩的事。我們不隸屬於任何學校單位，也與梅竹沒有任何關係。竹梅賽全部由學生組成，也將永遠以學生為核心。
             </p>
           </section>
 
@@ -95,14 +94,14 @@ export default function AboutPage() {
               {spirits.map((s) => (
                 <span
                   key={s}
-                  className="rounded-full border-2 border-white/20 bg-dark-gray px-3 py-1 text-sm font-bold"
+                  className="border-2 border-white/20 bg-dark-gray px-3 py-1 text-sm font-bold"
                 >
                   {s}
                 </span>
               ))}
             </div>
             <p className="mt-4">
-              從恐龍賽跑開始，透過有趣的周邊賽事建立專屬於新竹的活潑文化。
+              為無聊的新竹帶來最好玩的活動。全部由學生組成，也將永遠以學生為核心。
             </p>
           </section>
 

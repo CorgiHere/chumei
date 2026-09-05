@@ -10,11 +10,11 @@ export function NewsCard({ post }: NewsCardProps) {
   return (
     <article className="card p-5">
       <div className="mb-2 flex flex-wrap items-center gap-2">
-        <span className="rounded-full bg-brand-yellow px-2 py-0.5 font-mono-ui text-[11px] font-semibold text-ink">
+        <span className="bg-brand-yellow px-2 py-0.5 font-mono-ui text-[11px] font-semibold tracking-[0.08em] text-ink">
           {getNewsCategoryLabel(post.category)}
         </span>
         {post.pinned && (
-          <span className="rounded-full bg-black px-2 py-0.5 text-xs font-bold text-white">
+          <span className="border border-white/20 px-2 py-0.5 font-mono-ui text-[11px] font-semibold tracking-[0.08em] text-chalk">
             置頂
           </span>
         )}

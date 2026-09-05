@@ -4,8 +4,8 @@ import { appPath } from "@/lib/utils";
 
 const items = [
   `2026 總錦標 交大 ${siteConfig.nycuScore}：${siteConfig.nthuScore} 清大`,
-  "學生自發籌辦 · 非學校組織",
-  "旮拉給木持續開放",
+  "2027 雷霆活動規劃中",
+  "學生自發 · 永遠以學生為核心",
   "清大 × 交大 · NTHU × NYCU",
 ];
 

@@ -51,7 +51,7 @@ export default function HomePage() {
           <SectionHeader
             title="總錦標"
             highlight="錦標"
-            subtitle="七場計分項目，交大以一分之差拿下。"
+            subtitle="2026竹梅錦標對抗賽由交大以一分之差拿下"
             href="/scoreboard"
             actionLabel="完整比分"
             dark
@@ -65,8 +65,8 @@ export default function HomePage() {
       <section className="section-space bg-ink">
         <div className="container-main">
           <SectionHeader
-            title="三場代表"
-            highlight="代表"
+            title="知名活動"
+            highlight="活動"
             subtitle="開季恐龍、酒精微積分、收官兩校憑拳。其餘場次與非計分項目見活動總覽。"
             href="/activities"
             actionLabel={`全部 ${activities.length} 項`}

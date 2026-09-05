@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { SectionHeader } from "@/components/SectionHeader";
+import { PageIntro } from "@/components/PageIntro";
 import { siteConfig } from "@/data/site";
 import { buildPageMetadata } from "@/lib/seo";
 
@@ -12,9 +12,9 @@ export const metadata: Metadata = buildPageMetadata({
 
 export default function ContactPage() {
   return (
-    <div className="bg-ink py-12 text-chalk">
+    <div className="bg-ink section-space text-chalk">
       <div className="container-main max-w-xl">
-        <SectionHeader title="聯絡我們" dark />
+        <PageIntro title="聯絡我們" />
 
         <div className="card space-y-6 p-6">
           <div>
@@ -91,7 +91,7 @@ export default function ContactPage() {
           </dl>
 
           <p className="text-sm text-muted">
-            🐼🦊 歡迎匿名提問，請至 Instagram 限時動態或 Linktree 表單。
+            歡迎匿名提問，請至 Instagram 限時動態或 Linktree 表單。
           </p>
         </div>
       </div>

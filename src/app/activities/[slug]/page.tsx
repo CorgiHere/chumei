@@ -62,7 +62,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
   const isOnline = activity.categories.includes("線上活動");
 
   return (
-    <div className="pb-12">
+    <div className="bg-ink text-chalk">
       <JsonLd
         data={[
           eventJsonLd({
@@ -84,20 +84,20 @@ export default async function ActivityDetailPage({ params }: PageProps) {
           ]),
         ]}
       />
-      <section className="bg-black py-12 text-white">
+      <section className="section-space bg-ink text-chalk">
         <div className="container-main">
           <StatusBadge status={activity.status} className="mb-4" />
           <h1 className="display-title text-h1 font-black">
             {activity.title}
           </h1>
           {activity.subtitle && (
-            <p className="mt-2 text-lg text-gray-300">{activity.subtitle}</p>
+            <p className="mt-2 text-lg text-muted">{activity.subtitle}</p>
           )}
-          <div className="mt-6 flex flex-wrap gap-4 text-sm">
+          <div className="mt-6 flex flex-wrap gap-4 text-sm text-muted">
             <span>{formatDate(activity.startAt)}</span>
             <span>{activity.venue.name}</span>
             {activity.isScored && (
-              <span className="rounded-full bg-brand-yellow px-2 py-0.5 font-bold text-black">
+              <span className="bg-brand-yellow px-2 py-0.5 font-mono-ui text-[11px] font-semibold tracking-[0.08em] text-ink">
                 計入總錦標
               </span>
             )}
@@ -121,7 +121,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
               )}
               target="_blank"
               rel="noopener noreferrer"
-              className="btn-outline border-white! text-white!"
+              className="btn-dark-outline"
             >
               加入行事曆
             </a>
@@ -129,7 +129,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
         </div>
       </section>
 
-      <div className="container-main bg-ink py-12 text-chalk">
+      <div className="container-main pb-14 lg:pb-20">
         <div className="grid gap-10 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-10">
             <section>

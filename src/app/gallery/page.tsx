@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { SectionHeader } from "@/components/SectionHeader";
+import { PageIntro } from "@/components/PageIntro";
 import { galleryItems } from "@/data/history";
 import { siteConfig } from "@/data/site";
 import { withBasePath } from "@/lib/utils";
@@ -16,13 +16,9 @@ export const metadata: Metadata = buildPageMetadata({
 
 export default function GalleryPage() {
   return (
-    <div className="bg-ink py-12 text-chalk">
+    <div className="bg-ink section-space text-chalk">
       <div className="container-main">
-        <SectionHeader
-          title="圖庫"
-          subtitle="站內保存的活動照片。更多花絮見 Instagram。"
-          dark
-        />
+        <PageIntro title="圖庫" subtitle="站內保存的活動照片。更多花絮見 Instagram。" />
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {galleryItems.map((item) => (
             <figure key={item.id} className="card overflow-hidden">

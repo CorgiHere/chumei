@@ -14,12 +14,12 @@ export const metadata: Metadata = buildPageMetadata({
 
 export default function SchedulePage() {
   return (
-    <div className="bg-ink py-12 text-chalk">
+    <div className="bg-ink section-space text-chalk">
       <div className="container-main">
         <PageIntro
           eyebrow={siteConfig.yearName}
           title="賽程"
-          subtitle="正賽已結束。此頁是完整時間軸：日期、校區與地圖。活動規則與賽果請看活動總覽。"
+          subtitle="2026 完整時間軸：日期、校區與地圖。活動規則與賽果請看活動總覽。"
           dark
         />
         <ScheduleExplorer activities={activities} dark />

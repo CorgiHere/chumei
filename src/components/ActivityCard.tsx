@@ -77,7 +77,7 @@ export function ActivityCard({
             </p>
           )}
           <h3 className="text-xl font-black">{activity.title}</h3>
-          <p className="mt-2 text-sm text-[#cfccc4]">{formatDateOnly(activity.startAt)}</p>
+          <p className="mt-2 text-sm text-muted">{formatDateOnly(activity.startAt)}</p>
           <Link
             href={appPath(`/activities/${activity.slug}`)}
             className="text-link mt-auto pt-4"
@@ -137,15 +137,15 @@ export function ActivityCard({
           <dt className="pt-0.5 font-mono-ui text-[11px] tracking-widest text-muted">
             日期
           </dt>
-          <dd className="m-0 text-[#cfccc4]">{formatDateOnly(activity.startAt)}</dd>
+          <dd className="m-0 text-muted">{formatDateOnly(activity.startAt)}</dd>
           <dt className="pt-0.5 font-mono-ui text-[11px] tracking-widest text-muted">
             地點
           </dt>
-          <dd className="m-0 text-[#cfccc4]">{activity.venue.name}</dd>
+          <dd className="m-0 text-muted">{activity.venue.name}</dd>
           <dt className="pt-0.5 font-mono-ui text-[11px] tracking-widest text-muted">
             費用
           </dt>
-          <dd className={cn("m-0", feePending ? "font-mono-ui text-xs text-brand-yellow" : "text-[#cfccc4]")}>
+          <dd className={cn("m-0", feePending ? "font-mono-ui text-xs text-brand-yellow" : "text-muted")}>
             {fee}
           </dd>
           {prize && (
@@ -153,7 +153,7 @@ export function ActivityCard({
               <dt className="pt-0.5 font-mono-ui text-[11px] tracking-widest text-muted">
                 獎品
               </dt>
-              <dd className="m-0 text-[#cfccc4]">{prize}</dd>
+              <dd className="m-0 text-muted">{prize}</dd>
             </>
           )}
         </dl>

@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { SectionHeader } from "@/components/SectionHeader";
+import { PageIntro } from "@/components/PageIntro";
 import { partners } from "@/data/history";
 import { withBasePath } from "@/lib/utils";
 import { buildPageMetadata } from "@/lib/seo";
@@ -24,9 +24,9 @@ const typeLabels = {
 
 export default function PartnersPage() {
   return (
-    <div className="bg-ink py-12 text-chalk">
+    <div className="bg-ink section-space text-chalk">
       <div className="container-main">
-        <SectionHeader title="合作夥伴" dark />
+        <PageIntro title="合作夥伴" />
 
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {partners.map((p) => (
@@ -37,10 +37,10 @@ export default function PartnersPage() {
                   alt={p.name}
                   width={80}
                   height={80}
-                  className="mb-3 h-20 w-20 rounded-lg"
+                  className="mb-3 h-20 w-20"
                 />
               )}
-              <p className="text-xs font-bold text-brand-blue">
+              <p className="font-mono-ui text-[11px] font-semibold tracking-[0.12em] text-brand-yellow">
                 {typeLabels[p.type]}
               </p>
               <p className="mt-2 text-lg font-black">{p.name}</p>

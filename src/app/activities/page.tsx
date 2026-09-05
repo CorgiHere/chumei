@@ -16,7 +16,7 @@ export const metadata: Metadata = buildPageMetadata({
 
 export default function ActivitiesPage() {
   return (
-    <div className="bg-ink py-12 text-chalk">
+    <div className="bg-ink section-space text-chalk">
       <div className="container-main">
         <PageIntro
           eyebrow={`${siteConfig.yearName}`}

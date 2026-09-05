@@ -9,7 +9,6 @@ import {
   searchActivities,
   type ActivityFilterId,
 } from "@/lib/activity-filters";
-import { cn } from "@/lib/utils";
 
 const FILTERS: { id: ActivityFilterId; label: string }[] = [
   { id: "all", label: "全部" },
@@ -28,10 +27,11 @@ const FILTERS: { id: ActivityFilterId; label: string }[] = [
 
 type ActivitiesExplorerProps = {
   activities: Activity[];
+  /** @deprecated Site is dark-first; prop kept for call-site compatibility. */
   dark?: boolean;
 };
 
-export function ActivitiesExplorer({ activities, dark = false }: ActivitiesExplorerProps) {
+export function ActivitiesExplorer({ activities }: ActivitiesExplorerProps) {
   const [filter, setFilter] = useState<ActivityFilterId>("all");
   const [query, setQuery] = useState("");
 
@@ -44,12 +44,7 @@ export function ActivitiesExplorer({ activities, dark = false }: ActivitiesExplo
 
   return (
     <div>
-      <div
-        className={cn(
-          "mb-8 space-y-4 p-5",
-          dark ? "bg-dark-gray" : "card",
-        )}
-      >
+      <div className="mb-8 space-y-4 bg-dark-gray p-5">
         <label className="block">
           <span className="mb-2 block text-sm font-bold">搜尋活動</span>
           <input
@@ -57,12 +52,7 @@ export function ActivitiesExplorer({ activities, dark = false }: ActivitiesExplo
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="活動名稱、地點、關鍵字…"
-            className={cn(
-              "w-full border-2 px-4 py-3 text-base outline-none focus:border-brand-yellow",
-              dark
-                ? "border-white/20 bg-ink text-chalk placeholder:text-muted"
-                : "border-ink bg-white text-ink",
-            )}
+            className="w-full border-2 border-white/20 bg-ink px-4 py-3 text-base text-chalk outline-none placeholder:text-muted focus:border-brand-yellow"
           />
         </label>
         <FilterChips
@@ -70,7 +60,6 @@ export function ActivitiesExplorer({ activities, dark = false }: ActivitiesExplo
           options={FILTERS}
           value={filter}
           onChange={(id) => setFilter(id as ActivityFilterId)}
-          dark={dark}
         />
       </div>
 
@@ -79,21 +68,14 @@ export function ActivitiesExplorer({ activities, dark = false }: ActivitiesExplo
       </p>
 
       {filtered.length === 0 ? (
-        <div
-          className={cn(
-            "border-2 border-dashed p-10 text-center",
-            dark
-              ? "border-white/20 bg-dark-gray"
-              : "rounded-lg border-muted bg-white",
-          )}
-        >
+        <div className="border-2 border-dashed border-white/20 bg-dark-gray p-10 text-center">
           <p className="font-bold">找不到符合條件的活動。</p>
           <p className="mt-2 text-sm text-muted">
             試著清空搜尋或改選「全部」。
           </p>
           <button
             type="button"
-            className={cn("mt-4 text-sm", dark ? "btn-dark-outline" : "btn-outline")}
+            className="btn-dark-outline mt-4 text-sm"
             onClick={() => {
               setFilter("all");
               setQuery("");

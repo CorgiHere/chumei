@@ -46,7 +46,16 @@ export function JoinBand({ headingLevel = "h2" }: JoinBandProps) {
           加入<span className="mark">我們</span>
         </Heading>
         <p className="mb-10 max-w-[44em] text-[15px] text-muted">
-          下一季已經在想了，缺人。不用有經驗，但要有那種「這個想法很爛，做吧」的判斷力。
+          2027竹梅錦標對抗賽正在規劃能震驚所有人的雷霆活動。私訊我們的{" "}
+          <a
+            href={siteConfig.instagramUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-link"
+          >
+            IG
+          </a>
+          ，只要你有搞事的心，想要夥伴、資源或者想法，任何時間都可以聯絡我們。
         </p>
         <div className="border-t-2 border-white/20">
           {roles.map((role) => (

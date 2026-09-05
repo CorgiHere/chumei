@@ -25,10 +25,11 @@ const MODES = [
 
 type ScheduleExplorerProps = {
   activities: Activity[];
+  /** @deprecated Site is dark-first; prop kept for call-site compatibility. */
   dark?: boolean;
 };
 
-export function ScheduleExplorer({ activities, dark = false }: ScheduleExplorerProps) {
+export function ScheduleExplorer({ activities }: ScheduleExplorerProps) {
   const [mode, setMode] = useState<ScheduleMode>("all");
 
   const sorted = useMemo(
@@ -67,47 +68,34 @@ export function ScheduleExplorer({ activities, dark = false }: ScheduleExplorerP
           options={MODES}
           value={mode}
           onChange={(id) => setMode(id as ScheduleMode)}
-          dark={dark}
         />
       </div>
 
       {filtered.length === 0 ? (
-        <div
-          className={cn(
-            "border-2 border-dashed p-10 text-center",
-            dark
-              ? "border-white/20 bg-dark-gray"
-              : "border-ink/20 bg-white",
-          )}
-        >
+        <div className="border-2 border-dashed border-white/20 bg-dark-gray p-10 text-center">
           <p className="font-bold">這個時段沒有活動。</p>
           <p className="mt-2 text-sm text-muted">
             改看「全部」或「即將到來」試試。
           </p>
         </div>
       ) : mode === "timeline" ? (
-        <ol className={cn("relative space-y-0 pl-6", dark ? "border-l-4 border-brand-yellow" : "border-l-4 border-black")}>
+        <ol className="relative space-y-0 border-l-4 border-brand-yellow pl-6">
           {filtered.map((activity, index) => (
             <li key={activity.id} className="relative pb-10 last:pb-0">
               <span
-                className={cn(
-                  "absolute left-[-1.9rem] top-1 flex h-6 w-6 items-center justify-center text-xs font-black",
-                  dark
-                    ? "border-2 border-brand-yellow bg-ink text-brand-yellow"
-                    : "rounded-full border-2 border-black bg-brand-yellow",
-                )}
+                className="absolute left-[-1.9rem] top-1 flex h-6 w-6 items-center justify-center border-2 border-brand-yellow bg-ink text-xs font-black text-brand-yellow"
                 aria-hidden
               >
                 {index + 1}
               </span>
-              <ScheduleItem activity={activity} dark={dark} />
+              <ScheduleItem activity={activity} />
             </li>
           ))}
         </ol>
       ) : (
         <div className="space-y-4">
           {filtered.map((activity) => (
-            <ScheduleItem key={activity.id} activity={activity} dark={dark} />
+            <ScheduleItem key={activity.id} activity={activity} />
           ))}
         </div>
       )}
@@ -115,7 +103,7 @@ export function ScheduleExplorer({ activities, dark = false }: ScheduleExplorerP
   );
 }
 
-function ScheduleItem({ activity, dark = false }: { activity: Activity; dark?: boolean }) {
+function ScheduleItem({ activity }: { activity: Activity }) {
   const campus = activity.venue.campus;
   const rail =
     campus === "NTHU"
@@ -138,12 +126,7 @@ function ScheduleItem({ activity, dark = false }: { activity: Activity; dark?: b
   const place = campus === "OTHER" ? null : getCampusLabel(campus);
 
   return (
-    <article
-      className={cn(
-        "relative overflow-hidden border",
-        dark ? "border-white/15 bg-dark-gray" : "border-ink/10 bg-white",
-      )}
-    >
+    <article className="relative overflow-hidden border border-white/15 bg-dark-gray">
       <span className={cn("absolute inset-y-0 left-0 w-1.5", rail)} aria-hidden />
       <div className="flex flex-col gap-4 py-5 pl-6 pr-5 md:flex-row md:items-stretch md:justify-between md:pl-7">
         <div className="flex min-w-0 flex-1 gap-4 md:gap-5">
@@ -154,7 +137,7 @@ function ScheduleItem({ activity, dark = false }: { activity: Activity; dark?: b
             <span className="font-num text-2xl font-bold leading-none text-brand-yellow">
               {mm}.{dd}
             </span>
-            <span className="mt-1 font-mono-ui text-[10px] tracking-[0.12em] text-chalk/70">
+            <span className="mt-1 font-mono-ui text-[10px] tracking-[0.12em] text-muted">
               （{wd}）{hh}:{min}
             </span>
           </time>
@@ -173,7 +156,12 @@ function ScheduleItem({ activity, dark = false }: { activity: Activity; dark?: b
             <p className="mt-2 text-sm font-medium">
               {activity.venue.name}
               {place && (
-                <span className={cn("ml-1.5 font-mono-ui text-[11px] tracking-[0.12em]", campusTone)}>
+                <span
+                  className={cn(
+                    "ml-1.5 font-mono-ui text-[11px] tracking-[0.12em]",
+                    campusTone,
+                  )}
+                >
                   · {place}
                 </span>
               )}
@@ -181,16 +169,18 @@ function ScheduleItem({ activity, dark = false }: { activity: Activity; dark?: b
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <StatusBadge status={activity.status} />
               {activity.isScored ? (
-                <span className="border border-ink bg-brand-yellow px-2 py-0.5 font-mono-ui text-[11px] font-semibold tracking-[0.08em] text-ink">
+                <span className="bg-brand-yellow px-2 py-0.5 font-mono-ui text-[11px] font-semibold tracking-[0.08em] text-ink">
                   計分項目
                 </span>
               ) : (
-                <span className="border border-dashed border-ink/30 px-2 py-0.5 font-mono-ui text-[11px] font-semibold tracking-[0.08em] text-muted">
+                <span className="border border-dashed border-white/20 px-2 py-0.5 font-mono-ui text-[11px] font-semibold tracking-[0.08em] text-muted">
                   非計分
                 </span>
               )}
               {activity.audienceNotes?.[0] && (
-                <span className="text-xs text-muted">{activity.audienceNotes[0]}</span>
+                <span className="text-xs text-muted">
+                  {activity.audienceNotes[0]}
+                </span>
               )}
             </div>
           </div>
@@ -210,7 +200,7 @@ function ScheduleItem({ activity, dark = false }: { activity: Activity; dark?: b
             )}
             target="_blank"
             rel="noopener noreferrer"
-            className={cn("px-5 text-sm", dark ? "btn-dark-outline" : "btn-outline")}
+            className="btn-dark-outline px-5 text-sm"
           >
             加入行事曆
           </a>
@@ -219,7 +209,7 @@ function ScheduleItem({ activity, dark = false }: { activity: Activity; dark?: b
               href={activity.venue.mapUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-flex min-h-12 items-center justify-center border-2 border-nycu px-5 font-mono-ui text-sm font-semibold tracking-widest text-nycu hover:bg-nycu hover:text-white"
+              className="btn-dark-outline px-5 text-sm"
             >
               地圖
             </a>

@@ -28,18 +28,18 @@ export default function ScoreboardPage() {
 
   return (
     <div>
-      <section className="bg-black py-12 text-white">
+      <section className="bg-ink text-chalk">
         <div className="hazard-stripe-animated h-2" aria-hidden />
-        <div className="container-main py-10">
+        <div className="container-main section-space">
           <PageIntro
             dark
             eyebrow={siteConfig.yearName}
             title="比分與結果"
             highlight="結果"
-            subtitle="總錦標以 4/22 官方公告為準：交通大學 4：3 獲勝。"
+            subtitle="2026竹梅錦標對抗賽由交大以一分之差拿下"
           />
           <Scoreboard className="mx-auto max-w-2xl" />
-          <p className="mt-6 text-center text-white/70">
+          <p className="mt-6 text-center text-muted">
             已完成計分 {finished.length}／{scored.length} 場 · 清大{" "}
             {siteConfig.nthuScore}：{siteConfig.nycuScore} 交大
           </p>
@@ -47,7 +47,7 @@ export default function ScoreboardPage() {
         <div className="hazard-stripe-animated h-2" aria-hidden />
       </section>
 
-      <div className="bg-ink py-12 text-chalk">
+      <div className="bg-ink section-space text-chalk">
         <div className="container-main space-y-14">
           <section>
             <h2 className="section-title display-title mb-2">計分項目</h2>

@@ -6,10 +6,10 @@ export function KeepPlaying() {
     <section className="section-space bg-ink text-chalk">
       <div className="container-main">
         <h2 className="section-title mb-3">
-          還能繼續<span className="mark">胡鬧</span>
+          正在挑戰更<span className="mark">誇張</span>的目標
         </h2>
         <p className="mb-9 max-w-[44em] text-[15px] text-muted">
-          正賽已結束。線上遊戲、周邊領取、抽獎與非計分活動仍可從這裡進去。
+          2027竹梅錦標對抗賽正在規劃能震驚所有人的雷霆活動，你現在就能加入！
         </p>
         <article className="mb-0.5 flex flex-col gap-2.5 bg-dark-gray p-6 md:flex-row md:items-end md:justify-between">
           <div>

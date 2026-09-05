@@ -22,7 +22,7 @@ type NewsExplorerProps = {
   dark?: boolean;
 };
 
-export function NewsExplorer({ posts, dark = false }: NewsExplorerProps) {
+export function NewsExplorer({ posts, dark = true }: NewsExplorerProps) {
   const [category, setCategory] = useState<"all" | NewsCategory>("all");
 
   const sorted = useMemo(() => {
@@ -45,10 +45,10 @@ export function NewsExplorer({ posts, dark = false }: NewsExplorerProps) {
   return (
     <div>
       {showPinBanner && (
-        <section className="mb-10 overflow-hidden rounded-lg border-4 border-black bg-black">
+        <section className="mb-10 overflow-hidden border-2 border-brand-yellow bg-dark-gray">
           <div className="hazard-stripe-animated h-2" aria-hidden />
           <div className="p-6">
-            <p className="mb-3 text-sm font-bold text-brand-yellow">
+            <p className="mb-3 font-mono-ui text-sm font-bold tracking-[0.12em] text-brand-yellow">
               重要公告
             </p>
             <div className="grid gap-4 md:grid-cols-2">
@@ -76,13 +76,7 @@ export function NewsExplorer({ posts, dark = false }: NewsExplorerProps) {
       </p>
 
       {listPosts.length === 0 ? (
-        <div
-          className={
-            dark
-              ? "border-2 border-dashed border-white/20 bg-dark-gray p-10 text-center"
-              : "rounded-lg border-2 border-dashed border-muted bg-white p-10 text-center"
-          }
-        >
+        <div className="border-2 border-dashed border-white/20 bg-dark-gray p-10 text-center">
           <p className="font-bold">這個分類目前沒有消息。</p>
         </div>
       ) : (
