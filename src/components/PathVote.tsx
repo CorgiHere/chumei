@@ -163,9 +163,7 @@ export function PathVote({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" }
     <div data-keep-order>
       <div className="container-main">
         <Heading className="display-title text-[clamp(28px,5vw,56px)] leading-[1.15]">
-          一徑各表
-          <br />
-          <span className="mark">沒有共識</span>
+          一徑各表 <span className="mark">沒有共識</span>
         </Heading>
       </div>
 
