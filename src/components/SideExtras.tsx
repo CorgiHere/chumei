@@ -58,6 +58,8 @@ export function SideExtras() {
               src={withBasePath(item.image)}
               alt={item.alt}
               className="h-full w-full object-cover"
+              loading="lazy"
+              decoding="async"
             />
           </div>
         );

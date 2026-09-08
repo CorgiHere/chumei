@@ -48,7 +48,6 @@ export function Header() {
             width={42}
             height={42}
             className="h-10.5 w-10.5 rounded-[9px]"
-            priority
           />
           <span className="hidden text-[17px] font-black tracking-[0.06em] sm:block">
             竹梅籌備委員會

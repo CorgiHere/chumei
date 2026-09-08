@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, Noto_Sans_TC, Oswald } from "next/font/google";
+import { IBM_Plex_Mono, Oswald } from "next/font/google";
 import { SiteChrome } from "@/components/SiteChrome";
 import { JsonLd } from "@/components/JsonLd";
 import { siteConfig } from "@/data/site";
@@ -14,22 +14,20 @@ import {
 } from "@/lib/seo";
 import "./globals.css";
 
-const notoSansTC = Noto_Sans_TC({
-  subsets: ["latin"],
-  weight: ["400", "500", "700", "900"],
-  variable: "--font-noto-sans-tc",
-});
-
 const ibmPlexMono = IBM_Plex_Mono({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400"],
   variable: "--font-ibm-plex-mono",
+  display: "swap",
+  preload: false,
 });
 
 const oswald = Oswald({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
+  weight: ["700"],
   variable: "--font-oswald",
+  display: "swap",
+  preload: false,
 });
 
 export const metadata: Metadata = {
@@ -106,7 +104,7 @@ export default function RootLayout({
   return (
     <html
       lang="zh-TW"
-      className={`${notoSansTC.variable} ${ibmPlexMono.variable} ${oswald.variable}`}
+      className={`${ibmPlexMono.variable} ${oswald.variable}`}
     >
       <body className="flex min-h-screen flex-col">
         <JsonLd data={[organizationJsonLd(), websiteJsonLd()]} />

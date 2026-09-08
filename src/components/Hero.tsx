@@ -15,9 +15,11 @@ const slides = galleryItems.slice(0, 5).map((item) => ({
 
 export function Hero() {
   const [index, setIndex] = useState(0);
+  const [carouselReady, setCarouselReady] = useState(false);
   const total = slides.length || 1;
 
   useEffect(() => {
+    setCarouselReady(true);
     if (slides.length < 2) return;
     const id = window.setInterval(() => {
       setIndex((i) => (i + 1) % slides.length);
@@ -80,7 +82,7 @@ export function Hero() {
         </div>
 
         <div className="relative aspect-4/3 overflow-hidden bg-ink lg:aspect-auto lg:min-h-0">
-          {slides.map((slide, i) => (
+          {(carouselReady ? slides : slides.slice(0, 1)).map((slide, i) => (
             <div
               key={slide.src}
               className={`absolute inset-0 bg-[#F2F0EA] p-2 shadow-[0_14px_34px_-18px_rgba(0,0,0,.9)] transition-opacity duration-700 ${
@@ -92,6 +94,9 @@ export function Hero() {
                   src={withBasePath(slide.src)}
                   alt={slide.alt}
                   className="h-full w-full object-cover"
+                  fetchPriority={i === 0 ? "high" : "low"}
+                  decoding={i === 0 ? "sync" : "async"}
+                  loading={i === 0 ? "eager" : "lazy"}
                 />
                 <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/70 to-transparent" />
               </div>

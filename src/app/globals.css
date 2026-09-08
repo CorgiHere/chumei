@@ -26,9 +26,11 @@
   --color-nycu: #003087;
   --color-draw: #666666;
 
-  --font-sans: var(--font-noto-sans-tc), "Noto Sans TC", system-ui, sans-serif;
+  --font-sans: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei",
+    system-ui, sans-serif;
   --font-mono: var(--font-ibm-plex-mono), "IBM Plex Mono", ui-monospace, monospace;
-  --font-display: var(--font-noto-sans-tc), "Oswald", sans-serif;
+  --font-display: "Noto Sans TC", "PingFang TC", "Microsoft JhengHei",
+    system-ui, sans-serif;
   --font-num: var(--font-oswald), "Oswald", sans-serif;
 
   --text-display-xl: clamp(2.5rem, 6vw, 5.5rem);

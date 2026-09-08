@@ -15,6 +15,7 @@ import { galleryItems } from "@/data/history";
 import { siteConfig } from "@/data/site";
 import { formatDateOnly, getNewsCategoryLabel, withBasePath, appPath } from "@/lib/utils";
 import { buildPageMetadata, gamesEventJsonLd } from "@/lib/seo";
+import { preload } from "react-dom";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "竹梅賽｜2026 清大 × 交大官方網站",
@@ -26,6 +27,10 @@ export const metadata: Metadata = buildPageMetadata({
 const FEATURED_SLUGS = ["dinosaur-race", "alcohol-calculus", "two-school-rps"];
 
 export default function HomePage() {
+  preload(withBasePath("/images/gallery/hero-slide-1.jpg"), {
+    as: "image",
+    fetchPriority: "high",
+  });
   const featuredActivities = FEATURED_SLUGS.map((slug) =>
     activities.find((a) => a.slug === slug),
   ).filter((a): a is NonNullable<typeof a> => Boolean(a));
@@ -157,6 +162,8 @@ export default function HomePage() {
                     src={withBasePath(item.imageUrl)}
                     alt={item.alt}
                     className="h-full w-full object-cover"
+                    loading="lazy"
+                    decoding="async"
                   />
                 </div>
               </Link>

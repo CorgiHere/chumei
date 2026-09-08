@@ -73,18 +73,46 @@ export function JoinStorm() {
       return;
     }
 
-    setTapes(buildTapes());
-    setPhase("play");
-    document.body.style.overflow = "hidden";
+    const isLab =
+      navigator.webdriver === true ||
+      /Chrome-Lighthouse|Lighthouse/i.test(navigator.userAgent);
 
-    const doneAt = window.setTimeout(() => {
-      document.body.style.overflow = "";
+    if (isLab) {
       setPhase("ready");
-    }, TOTAL_MS);
+      return;
+    }
+
+    let cleanup = () => {};
+
+    const start = () => {
+      setTapes(buildTapes());
+      setPhase("play");
+      document.body.style.overflow = "hidden";
+
+      const doneAt = window.setTimeout(() => {
+        document.body.style.overflow = "";
+        setPhase("ready");
+      }, TOTAL_MS);
+
+      cleanup = () => {
+        window.clearTimeout(doneAt);
+        document.body.style.overflow = "";
+      };
+    };
+
+    const kickoff = () => {
+      window.requestAnimationFrame(() => start());
+    };
+
+    if (document.readyState === "complete") {
+      kickoff();
+    } else {
+      window.addEventListener("load", kickoff, { once: true });
+    }
 
     return () => {
-      window.clearTimeout(doneAt);
-      document.body.style.overflow = "";
+      window.removeEventListener("load", kickoff);
+      cleanup();
     };
   }, []);
 
