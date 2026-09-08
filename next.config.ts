@@ -1,4 +1,11 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import type { NextConfig } from "next";
+
+const emptyPolyfill = path.join(
+  path.dirname(fileURLToPath(import.meta.url)),
+  "src/lib/empty-polyfill.js",
+);
 
 const deployTarget = process.env.DEPLOY_TARGET ?? "";
 const isGithubPages =
@@ -27,6 +34,27 @@ const nextConfig: NextConfig = {
   trailingSlash: true,
   images: {
     unoptimized: true,
+  },
+  experimental: {
+    inlineCss: true,
+  },
+  webpack: (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      [path.join(
+        path.dirname(fileURLToPath(import.meta.url)),
+        "node_modules/next/dist/build/polyfills/polyfill-module.js",
+      )]: emptyPolyfill,
+      "next/dist/build/polyfills/polyfill-module": emptyPolyfill,
+      "next/dist/build/polyfills/polyfill-module.js": emptyPolyfill,
+    };
+    return config;
+  },
+  turbopack: {
+    resolveAlias: {
+      "next/dist/build/polyfills/polyfill-module": "./src/lib/empty-polyfill.js",
+      "next/dist/build/polyfills/polyfill-module.js": "./src/lib/empty-polyfill.js",
+    },
   },
   basePath: isGithubPages ? `/${repoName}` : "",
   assetPrefix: isGithubPages ? `/${repoName}/` : "",

@@ -6,6 +6,7 @@
     "dev": "next dev",
     "prebuild": "node scripts/generate-seo.mjs",
     "build": "next build",
+    "postbuild": "node scripts/strip-preconnect.mjs",
     "build:cloudflare": "node scripts/build-cloudflare.mjs",
     "deploy:cloudflare": "node scripts/build-cloudflare.mjs && npx wrangler pages deploy out --project-name=chumei --branch=main",
     "start": "npx --yes serve@latest out",
