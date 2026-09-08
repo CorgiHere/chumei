@@ -15,7 +15,9 @@ type PagesContext = {
   env: Env;
 };
 
-const COUNTS_KEY = "counts-v2";
+const COUNTS_KEY = "counts-v3";
+const VOTER_PREFIX = "voter-v3:";
+const IP_PREFIX = "ip-v3:";
 const EMPTY: Counts = { qingjiao: 0, jiaoqing: 0 };
 
 function corsOrigin(request: Request) {
@@ -101,7 +103,7 @@ export async function onRequestPost(context: PagesContext) {
     return json(request, { error: "missing_voter", ...counts, ready: true }, 400);
   }
 
-  const voterKey = `voter:${voter}`;
+  const voterKey = `${VOTER_PREFIX}${voter}`;
   const previous = await env.CHUMEI_VOTES.get(voterKey);
   if (previous === choice) {
     return json(request, {
@@ -121,9 +123,9 @@ export async function onRequestPost(context: PagesContext) {
   }
 
   const ip = request.headers.get("CF-Connecting-IP") ?? "unknown";
-  const ipKey = `ip:${ip}:${new Date().toISOString().slice(0, 10)}`;
+  const ipKey = `${IP_PREFIX}${ip}:${new Date().toISOString().slice(0, 10)}`;
   const ipCount = Number((await env.CHUMEI_VOTES.get(ipKey)) ?? "0");
-  if (ipCount >= 8) {
+  if (ipCount >= 2) {
     return json(request, { error: "rate_limited", ...counts, ready: true }, 429);
   }
 

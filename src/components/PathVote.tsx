@@ -1,7 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+  clearStoredChoice,
   emptyCounts,
   getOrCreateVoterId,
   getVoteEndpoint,
@@ -88,27 +89,36 @@ export function PathVote({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" }
   const [choice, setChoice] = useState<PathChoice | null>(null);
   const [hydrated, setHydrated] = useState(false);
   const [voting, setVoting] = useState(false);
+  const votingRef = useRef(false);
 
   useEffect(() => {
     const stored = readStoredChoice();
     setChoice(stored);
+    if (stored) setOrder(stored);
     setHydrated(true);
 
     let cancelled = false;
-    (async () => {
+
+    const refresh = async () => {
+      if (votingRef.current || document.visibilityState === "hidden") return;
       const live = await fetchCounts();
-      if (cancelled) return;
-      if (live) setCounts(live);
-      if (stored) {
-        const submitted = await submitVote(stored);
-        if (cancelled || !submitted) return;
-        setCounts(submitted);
-      }
-    })();
+      if (cancelled || votingRef.current || !live) return;
+      setCounts(live);
+    };
+
+    refresh();
+    const timer = window.setInterval(refresh, 2500);
+    const onVisible = () => {
+      if (document.visibilityState === "visible") refresh();
+    };
+    document.addEventListener("visibilitychange", onVisible);
+
     return () => {
       cancelled = true;
+      window.clearInterval(timer);
+      document.removeEventListener("visibilitychange", onVisible);
     };
-  }, []);
+  }, [setOrder]);
 
   const total = counts.qingjiao + counts.jiaoqing;
   const qingShare = total === 0 ? 50 : (counts.qingjiao / total) * 100;
@@ -117,6 +127,7 @@ export function PathVote({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" }
   async function vote(next: PathChoice) {
     if (voting || !hydrated || choice === next) return;
     const previous = choice;
+    votingRef.current = true;
     setVoting(true);
     storeChoice(next);
     setChoice(next);
@@ -130,7 +141,21 @@ export function PathVote({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" }
     }));
 
     const live = await submitVote(next);
-    if (live) setCounts(live);
+    if (live) {
+      setCounts(live);
+    } else if (previous) {
+      storeChoice(previous);
+      setChoice(previous);
+      setOrder(previous);
+      const latest = await fetchCounts();
+      if (latest) setCounts(latest);
+    } else {
+      clearStoredChoice();
+      setChoice(null);
+      const latest = await fetchCounts();
+      if (latest) setCounts(latest);
+    }
+    votingRef.current = false;
     setVoting(false);
   }
 
@@ -184,7 +209,7 @@ export function PathVote({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" }
             <span className="sr-only"> 清交票數</span>
           </p>
           <div
-            className="flex h-2 min-w-0 flex-1 overflow-hidden rounded-[999px] md:h-2.5"
+            className="relative flex h-2.5 min-w-0 flex-1 overflow-hidden rounded-[999px] border border-white md:h-3"
             role="img"
             aria-label={
               total === 0
@@ -193,12 +218,16 @@ export function PathVote({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" }
             }
           >
             <span
-              className="bg-nthu transition-[width] duration-500"
-              style={{ width: `${qingShare}%` }}
+              className="bg-nthu transition-[flex-grow] duration-500"
+              style={{ flexGrow: Math.max(qingShare, 0.01) }}
             />
             <span
-              className="bg-nycu transition-[width] duration-500"
-              style={{ width: `${100 - qingShare}%` }}
+              aria-hidden
+              className="relative z-10 w-[3px] shrink-0 origin-center -skew-x-[28deg] bg-white"
+            />
+            <span
+              className="bg-nycu transition-[flex-grow] duration-500"
+              style={{ flexGrow: Math.max(100 - qingShare, 0.01) }}
             />
           </div>
           <p className="font-num w-8 shrink-0 text-center text-[clamp(24px,3.6vw,34px)] leading-none font-bold text-nycu md:w-10">
