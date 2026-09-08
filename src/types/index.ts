@@ -164,6 +164,7 @@ export type SiteConfig = {
   galagaUrl: string;
   merchFormUrl: string;
   rpsFormUrl: string;
+  joinFormUrl: string;
   contactEmail: string;
   logoUrl: string;
   siteUrl: string;

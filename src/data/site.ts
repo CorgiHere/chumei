@@ -16,6 +16,8 @@ export const siteConfig: SiteConfig = {
   merchFormUrl:
     "https://docs.google.com/forms/d/e/1FAIpQLSf5hXvKgJrZQQVri5y8de4U49rJHIWI3qqrmeUYpJzy-O0eBQ/viewform",
   rpsFormUrl: "https://forms.gle/ZGZp3FwFKW4Bjm379",
+  joinFormUrl:
+    "https://docs.google.com/forms/d/e/1FAIpQLSd30siFkuSjE4WQnrd5hlP4BfwjjNbFiJAhLXnANYTFw5gQ0Q/viewform",
   contactEmail: "chumei2026@gmail.com",
   logoUrl: "/images/brand/chumei-logo.png",
   /** Canonical production origin (Cloudflare: chumei.org). */

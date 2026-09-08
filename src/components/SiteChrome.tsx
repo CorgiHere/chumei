@@ -2,6 +2,7 @@
 
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { JoinStorm } from "@/components/JoinStorm";
 import { SchoolOrderProvider } from "@/components/SchoolOrder";
 
 export function SiteChrome({ children }: { children: React.ReactNode }) {
@@ -10,6 +11,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
+      <JoinStorm />
     </SchoolOrderProvider>
   );
 }

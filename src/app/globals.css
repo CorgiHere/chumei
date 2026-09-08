@@ -304,6 +304,165 @@
   }
 }
 
+.join-storm {
+  position: fixed;
+  inset: 0;
+  z-index: 80;
+  overflow: hidden;
+  background: rgba(10, 10, 10, 0.52);
+  animation: join-storm-veil 1.8s ease-out forwards;
+}
+
+.join-storm-tape {
+  position: absolute;
+  top: var(--top);
+  left: var(--left);
+  z-index: var(--z);
+  width: 260vmax;
+  height: var(--thick);
+  margin-top: calc(var(--thick) / -2);
+  margin-left: -130vmax;
+  transform: rotate(var(--rot));
+  pointer-events: none;
+  filter:
+    drop-shadow(0 5px 0 #0a0a0a)
+    drop-shadow(0 10px 14px rgba(0, 0, 0, 0.38));
+}
+
+.join-storm-tape-band {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  overflow: hidden;
+  background: var(--hi);
+  border-block: 3px solid #0a0a0a;
+  transform: scaleX(0);
+  transform-origin: var(--origin) center;
+  animation: join-storm-tape 1.08s linear both;
+  animation-delay: var(--delay);
+}
+
+.join-storm-tape-band.is-stripe {
+  border-block: 0;
+  background: repeating-linear-gradient(
+    -45deg,
+    var(--hi) 0 16px,
+    var(--color-ink) 16px 32px
+  );
+}
+
+.join-storm-tape-band.is-invert {
+  background: #0a0a0a;
+  border-block-color: var(--hi);
+}
+
+.join-storm-tape-band.is-invert .join-storm-tape-copy {
+  color: var(--hi);
+}
+
+.join-storm-tape-copy {
+  font-family: var(--font-mono);
+  font-size: calc(var(--thick) * 0.46);
+  font-weight: 900;
+  letter-spacing: 0.32em;
+  color: #0a0a0a;
+  line-height: 1;
+  white-space: nowrap;
+  padding-inline: 1.25rem;
+}
+
+@keyframes join-storm-tape {
+  0% {
+    opacity: 1;
+    transform: scaleX(0);
+  }
+  18% {
+    opacity: 1;
+    transform: scaleX(1.05);
+  }
+  26% {
+    opacity: 1;
+    transform: scaleX(1) translateX(0);
+  }
+  32% {
+    opacity: 1;
+    transform: scaleX(1.07) translateX(calc(var(--yank) * -16px));
+  }
+  52% {
+    opacity: 1;
+    transform: scaleX(1) translateX(calc(var(--yank) * 36vmax));
+  }
+  100% {
+    opacity: 0;
+    transform: scaleX(0.88) translateX(calc(var(--yank) * 170vmax));
+  }
+}
+
+@keyframes join-storm-veil {
+  0%,
+  48% {
+    background: rgba(10, 10, 10, 0.52);
+  }
+  100% {
+    background: transparent;
+  }
+}
+
+@keyframes join-fab-call {
+  0%,
+  100% {
+    transform: translateY(0) rotate(-6deg);
+    box-shadow:
+      5px 5px 0 0 #0a0a0a,
+      0 0 8px 0 rgba(255, 198, 26, 0.35);
+  }
+  18% {
+    transform: translateY(-16px) rotate(7deg);
+    box-shadow:
+      5px 5px 0 0 #0a0a0a,
+      0 0 28px 10px rgba(255, 198, 26, 0.9);
+  }
+  36% {
+    transform: translateY(0) rotate(-5deg);
+    box-shadow:
+      5px 5px 0 0 #0a0a0a,
+      0 0 10px 2px rgba(255, 198, 26, 0.4);
+  }
+  52% {
+    transform: translateY(-12px) rotate(8deg);
+    box-shadow:
+      5px 5px 0 0 #0a0a0a,
+      0 0 32px 12px rgba(255, 198, 26, 1);
+  }
+  68% {
+    transform: translateY(0) rotate(360deg);
+    box-shadow:
+      5px 5px 0 0 #0a0a0a,
+      0 0 18px 6px rgba(255, 198, 26, 0.7);
+  }
+  84% {
+    transform: translateY(-10px) rotate(354deg);
+    box-shadow:
+      5px 5px 0 0 #0a0a0a,
+      0 0 24px 8px rgba(255, 198, 26, 0.85);
+  }
+}
+
+.join-fab {
+  animation: join-fab-call 2.4s ease-in-out infinite;
+  transform-origin: center center;
+}
+
+.join-fab:hover,
+.join-fab:focus-visible {
+  animation-play-state: paused;
+  transform: translateY(-4px) rotate(0deg);
+  box-shadow:
+    7px 7px 0 0 #0a0a0a,
+    0 0 22px 8px rgba(255, 198, 26, 0.85);
+}
+
 @keyframes stripe-scroll {
   from {
     background-position: 0 0;

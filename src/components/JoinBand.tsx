@@ -34,7 +34,7 @@ type JoinBandProps = {
 
 export function JoinBand({ headingLevel = "h2" }: JoinBandProps) {
   const Heading = headingLevel;
-  const signup = siteConfig.linktreeUrl;
+  const signup = siteConfig.joinFormUrl;
 
   return (
     <section className="section-space bg-ink text-chalk" id="join">
