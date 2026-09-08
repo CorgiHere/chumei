@@ -209,7 +209,7 @@ export function PathVote({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" }
             <span className="sr-only"> 清交票數</span>
           </p>
           <div
-            className="relative flex h-2.5 min-w-0 flex-1 overflow-hidden rounded-[999px] border border-white md:h-3"
+            className="relative flex h-3.5 min-w-0 flex-1 overflow-hidden rounded-[999px] border border-white md:h-4"
             role="img"
             aria-label={
               total === 0
@@ -223,7 +223,7 @@ export function PathVote({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" }
             />
             <span
               aria-hidden
-              className="relative z-10 w-[3px] shrink-0 origin-center -skew-x-[28deg] bg-white"
+              className="relative z-10 w-0.5 shrink-0 bg-white"
             />
             <span
               className="bg-nycu transition-[flex-grow] duration-500"
