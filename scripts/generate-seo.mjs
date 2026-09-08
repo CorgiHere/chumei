@@ -54,6 +54,7 @@ const staticPaths = [
   "/join/",
   "/partners/",
   "/contact/",
+  "/path-vote/",
 ];
 
 const activitySlugs = extractSlugs(join(root, "src/data/activities.ts"));

@@ -22,13 +22,13 @@ export function Footer() {
               <p className="text-lg font-black">{siteConfig.yearName}</p>
             </div>
             <p className="text-[13px] leading-relaxed text-muted">
-              竹梅賽致力於在清交大搞一些蝦趴事，為無聊的新竹帶來最好玩的活動。全部由學生組成，也將永遠以學生為核心。
+              竹梅賽（Chu Mei）致力於在清交大搞一些蝦趴事，為無聊的新竹帶來最好玩的活動。學生自辦，與梅竹賽無關。
             </p>
           </div>
           <div>
-            <h5 className="mb-2.5 font-mono-ui text-[11px] font-medium tracking-[0.18em] text-brand-yellow">
+            <p className="mb-2.5 font-mono-ui text-[11px] font-medium tracking-[0.18em] text-brand-yellow">
               賽事
-            </h5>
+            </p>
             <Link href={appPath("/")} className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">
               首頁
             </Link>
@@ -46,11 +46,14 @@ export function Footer() {
             </Link>
           </div>
           <div>
-            <h5 className="mb-2.5 font-mono-ui text-[11px] font-medium tracking-[0.18em] text-brand-yellow">
+            <p className="mb-2.5 font-mono-ui text-[11px] font-medium tracking-[0.18em] text-brand-yellow">
               參與
-            </h5>
+            </p>
             <Link href={appPath("/join")} className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">
               加入我們
+            </Link>
+            <Link href={appPath("/path-vote")} className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">
+              小徑正名
             </Link>
             <Link href={appPath("/partners")} className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">
               合作提案
@@ -60,11 +63,11 @@ export function Footer() {
             </Link>
           </div>
           <div>
-            <h5 className="mb-2.5 font-mono-ui text-[11px] font-medium tracking-[0.18em] text-brand-yellow">
+            <p className="mb-2.5 font-mono-ui text-[11px] font-medium tracking-[0.18em] text-brand-yellow">
               社群
-            </h5>
+            </p>
             <a href={siteConfig.instagramUrl} target="_blank" rel="noopener noreferrer" className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">
-              Instagram
+              Instagram @chumei2026
             </a>
             <a href={siteConfig.facebookUrl} target="_blank" rel="noopener noreferrer" className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">
               Facebook
@@ -77,7 +80,7 @@ export function Footer() {
         <p className="border-t border-white/15 pt-5 text-[13px] leading-relaxed text-muted">
           竹梅籌備委員會為學生自發團體，非學校組織。本站資訊以籌委會公告為準。
         </p>
-        <p className="mt-4 font-mono-ui text-[11px] tracking-[0.06em] text-[#6e6c66]">
+        <p className="mt-4 font-mono-ui text-[11px] tracking-[0.06em] text-muted">
           © {siteConfig.year} 竹梅籌備委員會
         </p>
       </div>

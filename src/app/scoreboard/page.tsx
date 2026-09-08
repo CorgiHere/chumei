@@ -11,7 +11,7 @@ import { buildPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "比分與結果｜清華大學 vs 交通大學總錦標",
-  description: `2026 竹梅賽總錦標：國立清華大學（清大／NTHU）${siteConfig.nthuScore}：${siteConfig.nycuScore} 國立交通大學／陽明交通大學（交大／NYCU／NCTU）。查看七場計分項目與完整賽果——恐龍賽跑、酒精微積分、辦公椅、麻將、刷條碼、兩校憑拳。`,
+  description: `2026 竹梅賽（Chu Mei）總錦標：國立清華大學（清大／NTHU）${siteConfig.nthuScore}：${siteConfig.nycuScore} 國立交通大學／陽明交通大學（交大／NYCU／NCTU）。查看七場計分項目與完整賽果——恐龍賽跑、酒精微積分、辦公椅錦標賽、麻將、刷條碼競速、兩校憑拳。`,
   path: "/scoreboard",
 });
 

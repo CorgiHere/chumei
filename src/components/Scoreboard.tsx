@@ -25,7 +25,7 @@ function WinMark({
           ? school === "nthu"
             ? "bg-nthu font-semibold text-white"
             : "bg-nycu font-semibold text-white"
-          : "text-chalk/45",
+          : "text-chalk/65",
       )}
     >
       {win ? (school === "nthu" ? "清" : "交") : "—"}
@@ -70,14 +70,14 @@ export function Scoreboard({
       >
         <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 bg-brand-yellow px-4 py-5 text-ink md:px-6">
           <div className="flex min-w-0 items-center gap-5 md:gap-6">
-            <p className="font-sans text-[clamp(28px,4vw,48px)] leading-none font-bold text-nthu [font-synthesis:weight] [-webkit-text-stroke:0.6px_currentColor]">
+            <p className="font-sans text-[clamp(28px,4vw,48px)] leading-none font-bold text-[#4A1460] [font-synthesis:weight] [-webkit-text-stroke:0.6px_currentColor]">
               清大
             </p>
             <p className="font-num text-[clamp(28px,4vw,48px)] leading-none font-bold">
               {siteConfig.nthuScore}
             </p>
           </div>
-          <p className="font-num text-[15px] tracking-[0.16em] opacity-65">
+          <p className="font-num text-[15px] tracking-[0.16em] text-ink/70">
             VS
           </p>
           <div className="flex min-w-0 flex-col items-end gap-1">

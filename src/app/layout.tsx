@@ -32,8 +32,8 @@ const oswald = Oswald({
 
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
-  title: {
-    default: "竹梅賽｜2026 清大 × 交大",
+    title: {
+      default: "竹梅賽 Chu Mei｜2026 清大 × 交大",
     template: `%s｜${siteConfig.yearName}`,
   },
   description: siteConfig.description,
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     canonical: absoluteUrl("/"),
   },
   openGraph: {
-    title: "竹梅賽｜2026 清大 NTHU × 交大 NYCU",
+    title: "竹梅賽 Chu Mei｜2026 清大 NTHU × 交大 NYCU",
     description: siteConfig.description,
     url: absoluteUrl("/"),
     siteName: SITE_BRAND_NAME,
@@ -60,13 +60,13 @@ export const metadata: Metadata = {
         url: absoluteAssetUrl(siteConfig.logoUrl),
         width: 543,
         height: 543,
-        alt: "竹梅賽｜清大 × 交大",
+        alt: "竹梅賽 Chu Mei｜清大 × 交大",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "竹梅賽｜2026 清大交大官方網站",
+    title: "竹梅賽 Chu Mei｜2026 清大交大官方網站",
     description: siteConfig.description,
     images: [absoluteAssetUrl(siteConfig.logoUrl)],
   },

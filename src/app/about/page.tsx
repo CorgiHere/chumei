@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { PageIntro } from "@/components/PageIntro";
 import { siteConfig } from "@/data/site";
-import { buildPageMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/JsonLd";
+import { buildPageMetadata, faqJsonLd } from "@/lib/seo";
 import { appPath } from "@/lib/utils";
 import {
   FacebookIcon,
@@ -13,9 +14,9 @@ import {
 } from "@/components/BrandIcons";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "關於竹梅賽",
+  title: "關於竹梅賽｜清交學生自辦，不是梅竹賽",
   description:
-    "竹梅賽致力於在清交大搞一些蝦趴事，為無聊的新竹帶來最好玩的活動。學生自發組成，與梅竹沒有任何關係。",
+    "竹梅賽（Chu Mei）是清大與交大學生自辦的清交荒謬競技，與梅竹賽沒有任何關係。恐龍賽跑、大草坪大尖叫、酒精微積分、辦公椅競速、刷條碼到猜拳送機票。",
   path: "/about",
 });
 
@@ -31,6 +32,7 @@ const spirits = [
 export default function AboutPage() {
   return (
     <div className="bg-ink section-space text-chalk">
+      <JsonLd data={faqJsonLd()} />
       <div className="container-main max-w-3xl">
         <PageIntro
           eyebrow={siteConfig.yearName}
@@ -43,10 +45,10 @@ export default function AboutPage() {
           <section>
             <h2 className="text-xl font-black">竹梅賽是什麼？</h2>
             <p className="mt-3">
-              竹梅賽致力於在清交大搞一些蝦趴事，為無聊的新竹帶來最好玩的活動，籌備恐龍賽跑開始、大草坪大尖叫、酒精微積分、辦公椅競速、刷條碼競速到猜拳送機票等。
+              竹梅賽（Chu Mei、chumei games）致力於在清交大搞一些蝦趴事，為無聊的新竹帶來最好玩的活動，籌備恐龍賽跑、大草坪大尖叫、酒精微積分、辦公椅競速、刷條碼競速到猜拳送機票等。
             </p>
             <p className="mt-3 text-muted">
-              竹梅籌備委員會是清大與交大學生自發組成的團體，目標是做一些好玩的事。我們不隸屬於任何學校單位，也與梅竹沒有任何關係。竹梅賽全部由學生組成，也將永遠以學生為核心。
+              竹梅籌備委員會是清大與交大學生自發組成的團體，目標是做一些好玩的事。我們不隸屬於任何學校單位，也與梅竹賽沒有任何關係。竹梅賽全部由學生組成，也將永遠以學生為核心。
             </p>
           </section>
 
@@ -125,7 +127,7 @@ export default function AboutPage() {
             <h2 className="text-xl font-black">籌備團隊</h2>
             <p className="mt-3 font-bold">竹梅籌備委員會</p>
             <p className="mt-2 text-sm text-muted">
-              只要是清交人就絕對不能錯過的竹梅！
+              只要是清交人就絕對不能錯過的竹梅賽！
             </p>
             <p className="mt-3 text-sm">
               Email：{" "}

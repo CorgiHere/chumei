@@ -31,6 +31,9 @@ jobs:
           DEPLOY_TARGET: cloudflare
           NEXT_PUBLIC_SITE_URL: https://chumei.org
 
+      - name: Include Pages Functions
+        run: cp -r functions out/functions
+
       - name: Set Pages production branch to main
         run: |
           curl --fail-with-body -s -X PATCH \

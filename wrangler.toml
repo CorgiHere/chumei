@@ -1,5 +1,6 @@
 # Cloudflare Pages — Next.js static export (out/)
 # Deploy: npx wrangler pages deploy out --project-name=chumei
+# Path vote: bind KV namespace as CHUMEI_VOTES in Pages → Settings → Bindings
 name = "chumei"
 compatibility_date = "2024-09-23"
 pages_build_output_dir = "out"

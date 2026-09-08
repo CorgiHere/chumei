@@ -3,7 +3,7 @@ import { SideExtras } from "@/components/SideExtras";
 
 export function KeepPlaying() {
   return (
-    <section className="section-space bg-ink text-chalk">
+    <section className="section-space scroll-mt-24 bg-ink text-chalk" id="playing">
       <div className="container-main">
         <h2 className="section-title mb-3">
           正在挑戰更<span className="mark">誇張</span>的目標

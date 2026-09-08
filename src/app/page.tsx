@@ -14,11 +14,12 @@ import { newsPosts } from "@/data/news";
 import { galleryItems } from "@/data/history";
 import { siteConfig } from "@/data/site";
 import { formatDateOnly, getNewsCategoryLabel, withBasePath, appPath } from "@/lib/utils";
-import { buildPageMetadata, gamesEventJsonLd } from "@/lib/seo";
+import { buildPageMetadata, faqJsonLd, gamesEventJsonLd } from "@/lib/seo";
+import { PathVote } from "@/components/PathVote";
 import { preload } from "react-dom";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "竹梅賽｜2026 清大 × 交大官方網站",
+  title: "竹梅賽 Chu Mei｜2026 清大 × 交大官方網站",
   description: siteConfig.description,
   path: "/",
   absoluteTitle: true,
@@ -47,11 +48,17 @@ export default function HomePage() {
 
   return (
     <>
-      <JsonLd data={gamesEventJsonLd()} />
+      <JsonLd data={[gamesEventJsonLd(), faqJsonLd()]} />
       <Hero />
       <LiveStatusStrip />
 
-      <section className="section-space bg-ink">
+      <section id="path-vote" className="scroll-mt-24 bg-ink pb-4 text-chalk">
+        <div className="section-space">
+          <PathVote />
+        </div>
+      </section>
+
+      <section id="championship" className="section-space scroll-mt-24 bg-ink">
         <div className="container-main">
           <SectionHeader
             title="總錦標"
@@ -67,12 +74,12 @@ export default function HomePage() {
 
       <KeepPlaying />
 
-      <section className="section-space bg-ink">
+      <section id="featured" className="section-space scroll-mt-24 bg-ink">
         <div className="container-main">
           <SectionHeader
             title="知名活動"
             highlight="活動"
-            subtitle="開季恐龍、酒精微積分、收官兩校憑拳。其餘場次與非計分項目見活動總覽。"
+            subtitle="開季恐龍賽跑、酒精微積分、辦公椅、麻將、刷條碼、收官兩校憑拳與猜拳送機票。其餘場次見活動總覽。"
             href="/activities"
             actionLabel={`全部 ${activities.length} 項`}
             dark
@@ -91,7 +98,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section-space bg-ink">
+      <section id="news" className="section-space scroll-mt-24 bg-ink">
         <div className="container-main">
           <SectionHeader
             title="最新公告"
@@ -140,7 +147,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="section-space bg-ink">
+      <section id="gallery" className="section-space scroll-mt-24 bg-ink">
         <div className="container-main">
           <SectionHeader
             title="精選回顧"
@@ -152,9 +159,8 @@ export default function HomePage() {
           />
           <div className="grid grid-cols-2 gap-3.5 md:grid-cols-4">
             {galleryItems.slice(0, 10).map((item, i) => (
-              <Link
+              <div
                 key={item.id}
-                href={appPath("/gallery")}
                 className={`relative overflow-hidden ${(i === 0 || i === 5) ? "col-span-2 aspect-2/1" : "aspect-square"}`}
               >
                 <div className="photo-frame absolute inset-0">
@@ -166,7 +172,7 @@ export default function HomePage() {
                     decoding="async"
                   />
                 </div>
-              </Link>
+              </div>
             ))}
           </div>
         </div>
