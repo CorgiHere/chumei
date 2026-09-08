@@ -41,13 +41,14 @@ async function fetchCounts(): Promise<PathVoteCounts | null> {
     const res = await fetch(getVoteEndpoint(), { cache: "no-store" });
     if (!res.ok) return null;
     const data = (await res.json()) as Partial<PathVoteCounts>;
+    if (data.ready === false) return null;
     if (typeof data.qingjiao !== "number" || typeof data.jiaoqing !== "number") {
       return null;
     }
     return {
       qingjiao: data.qingjiao,
       jiaoqing: data.jiaoqing,
-      ready: data.ready !== false,
+      ready: true,
     };
   } catch {
     return null;
@@ -63,13 +64,14 @@ async function submitVote(choice: PathChoice): Promise<PathVoteCounts | null> {
     });
     if (!res.ok) return null;
     const data = (await res.json()) as Partial<PathVoteCounts>;
+    if (data.ready === false) return null;
     if (typeof data.qingjiao !== "number" || typeof data.jiaoqing !== "number") {
       return null;
     }
     return {
       qingjiao: data.qingjiao,
       jiaoqing: data.jiaoqing,
-      ready: data.ready !== false,
+      ready: true,
     };
   } catch {
     return null;
