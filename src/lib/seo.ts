@@ -172,7 +172,8 @@ export function absoluteAssetUrl(path: string): string {
   const base = getSiteUrl();
   if (path.startsWith("http")) return path;
   const normalized = path.startsWith("/") ? path : `/${path}`;
-  return `${base}${normalized}`;
+  const social = normalized.replace(/\.avif$/i, ".jpg");
+  return `${base}${social}`;
 }
 
 type PageSeoInput = {

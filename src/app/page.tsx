@@ -28,8 +28,9 @@ export const metadata: Metadata = buildPageMetadata({
 const FEATURED_SLUGS = ["dinosaur-race", "alcohol-calculus", "two-school-rps"];
 
 export default function HomePage() {
-  preload(withBasePath("/images/gallery/hero-slide-1.jpg"), {
+  preload(withBasePath("/images/gallery/hero-slide-1.avif"), {
     as: "image",
+    type: "image/avif",
     fetchPriority: "high",
   });
   const featuredActivities = FEATURED_SLUGS.map((slug) =>
@@ -52,13 +53,17 @@ export default function HomePage() {
       <Hero />
       <LiveStatusStrip />
 
-      <section id="path-vote" className="scroll-mt-24 bg-ink pb-4 text-chalk">
-        <div className="section-space">
-          <PathVote />
-        </div>
+      <section
+        id="path-vote"
+        className="scroll-mt-24 bg-ink pt-[var(--space-section-mobile)] text-chalk lg:pt-[var(--space-section-desktop)]"
+      >
+        <PathVote />
       </section>
 
-      <section id="championship" className="section-space scroll-mt-24 bg-ink">
+      <section
+        id="championship"
+        className="scroll-mt-24 bg-ink pb-[var(--space-section-mobile)] pt-10 lg:pb-[var(--space-section-desktop)] lg:pt-12"
+      >
         <div className="container-main">
           <SectionHeader
             title="總錦標"

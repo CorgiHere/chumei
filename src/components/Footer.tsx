@@ -13,7 +13,7 @@ export function Footer() {
           <div className="max-w-sm">
             <div className="mb-3 flex items-center gap-3">
               <Image
-                src={withBasePath(siteConfig.logoUrl)}
+                src={withBasePath("/images/brand/chumei-logo-mark.webp")}
                 alt="竹梅賽"
                 width={42}
                 height={42}

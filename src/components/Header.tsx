@@ -4,7 +4,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
-import { siteConfig } from "@/data/site";
 import { SchoolOrderToggle } from "@/components/SchoolOrderToggle";
 import { cn, withBasePath, appPath } from "@/lib/utils";
 
@@ -43,7 +42,7 @@ export function Header() {
           onClick={() => setMenuOpen(false)}
         >
           <Image
-            src={withBasePath(siteConfig.logoUrl)}
+            src={withBasePath("/images/brand/chumei-logo-mark.webp")}
             alt="竹梅 Chu Mei"
             width={42}
             height={42}

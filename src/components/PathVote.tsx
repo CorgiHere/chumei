@@ -16,11 +16,11 @@ import { useSchoolOrder } from "./SchoolOrder";
 
 const CARD_ART = {
   qingjiao: {
-    src: "/images/path-vote/nthu-gate.jpg",
+    src: "/images/path-vote/nthu-gate.avif",
     position: "18% 78%",
   },
   jiaoqing: {
-    src: "/images/path-vote/nycu-tower.jpg",
+    src: "/images/path-vote/nycu-tower.avif",
     position: "88% 72%",
   },
 } as const;
@@ -219,7 +219,7 @@ export function PathVote({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" }
       </div>
 
       <div
-        className="mt-8 overflow-hidden bg-brand-yellow text-ink"
+        className="mt-6 overflow-hidden bg-brand-yellow text-ink md:mt-8"
         aria-hidden
       >
         <div className="ticker-track text-ink">

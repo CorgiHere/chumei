@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { siteConfig } from "@/data/site";
 import { withBasePath, appPath } from "@/lib/utils";
@@ -15,19 +15,35 @@ const slides = galleryItems.slice(0, 5).map((item) => ({
 
 export function Hero() {
   const [index, setIndex] = useState(0);
-  const [carouselReady, setCarouselReady] = useState(false);
+  const [outgoing, setOutgoing] = useState<number | null>(null);
+  const indexRef = useRef(0);
   const total = slides.length || 1;
+  indexRef.current = index;
+
+  const goTo = (next: number) => {
+    const currentIndex = indexRef.current;
+    if (next === currentIndex) return;
+    setOutgoing(currentIndex);
+    setIndex(next);
+  };
 
   useEffect(() => {
-    setCarouselReady(true);
     if (slides.length < 2) return;
     const id = window.setInterval(() => {
-      setIndex((i) => (i + 1) % slides.length);
+      goTo((indexRef.current + 1) % slides.length);
     }, 5000);
     return () => window.clearInterval(id);
   }, []);
 
+  useEffect(() => {
+    if (outgoing === null) return;
+    const id = window.setTimeout(() => setOutgoing(null), 700);
+    return () => window.clearTimeout(id);
+  }, [outgoing]);
+
   const current = slides[index] ?? slides[0];
+  const renderedIndexes =
+    outgoing === null || outgoing === index ? [index] : [outgoing, index];
 
   return (
     <section className="relative bg-ink text-chalk">
@@ -82,27 +98,35 @@ export function Hero() {
         </div>
 
         <div className="relative aspect-4/3 overflow-hidden bg-ink lg:aspect-auto lg:min-h-0">
-          {(carouselReady ? slides : slides.slice(0, 1)).map((slide, i) => (
-            <div
-              key={slide.src}
-              className={`absolute inset-0 bg-[#F2F0EA] p-2 shadow-[0_14px_34px_-18px_rgba(0,0,0,.9)] transition-opacity duration-700 ${
-                i === index ? "opacity-100" : "opacity-0"
-              }`}
-              aria-hidden={i !== index}
-            >
-              <div className="relative h-full w-full">
-                <img
-                  src={withBasePath(slide.src)}
-                  alt={slide.alt}
-                  className="h-full w-full object-cover"
-                  fetchPriority={i === 0 ? "high" : "low"}
-                  decoding={i === 0 ? "sync" : "async"}
-                  loading={i === 0 ? "eager" : "lazy"}
-                />
-                <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/70 to-transparent" />
+          {renderedIndexes.map((i) => {
+            const slide = slides[i];
+            if (!slide) return null;
+            const isCurrent = i === index;
+            const isLcp = i === 0 && isCurrent;
+            return (
+              <div
+                key={slide.src}
+                className={`absolute inset-0 bg-[#F2F0EA] p-2 shadow-[0_14px_34px_-18px_rgba(0,0,0,.9)] transition-opacity duration-700 ${
+                  isCurrent ? "opacity-100" : "opacity-0"
+                }`}
+                aria-hidden={!isCurrent}
+              >
+                <div className="relative h-full w-full">
+                  <img
+                    src={withBasePath(slide.src)}
+                    alt={slide.alt}
+                    className="h-full w-full object-cover"
+                    width={960}
+                    height={720}
+                    fetchPriority={isLcp ? "high" : "low"}
+                    decoding={isLcp ? "sync" : "async"}
+                    loading={isLcp ? "eager" : "lazy"}
+                  />
+                  <div className="pointer-events-none absolute inset-0 bg-linear-to-t from-black/70 to-transparent" />
+                </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
           {current && (
             <div className="absolute bottom-4 left-4 z-10 flex max-w-[calc(100%-60px)] flex-wrap items-baseline gap-3 lg:bottom-5 lg:left-5">
               <span className="text-[19px] font-black leading-tight">{current.title}</span>
@@ -114,7 +138,7 @@ export function Hero() {
                 <button
                   type="button"
                   className="h-9.5 w-9.5 border-2 border-brand-yellow bg-black/55 font-mono-ui text-[15px] text-brand-yellow hover:bg-brand-yellow hover:text-ink"
-                  onClick={() => setIndex((i) => (i - 1 + total) % total)}
+                  onClick={() => goTo((index - 1 + total) % total)}
                   aria-label="上一張"
                 >
                   ‹
@@ -122,7 +146,7 @@ export function Hero() {
                 <button
                   type="button"
                   className="h-9.5 w-9.5 border-2 border-brand-yellow bg-black/55 font-mono-ui text-[15px] text-brand-yellow hover:bg-brand-yellow hover:text-ink"
-                  onClick={() => setIndex((i) => (i + 1) % total)}
+                  onClick={() => goTo((index + 1) % total)}
                   aria-label="下一張"
                 >
                   ›
@@ -142,7 +166,7 @@ export function Hero() {
                     className={`h-1 w-7.5 border-0 p-0 ${
                       i === index ? "bg-brand-yellow" : "bg-chalk/80"
                     }`}
-                    onClick={() => setIndex(i)}
+                    onClick={() => goTo(i)}
                   />
                 ))}
               </div>
