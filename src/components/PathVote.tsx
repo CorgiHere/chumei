@@ -167,23 +167,6 @@ export function PathVote({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" }
         </Heading>
       </div>
 
-      <div
-        className="mt-8 overflow-hidden bg-brand-yellow text-ink"
-        aria-hidden
-      >
-        <div className="ticker-track text-ink">
-          {TICKER_LOOP.map((item) => (
-            <span
-              key={item.id}
-              className="inline-flex items-center whitespace-nowrap"
-            >
-              <span className="px-5">✦</span>
-              {item.label}
-            </span>
-          ))}
-        </div>
-      </div>
-
       <div className="container-main mt-8 md:mt-10">
         <div className="grid grid-cols-1 md:grid-cols-[1fr_auto_1fr]">
           <ChoiceCard
@@ -232,6 +215,23 @@ export function PathVote({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" }
             {formatVotes(counts.jiaoqing)}
             <span className="sr-only"> 交大票數</span>
           </p>
+        </div>
+      </div>
+
+      <div
+        className="mt-8 overflow-hidden bg-brand-yellow text-ink"
+        aria-hidden
+      >
+        <div className="ticker-track text-ink">
+          {TICKER_LOOP.map((item) => (
+            <span
+              key={item.id}
+              className="inline-flex items-center whitespace-nowrap"
+            >
+              <span className="px-5">✦</span>
+              {item.label}
+            </span>
+          ))}
         </div>
       </div>
     </div>
