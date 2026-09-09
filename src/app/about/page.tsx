@@ -177,14 +177,16 @@ export default function AboutPage() {
               >
                 <MailIcon className="h-5 w-5" />
               </Link>
-              <Link
-                href={appPath("/join")}
+              <a
+                href={siteConfig.joinFormUrl}
+                target="_blank"
+                rel="noopener noreferrer"
                 className="btn-dark-outline h-12 w-12 p-0"
                 aria-label="加入竹梅"
                 title="加入竹梅"
               >
                 <JoinIcon className="h-5 w-5" />
-              </Link>
+              </a>
             </div>
           </section>
         </div>

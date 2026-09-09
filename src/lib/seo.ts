@@ -429,7 +429,7 @@ export function faqJsonLd() {
         name: "怎麼加入竹梅？",
         acceptedAnswer: {
           "@type": "Answer",
-          text: "清大、交大學生可到官網「加入竹梅」填表，或私訊 Instagram @chumei2026。只要有搞事的心，都可以聯絡竹梅籌備委員會。",
+          text: "清大、交大學生可填報名表，或私訊 Instagram @chumei2026。只要有搞事的心，都可以聯絡竹梅籌備委員會。",
         },
       },
     ],

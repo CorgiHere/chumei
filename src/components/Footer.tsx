@@ -49,9 +49,14 @@ export function Footer() {
             <p className="mb-2.5 font-mono-ui text-[11px] font-medium tracking-[0.18em] text-brand-yellow">
               參與
             </p>
-            <Link href={appPath("/join")} className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">
+            <a
+              href={siteConfig.joinFormUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow"
+            >
               加入我們
-            </Link>
+            </a>
             <Link href={appPath("/path-vote")} className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">
               小徑正名
             </Link>

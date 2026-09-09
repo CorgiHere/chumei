@@ -49,9 +49,14 @@ export function AboutBand() {
           <Link href={appPath("/history")} className="btn-dark-outline text-sm">
             歷屆紀錄 →
           </Link>
-          <Link href={appPath("/join")} className="btn-dark-outline text-sm">
+          <a
+            href={siteConfig.joinFormUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-dark-outline text-sm"
+          >
             加入籌備 →
-          </Link>
+          </a>
         </div>
       </div>
     </section>
