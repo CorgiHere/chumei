@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { StatusBadge } from "@/components/StatusBadge";
@@ -11,6 +12,7 @@ import {
   formatDate,
   getCalendarUrl,
   getCampusLabel,
+  withBasePath,
 } from "@/lib/utils";
 import {
   breadcrumbJsonLd,
@@ -140,13 +142,24 @@ export default async function ActivityDetailPage({ params }: PageProps) {
             {activityPartners.length > 0 && (
               <section className="card p-6">
                 <SectionHeader title="合作單位" dark />
-                <ul className="space-y-2">
+                <ul className="space-y-3">
                   {activityPartners.map((p) => (
-                    <li key={p.id}>
-                      <p className="font-black">{p.name}</p>
-                      {p.note && (
-                        <p className="text-sm text-muted">{p.note}</p>
+                    <li key={p.id} className="flex items-center gap-3">
+                      {p.logo && (
+                        <Image
+                          src={withBasePath(p.logo)}
+                          alt=""
+                          width={48}
+                          height={48}
+                          className="h-12 w-12 shrink-0 rounded-full bg-white object-contain"
+                        />
                       )}
+                      <div>
+                        <p className="font-black">{p.name}</p>
+                        {p.note && (
+                          <p className="text-sm text-muted">{p.note}</p>
+                        )}
+                      </div>
                     </li>
                   ))}
                 </ul>

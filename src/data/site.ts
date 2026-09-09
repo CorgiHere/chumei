@@ -18,7 +18,7 @@ export const siteConfig: SiteConfig = {
   rpsFormUrl: "https://forms.gle/ZGZp3FwFKW4Bjm379",
   joinFormUrl:
     "https://docs.google.com/forms/d/e/1FAIpQLSd30siFkuSjE4WQnrd5hlP4BfwjjNbFiJAhLXnANYTFw5gQ0Q/viewform",
-  contactEmail: "chumei2026@gmail.com",
+  contactEmail: "chu.mei.committee@gmail.com",
   logoUrl: "/images/brand/chumei-logo.png",
   /** Canonical production origin (Cloudflare: chumei.org). */
   siteUrl: "https://chumei.org",

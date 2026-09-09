@@ -27,6 +27,7 @@ function corsOrigin(request: Request) {
     const host = new URL(origin).hostname;
     if (
       host === "chumei.org" ||
+      host === "xn--eyqvve1quev2be32g7sbba230jtip1rbz09du88b.xyz" ||
       host === "localhost" ||
       host === "127.0.0.1" ||
       host.endsWith(".github.io") ||

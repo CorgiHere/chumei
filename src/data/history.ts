@@ -36,6 +36,7 @@ export const partners: Partner[] = [
     name: "日本麻將研究社",
     type: "club",
     note: "協辦日本麻將推廣賽",
+    logo: "/images/partners/nthu-japanese-mahjong.webp",
   },
 ];
 

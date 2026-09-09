@@ -37,7 +37,7 @@ export default function PartnersPage() {
                   alt={p.name}
                   width={80}
                   height={80}
-                  className="mb-3 h-20 w-20"
+                  className="mb-3 h-20 w-20 rounded-full bg-white object-contain"
                 />
               )}
               <p className="font-mono-ui text-[11px] font-semibold tracking-[0.12em] text-brand-yellow">
