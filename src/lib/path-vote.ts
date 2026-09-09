@@ -4,6 +4,8 @@ export type PathVoteCounts = {
   qingjiao: number;
   jiaoqing: number;
   ready: boolean;
+  /** Server-known choice for this client IP (shared across domains). */
+  you?: PathChoice;
 };
 
 export const PATH_VOTE_STORAGE_KEY = "chumei-path-vote-v3";
@@ -19,19 +21,13 @@ export function emptyCounts(ready = false): PathVoteCounts {
   return { qingjiao: 0, jiaoqing: 0, ready };
 }
 
-const PATH_VOTE_LOCAL_HOSTS = new Set([
-  "chumei.org",
-  "xn--eyqvve1quev2be32g7sbba230jtip1rbz09du88b.xyz",
-  "localhost",
-  "127.0.0.1",
-]);
+const PATH_VOTE_DEV_HOSTS = new Set(["localhost", "127.0.0.1"]);
 
+/** Production votes always go through chumei.org so both custom domains share one API origin. */
 export function getVoteEndpoint(): string {
   if (typeof window === "undefined") return "/api/path-vote/";
   const host = window.location.hostname;
-  if (PATH_VOTE_LOCAL_HOSTS.has(host)) {
-    return "/api/path-vote/";
-  }
+  if (PATH_VOTE_DEV_HOSTS.has(host)) return "/api/path-vote/";
   return "https://chumei.org/api/path-vote/";
 }
 

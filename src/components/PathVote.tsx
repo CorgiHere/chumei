@@ -37,20 +37,25 @@ const TICKER_LOOP = Array.from({ length: TICKER.length * 3 }, (_, i) => ({
   label: TICKER[i % TICKER.length],
 }));
 
+function parseCounts(data: Partial<PathVoteCounts>): PathVoteCounts | null {
+  if (data.ready === false) return null;
+  if (typeof data.qingjiao !== "number" || typeof data.jiaoqing !== "number") {
+    return null;
+  }
+  const you = data.you === "qingjiao" || data.you === "jiaoqing" ? data.you : undefined;
+  return {
+    qingjiao: data.qingjiao,
+    jiaoqing: data.jiaoqing,
+    ready: true,
+    ...(you ? { you } : {}),
+  };
+}
+
 async function fetchCounts(): Promise<PathVoteCounts | null> {
   try {
     const res = await fetch(getVoteEndpoint(), { cache: "no-store" });
     if (!res.ok) return null;
-    const data = (await res.json()) as Partial<PathVoteCounts>;
-    if (data.ready === false) return null;
-    if (typeof data.qingjiao !== "number" || typeof data.jiaoqing !== "number") {
-      return null;
-    }
-    return {
-      qingjiao: data.qingjiao,
-      jiaoqing: data.jiaoqing,
-      ready: true,
-    };
+    return parseCounts((await res.json()) as Partial<PathVoteCounts>);
   } catch {
     return null;
   }
@@ -64,16 +69,7 @@ async function submitVote(choice: PathChoice): Promise<PathVoteCounts | null> {
       body: JSON.stringify({ choice, voter: getOrCreateVoterId() }),
     });
     if (!res.ok) return null;
-    const data = (await res.json()) as Partial<PathVoteCounts>;
-    if (data.ready === false) return null;
-    if (typeof data.qingjiao !== "number" || typeof data.jiaoqing !== "number") {
-      return null;
-    }
-    return {
-      qingjiao: data.qingjiao,
-      jiaoqing: data.jiaoqing,
-      ready: true,
-    };
+    return parseCounts((await res.json()) as Partial<PathVoteCounts>);
   } catch {
     return null;
   }
@@ -104,6 +100,11 @@ export function PathVote({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" }
       const live = await fetchCounts();
       if (cancelled || votingRef.current || !live) return;
       setCounts(live);
+      if (live.you) {
+        storeChoice(live.you);
+        setChoice(live.you);
+        setOrder(live.you);
+      }
     };
 
     refresh();
@@ -143,6 +144,11 @@ export function PathVote({ headingLevel = "h2" }: { headingLevel?: "h1" | "h2" }
     const live = await submitVote(next);
     if (live) {
       setCounts(live);
+      if (live.you) {
+        storeChoice(live.you);
+        setChoice(live.you);
+        setOrder(live.you);
+      }
     } else if (previous) {
       storeChoice(previous);
       setChoice(previous);
