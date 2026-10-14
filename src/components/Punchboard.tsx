@@ -6,6 +6,7 @@ import {
   getPunchboardEndpoint,
   matchesQuery,
   PUNCH_GENDER_LABEL,
+  PUNCHBOARD_START_AT,
   type PunchboardPayload,
   type PunchGender,
   type PunchSchool,
@@ -79,27 +80,30 @@ function formatScore(n: number) {
   return n.toLocaleString("en-US");
 }
 
-function useCountdown(endAt: string) {
+function useCountdown(startAt: string, endAt: string) {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const id = window.setInterval(() => setNow(Date.now()), reduced ? 1000 : 250);
     return () => window.clearInterval(id);
   }, []);
+  const start = new Date(startAt).getTime();
   const end = new Date(endAt).getTime();
-  if (!Number.isFinite(end)) {
-    return { ended: false, label: "—" };
+  if (!Number.isFinite(start)) {
+    return { phase: "waiting" as const, headline: "11/17", detail: "" };
   }
-  const diff = end - now;
-  if (diff <= 0) return { ended: true, label: "本場完賽" };
-  const total = Math.floor(diff / 1000);
-  const days = Math.floor(total / 86400);
-  const hours = Math.floor((total % 86400) / 3600);
-  const minutes = Math.floor((total % 3600) / 60);
-  const seconds = total % 60;
-  const pad = (n: number) => String(n).padStart(2, "0");
-  const clock = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-  return { ended: false, label: days > 0 ? `${days} 天 ${clock}` : clock };
+  if (now < start) {
+    const days = Math.max(1, Math.ceil((start - now) / 86400000));
+    return {
+      phase: "waiting" as const,
+      headline: "11/17",
+      detail: `還有 ${days} 天`,
+    };
+  }
+  if (Number.isFinite(end) && now > end) {
+    return { phase: "ended" as const, headline: "11/17", detail: "本場完賽" };
+  }
+  return { phase: "live" as const, headline: "11/17", detail: "今天開打" };
 }
 
 export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2" }) {
@@ -107,7 +111,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
   const [query, setQuery] = useState("");
   const [tab, setTab] = useState<PunchGender>("male");
   const Heading = headingLevel;
-  const countdown = useCountdown(board.endAt);
+  const countdown = useCountdown(PUNCHBOARD_START_AT, board.endAt);
 
   useEffect(() => {
     let alive = true;
@@ -159,9 +163,9 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
               className="size-2 shrink-0 bg-ink motion-safe:animate-pulse"
               aria-hidden
             />
-            {countdown.ended ? "FINAL" : "LIVE"}
+            {countdown.phase === "ended" ? "FINAL" : "LIVE"}
           </p>
-          <p className="eyebrow m-0">2026 年 11 月 17 日（二）</p>
+          <p className="eyebrow m-0">11/17（二）</p>
         </div>
         <Heading className="display-title mt-4 text-[clamp(28px,5vw,56px)] leading-[1.15]">
           {board.eventName}
@@ -172,19 +176,21 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
         </p>
 
         <div className="mt-8 overflow-hidden border-2 border-brand-yellow">
-          <HazardBar animated={!countdown.ended} className="h-3" />
+          <HazardBar animated={countdown.phase !== "ended"} className="h-3" />
           <div className="grid gap-px bg-white/10 md:grid-cols-[1.15fr_1fr]">
             <div className="bg-ink px-5 py-6 md:px-7 md:py-8">
               <p className="font-mono-ui text-[11px] tracking-[0.2em] text-brand-yellow">
-                {countdown.ended ? "活動狀態" : "距離結束"}
+                活動日期
               </p>
               <p className="font-num mt-3 text-[clamp(40px,9vw,84px)] leading-none font-bold tracking-tight text-brand-yellow">
-                {countdown.label}
+                {countdown.headline}
               </p>
               <p className="mt-4 text-sm text-muted">
-                {countdown.ended
+                {countdown.phase === "ended"
                   ? "倒數已結束，以下為最終排名。"
-                  : "現場登錄後約數秒內會出現在榜上。"}
+                  : countdown.phase === "live"
+                    ? "今天開打。現場登錄後約數秒內會出現在榜上。"
+                    : `${countdown.detail}。現場登錄後約數秒內會出現在榜上。`}
               </p>
             </div>
             <div className="bg-dark-gray px-5 py-6 md:px-7 md:py-8">

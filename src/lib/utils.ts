@@ -49,10 +49,13 @@ export function formatDate(iso: string, short = false): string {
   const min = String(date.getMinutes()).padStart(2, "0");
   const wd = weekdays[date.getDay()];
 
+  const time = `${h}:${min}`;
+  const hideTime = h === "00" && min === "00";
   if (short) {
-    return `${m}/${d}（${wd}）${h}:${min}`;
+    return hideTime ? `${m}/${d}（${wd}）` : `${m}/${d}（${wd}）${time}`;
   }
-  return `${y} 年 ${date.getMonth() + 1} 月 ${date.getDate()} 日（${wd}）${h}:${min}`;
+  const dateLabel = `${y} 年 ${date.getMonth() + 1} 月 ${date.getDate()} 日（${wd}）`;
+  return hideTime ? dateLabel : `${dateLabel}${time}`;
 }
 
 export function formatDateOnly(iso: string): string {
