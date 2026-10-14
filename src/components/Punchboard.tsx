@@ -9,11 +9,37 @@ import {
   PUNCH_SCHOOL_LABEL,
   type PunchboardPayload,
   type PunchGender,
+  type PunchSchool,
   type RankedPunchEntry,
 } from "@/lib/punchboard";
 import { cn } from "@/lib/utils";
+import { HazardBar } from "./HazardBar";
 
 const POLL_MS = 4000;
+
+const PODIUM_META: Record<
+  1 | 2 | 3,
+  { title: string; accent: string; panel: string; score: string }
+> = {
+  1: {
+    title: "冠軍",
+    accent: "bg-brand-yellow text-ink",
+    panel: "border-brand-yellow bg-brand-yellow text-ink",
+    score: "text-ink",
+  },
+  2: {
+    title: "亞軍",
+    accent: "bg-chalk text-ink",
+    panel: "border-white/35 bg-[#2a2a2a] text-chalk",
+    score: "text-chalk",
+  },
+  3: {
+    title: "季軍",
+    accent: "bg-[#c47a3a] text-ink",
+    panel: "border-[#c47a3a] bg-[#1c140e] text-chalk",
+    score: "text-[#e8b27a]",
+  },
+};
 
 function parseBoard(data: Partial<PunchboardPayload>): PunchboardPayload | null {
   if (typeof data.eventName !== "string" || typeof data.endAt !== "string") return null;
@@ -115,8 +141,21 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
   return (
     <div>
       <div className="container-main">
-        <p className="eyebrow">2026 年 11 月 17 日（二）</p>
-        <Heading className="display-title text-[clamp(28px,5vw,56px)] leading-[1.15]">
+        <div className="flex flex-wrap items-center gap-3">
+          <p
+            className={cn(
+              "inline-flex min-h-8 items-center gap-2 bg-brand-yellow px-3 font-mono-ui text-[11px] font-bold tracking-[0.18em] text-ink",
+            )}
+          >
+            <span
+              className="size-2 shrink-0 bg-ink motion-safe:animate-pulse"
+              aria-hidden
+            />
+            {countdown.ended ? "FINAL" : "LIVE"}
+          </p>
+          <p className="eyebrow m-0">2026 年 11 月 17 日（二）</p>
+        </div>
+        <Heading className="display-title mt-4 text-[clamp(28px,5vw,56px)] leading-[1.15]">
           {board.eventName}
           <span className="mark"> 即時榜</span>
         </Heading>
@@ -124,35 +163,50 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
           現場拳擊機分數公開排名。分男性／女性兩榜，分數高到低。電腦與手機都會自動更新。
         </p>
 
-        <div className="mt-8 grid gap-0.5 md:grid-cols-[1.2fr_1fr]">
-          <div className="bg-dark-gray p-6">
-            <p className="font-mono-ui text-[11px] tracking-widest text-brand-yellow">
-              {countdown.ended ? "活動狀態" : "距離結束"}
-            </p>
-            <p className="font-num mt-2 text-[clamp(36px,8vw,72px)] leading-none font-bold text-brand-yellow">
-              {countdown.label}
-            </p>
-            <p className="mt-3 text-sm text-muted">
-              {countdown.ended
-                ? "倒數已結束，以下為最終排名。"
-                : "現場登錄後約數秒內會出現在榜上。"}
-            </p>
-          </div>
-          <div className="bg-dark-gray p-6">
-            <label className="font-mono-ui text-[11px] tracking-widest text-brand-yellow" htmlFor="punch-search">
-              查詢姓名／學校／系所
-            </label>
-            <input
-              id="punch-search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="例如：王小明、清大、電機"
-              className="mt-3 w-full border-2 border-white/20 bg-ink px-3 py-3 text-[15px] text-chalk outline-none placeholder:text-muted focus:border-brand-yellow"
-            />
-            <p className="mt-3 font-mono-ui text-[12px] text-muted">
-              男性 {board.male.length} 人　女性 {board.female.length} 人
-              {board.ready ? "" : "　（榜尚未連線，稍後自動重試）"}
-            </p>
+        <div className="mt-8 overflow-hidden border-2 border-brand-yellow">
+          <HazardBar animated={!countdown.ended} className="h-3" />
+          <div className="grid gap-px bg-white/10 md:grid-cols-[1.15fr_1fr]">
+            <div className="bg-ink px-5 py-6 md:px-7 md:py-8">
+              <p className="font-mono-ui text-[11px] tracking-[0.2em] text-brand-yellow">
+                {countdown.ended ? "活動狀態" : "距離結束"}
+              </p>
+              <p className="font-num mt-3 text-[clamp(40px,9vw,84px)] leading-none font-bold tracking-tight text-brand-yellow">
+                {countdown.label}
+              </p>
+              <p className="mt-4 text-sm text-muted">
+                {countdown.ended
+                  ? "倒數已結束，以下為最終排名。"
+                  : "現場登錄後約數秒內會出現在榜上。"}
+              </p>
+            </div>
+            <div className="bg-dark-gray px-5 py-6 md:px-7 md:py-8">
+              <label
+                className="font-mono-ui text-[11px] tracking-[0.2em] text-brand-yellow"
+                htmlFor="punch-search"
+              >
+                查詢姓名／學校／系所
+              </label>
+              <input
+                id="punch-search"
+                value={query}
+                onChange={(e) => setQuery(e.target.value)}
+                placeholder="例如：王小明、清大、電機"
+                className="mt-4 w-full border-2 border-white/20 bg-ink px-3 py-3 text-[15px] text-chalk outline-none placeholder:text-muted focus:border-brand-yellow"
+              />
+              <div className="mt-4 flex flex-wrap gap-2 font-mono-ui text-[12px] tracking-widest">
+                <span className="border border-white/20 px-2 py-1">
+                  男性 {board.male.length}
+                </span>
+                <span className="border border-white/20 px-2 py-1">
+                  女性 {board.female.length}
+                </span>
+                {board.ready ? null : (
+                  <span className="border border-brand-yellow px-2 py-1 text-brand-yellow">
+                    連線中
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
         </div>
 
@@ -163,10 +217,10 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
               type="button"
               onClick={() => setTab(g)}
               className={cn(
-                "min-h-12 flex-1 border-2 px-3 font-mono-ui text-sm tracking-widest",
+                "min-h-12 flex-1 px-3 font-mono-ui text-sm tracking-widest",
                 tab === g
-                  ? "border-brand-yellow bg-brand-yellow text-ink"
-                  : "border-white/20 text-chalk",
+                  ? "bg-brand-yellow text-ink"
+                  : "bg-dark-gray text-chalk",
               )}
             >
               {PUNCH_GENDER_LABEL[g]}
@@ -175,7 +229,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
         </div>
       </div>
 
-      <div className="container-main mt-6 grid gap-6 md:grid-cols-2">
+      <div className="container-main mt-8 grid gap-10 md:grid-cols-2 md:gap-8">
         <GenderBoard
           gender="male"
           rows={filteredMale}
@@ -200,26 +254,51 @@ function GenderBoard({
   rows: RankedPunchEntry[];
   className?: string;
 }) {
-  const top = rows.filter((r) => r.rank <= 3);
+  const first = rows.find((r) => r.rank === 1);
+  const second = rows.find((r) => r.rank === 2);
+  const third = rows.find((r) => r.rank === 3);
   const rest = rows.filter((r) => r.rank > 3);
+  const hasPodium = Boolean(first || second || third);
+
   return (
     <section className={className} aria-labelledby={`punch-${gender}`}>
-      <h2 id={`punch-${gender}`} className="mb-4 text-2xl font-black">
-        {PUNCH_GENDER_LABEL[gender]}
-      </h2>
+      <div className="mb-4 flex items-end justify-between gap-3 border-b-2 border-brand-yellow pb-3">
+        <h2 id={`punch-${gender}`} className="m-0 text-2xl font-black md:text-3xl">
+          {PUNCH_GENDER_LABEL[gender]}
+        </h2>
+        <p className="font-mono-ui text-[11px] tracking-[0.16em] text-muted">
+          {rows.length} 人
+        </p>
+      </div>
       {rows.length === 0 ? (
         <p className="bg-dark-gray p-6 text-sm text-muted">目前沒有符合的成績。</p>
       ) : (
         <>
-          <ol className="grid gap-2">
-            {top.map((row) => (
-              <li key={row.id}>
-                <PodiumCard entry={row} />
-              </li>
-            ))}
-          </ol>
+          {hasPodium ? (
+            <ol className="grid grid-cols-1 items-end gap-2 md:grid-cols-3">
+              {first ? (
+                <li className="md:order-2">
+                  <PodiumCard entry={first} featured />
+                </li>
+              ) : null}
+              {second ? (
+                <li className="md:order-1 md:pt-8">
+                  <PodiumCard entry={second} />
+                </li>
+              ) : (
+                <li className="hidden md:order-1 md:block" aria-hidden />
+              )}
+              {third ? (
+                <li className="md:order-3 md:pt-12">
+                  <PodiumCard entry={third} />
+                </li>
+              ) : (
+                <li className="hidden md:order-3 md:block" aria-hidden />
+              )}
+            </ol>
+          ) : null}
           {rest.length > 0 ? (
-            <ol className="mt-3 divide-y divide-white/10 border border-white/10">
+            <ol className="mt-4 divide-y divide-white/10 border border-white/12 bg-charcoal">
               {rest.map((row) => (
                 <li key={row.id}>
                   <RankRow entry={row} />
@@ -233,44 +312,88 @@ function GenderBoard({
   );
 }
 
-function PodiumCard({ entry }: { entry: RankedPunchEntry }) {
-  const tone =
-    entry.rank === 1
-      ? "border-brand-yellow bg-[#2a2308]"
-      : entry.rank === 2
-        ? "border-white/40 bg-dark-gray"
-        : "border-[#c47a3a] bg-[#23180f]";
+function PodiumCard({
+  entry,
+  featured = false,
+}: {
+  entry: RankedPunchEntry;
+  featured?: boolean;
+}) {
+  const place = entry.rank === 1 || entry.rank === 2 || entry.rank === 3 ? entry.rank : 3;
+  const meta = PODIUM_META[place];
   return (
-    <article className={cn("border-2 p-4 md:p-5", tone)}>
-      <div className="flex items-end justify-between gap-3">
-        <p className="font-num text-[clamp(40px,8vw,64px)] leading-none font-bold text-brand-yellow">
-          {entry.rank}
-        </p>
-        <p className="font-num text-[clamp(28px,6vw,44px)] leading-none font-bold">
-          {formatScore(entry.score)}
-        </p>
+    <article className={cn("border-2 p-4 md:p-5", meta.panel)}>
+      <div className="flex items-center justify-between gap-2">
+        <span
+          className={cn(
+            "px-2 py-1 font-mono-ui text-[11px] font-bold tracking-[0.16em]",
+            meta.accent,
+            place === 1 ? "bg-ink text-brand-yellow" : "",
+          )}
+        >
+          {meta.title}
+        </span>
+        <span className="font-num text-2xl font-bold leading-none opacity-70">
+          {String(entry.rank).padStart(2, "0")}
+        </span>
       </div>
-      <p className="mt-3 text-xl font-black">{entry.name}</p>
-      <p className="mt-1 text-sm text-muted">
-        {PUNCH_SCHOOL_LABEL[entry.school]}
-        {entry.department ? `　${entry.department}` : ""}
+      <p
+        className={cn(
+          "font-num mt-4 leading-none font-bold",
+          featured
+            ? "text-[clamp(44px,8vw,72px)]"
+            : "text-[clamp(32px,6vw,48px)]",
+          meta.score,
+        )}
+      >
+        {formatScore(entry.score)}
       </p>
+      <p className={cn("mt-4 truncate text-lg font-black md:text-xl", featured && "md:text-2xl")}>
+        {entry.name}
+      </p>
+      <div className="mt-2 flex flex-wrap items-center gap-2">
+        <SchoolChip school={entry.school} />
+        {entry.department ? (
+          <span className="truncate text-xs opacity-80">{entry.department}</span>
+        ) : null}
+      </div>
     </article>
   );
 }
 
 function RankRow({ entry }: { entry: RankedPunchEntry }) {
   return (
-    <div className="flex items-center gap-3 px-3 py-3 md:px-4">
-      <span className="font-num w-8 shrink-0 text-lg font-bold text-muted">{entry.rank}</span>
+    <div className="flex items-center gap-3 px-3 py-3.5 md:px-4">
+      <span className="font-num w-9 shrink-0 text-xl font-bold text-brand-yellow">
+        {String(entry.rank).padStart(2, "0")}
+      </span>
       <div className="min-w-0 flex-1">
-        <p className="truncate font-black">{entry.name}</p>
-        <p className="truncate text-xs text-muted">
-          {PUNCH_SCHOOL_LABEL[entry.school]}
-          {entry.department ? `　${entry.department}` : ""}
-        </p>
+        <p className="truncate text-base font-black">{entry.name}</p>
+        <div className="mt-1 flex min-w-0 items-center gap-2">
+          <SchoolChip school={entry.school} />
+          {entry.department ? (
+            <span className="truncate text-xs text-muted">{entry.department}</span>
+          ) : null}
+        </div>
       </div>
-      <span className="font-num shrink-0 text-xl font-bold">{formatScore(entry.score)}</span>
+      <span className="font-num shrink-0 text-[22px] font-bold leading-none">
+        {formatScore(entry.score)}
+      </span>
     </div>
+  );
+}
+
+function SchoolChip({ school }: { school: PunchSchool }) {
+  return (
+    <span
+      className={cn(
+        "shrink-0 px-1.5 py-0.5 font-mono-ui text-[10px] font-bold tracking-widest text-white",
+        school === "NTHU" && "bg-nthu",
+        school === "NYCU" && "bg-nycu",
+        school === "OTHER" && "bg-dark-gray text-muted ring-1 ring-white/25",
+      )}
+    >
+      {PUNCH_SCHOOL_LABEL[school]}
+    </span>
   );
 }

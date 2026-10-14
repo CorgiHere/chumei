@@ -187,8 +187,7 @@ export function PunchboardAdmin() {
 
   return (
     <div className="space-y-8">
-      <div className="flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm text-muted">已登入 · 公開頁面不會出現這個後台連結</p>
+      <div className="flex flex-wrap items-center justify-end gap-3">
         <button type="button" className="btn-dark-outline text-sm" onClick={logout}>
           登出
         </button>
