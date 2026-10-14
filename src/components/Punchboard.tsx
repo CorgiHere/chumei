@@ -202,19 +202,11 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
                 placeholder="例如：王小明、清大、電機"
                 className="mt-4 w-full border-2 border-white/20 bg-ink px-3 py-3 text-[15px] text-chalk outline-none placeholder:text-muted focus:border-brand-yellow"
               />
-              <div className="mt-4 flex flex-wrap gap-2 font-mono-ui text-[12px] tracking-widest">
-                <span className="border border-white/20 px-2 py-1">
-                  男性 {filteredMale.length}
-                </span>
-                <span className="border border-white/20 px-2 py-1">
-                  女性 {filteredFemale.length}
-                </span>
-                {board.ready ? null : (
-                  <span className="border border-brand-yellow px-2 py-1 text-brand-yellow">
-                    連線中
-                  </span>
-                )}
-              </div>
+              {board.ready ? null : (
+                <p className="mt-3 font-mono-ui text-[12px] tracking-widest text-brand-yellow">
+                  連線中
+                </p>
+              )}
             </div>
           </div>
         </div>
