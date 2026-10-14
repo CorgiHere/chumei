@@ -27,6 +27,12 @@ export type PunchEnv = {
   PUNCHBOARD_ADMIN_SECRET?: string;
 };
 
+/** Browsers revalidate every poll; the edge serves a shared copy for ~5s. */
+export const PUBLIC_CACHE_CONTROL =
+  "public, max-age=0, s-maxage=5, stale-while-revalidate=20";
+export const PUBLIC_CDN_CACHE_CONTROL =
+  "public, max-age=5, stale-while-revalidate=20";
+
 export const BOARD_KEY = "punchboard-v1";
 export const DEFAULT_NAME = "拳擊機大賽";
 export const DEFAULT_END_AT = "2026-11-17T23:59:00+08:00";
@@ -120,6 +126,22 @@ function demoBoard(): PunchBoard {
   };
 }
 
+function coerceBoard(raw: string): PunchBoard {
+  try {
+    const parsed = JSON.parse(raw) as Partial<PunchBoard>;
+    const entries = Array.isArray(parsed.entries) ? parsed.entries.filter(isEntry) : [];
+    return {
+      eventName: String(parsed.eventName || DEFAULT_NAME).slice(0, 80),
+      endAt: String(parsed.endAt || DEFAULT_END_AT).slice(0, 40),
+      updatedAt: String(parsed.updatedAt || ""),
+      version: Number(parsed.version) || 0,
+      entries,
+    };
+  } catch {
+    return emptyBoard();
+  }
+}
+
 /** Writes demo scores, and fills in any missing demo ids on later deploys. */
 export async function seedBoardIfEmpty(
   env: PunchEnv,
@@ -131,17 +153,16 @@ export async function seedBoardIfEmpty(
     await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(seeded));
     return { board: seeded, ready: true };
   }
-  const current = await readBoard(env);
-  if (!current.ready) return current;
+  const board = coerceBoard(raw);
   const now = new Date().toISOString();
-  const have = new Set(current.board.entries.map((entry) => entry.id));
+  const have = new Set(board.entries.map((entry) => entry.id));
   const extra = demoEntries(now).filter((entry) => !have.has(entry.id));
-  if (extra.length === 0) return current;
-  current.board.entries.push(...extra);
-  current.board.updatedAt = now;
-  current.board.version += 1;
-  await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(current.board));
-  return current;
+  if (extra.length === 0) return { board, ready: true };
+  board.entries.push(...extra);
+  board.updatedAt = now;
+  board.version += 1;
+  await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(board));
+  return { board, ready: true };
 }
 
 function isEntry(value: unknown): value is PunchEntry {
@@ -164,22 +185,7 @@ export async function readBoard(
   if (!env.CHUMEI_VOTES) return { board: emptyBoard(), ready: false };
   const raw = await env.CHUMEI_VOTES.get(BOARD_KEY);
   if (!raw) return { board: emptyBoard(), ready: true };
-  try {
-    const parsed = JSON.parse(raw) as Partial<PunchBoard>;
-    const entries = Array.isArray(parsed.entries) ? parsed.entries.filter(isEntry) : [];
-    return {
-      ready: true,
-      board: {
-        eventName: String(parsed.eventName || DEFAULT_NAME).slice(0, 80),
-        endAt: String(parsed.endAt || DEFAULT_END_AT).slice(0, 40),
-        updatedAt: String(parsed.updatedAt || ""),
-        version: Number(parsed.version) || 0,
-        entries,
-      },
-    };
-  } catch {
-    return { board: emptyBoard(), ready: true };
-  }
+  return { ready: true, board: coerceBoard(raw) };
 }
 
 export function rank(entries: PunchEntry[], gender: Gender) {

@@ -15,7 +15,8 @@ import {
 import { cn } from "@/lib/utils";
 import { HazardBar } from "./HazardBar";
 
-const POLL_MS = 4000;
+const POLL_MS = 8000;
+const POLL_JITTER_MS = 2000;
 
 const PODIUM_META: Record<
   1 | 2 | 3,
@@ -130,8 +131,12 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
     let alive = true;
 
     const refresh = async () => {
+      if (document.visibilityState === "hidden") return;
       try {
-        const res = await fetch(getPunchboardEndpoint(), { cache: "no-store" });
+        const res = await fetch(getPunchboardEndpoint(), {
+          cache: "no-cache",
+          headers: { Accept: "application/json" },
+        });
         if (!alive || !res.ok) return;
         const next = parseBoard((await res.json()) as Partial<PunchboardPayload>);
         if (!alive || !next) return;
@@ -142,7 +147,10 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
     };
 
     void refresh();
-    const timer = window.setInterval(refresh, POLL_MS);
+    const timer = window.setInterval(
+      refresh,
+      POLL_MS + Math.floor(Math.random() * POLL_JITTER_MS),
+    );
     const onVisible = () => {
       if (document.visibilityState === "visible") void refresh();
     };
@@ -201,7 +209,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
               <p className="mt-4 text-sm text-muted">
                 {countdown.phase === "ended"
                   ? "倒數已結束，以下為最終排名。"
-                  : "活動日期 11/17。現場登錄後約數秒內會出現在榜上。"}
+                  : "活動日期 11/17。現場登錄後約十秒內會出現在榜上。"}
               </p>
             </div>
             <div className="bg-dark-gray px-5 py-6 md:px-7 md:py-8">
