@@ -39,31 +39,55 @@ export function getNewsCategoryLabel(category: NewsCategory): string {
   return NEWS_CATEGORY_LABELS[category];
 }
 
-export function formatDate(iso: string, short = false): string {
-  const date = new Date(iso);
-  const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
-  const y = date.getFullYear();
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  const h = String(date.getHours()).padStart(2, "0");
-  const min = String(date.getMinutes()).padStart(2, "0");
-  const wd = weekdays[date.getDay()];
+const WEEKDAY_EN: Record<string, string> = {
+  Sun: "日",
+  Mon: "一",
+  Tue: "二",
+  Wed: "三",
+  Thu: "四",
+  Fri: "五",
+  Sat: "六",
+};
 
-  const time = `${h}:${min}`;
-  const hideTime = h === "00" && min === "00";
+function taipeiParts(iso: string) {
+  const parts = new Intl.DateTimeFormat("en-US", {
+    timeZone: "Asia/Taipei",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    weekday: "short",
+    hour12: false,
+  }).formatToParts(new Date(iso));
+  const get = (type: Intl.DateTimeFormatPartTypes) =>
+    parts.find((part) => part.type === type)?.value ?? "";
+  let hour = get("hour");
+  if (hour === "24") hour = "00";
+  return {
+    year: get("year"),
+    month: get("month"),
+    day: get("day"),
+    hour,
+    minute: get("minute"),
+    weekday: WEEKDAY_EN[get("weekday")] ?? get("weekday"),
+  };
+}
+
+export function formatDate(iso: string, short = false): string {
+  const t = taipeiParts(iso);
+  const hideTime = t.hour === "00" && t.minute === "00";
   if (short) {
-    return hideTime ? `${m}/${d}（${wd}）` : `${m}/${d}（${wd}）${time}`;
+    const dateLabel = `${t.month}/${t.day}（${t.weekday}）`;
+    return hideTime ? dateLabel : `${dateLabel}${t.hour}:${t.minute}`;
   }
-  const dateLabel = `${y} 年 ${date.getMonth() + 1} 月 ${date.getDate()} 日（${wd}）`;
-  return hideTime ? dateLabel : `${dateLabel}${time}`;
+  const dateLabel = `${t.year} 年 ${Number(t.month)} 月 ${Number(t.day)} 日（${t.weekday}）`;
+  return hideTime ? dateLabel : `${dateLabel}${t.hour}:${t.minute}`;
 }
 
 export function formatDateOnly(iso: string): string {
-  const date = new Date(iso);
-  const weekdays = ["日", "一", "二", "三", "四", "五", "六"];
-  const m = String(date.getMonth() + 1).padStart(2, "0");
-  const d = String(date.getDate()).padStart(2, "0");
-  return `${m}/${d}（${weekdays[date.getDay()]}）`;
+  const t = taipeiParts(iso);
+  return `${t.month}/${t.day}（${t.weekday}）`;
 }
 
 export function getCampusLabel(campus: "NTHU" | "NYCU" | "OTHER"): string {
