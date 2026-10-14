@@ -82,6 +82,39 @@ export function emptyBoard(): PunchBoard {
   };
 }
 
+function demoBoard(): PunchBoard {
+  const now = new Date().toISOString();
+  const rows: Array<Omit<PunchEntry, "updatedAt">> = [
+    { id: "demo-m1", name: "測試・林大為", score: 998, school: "NTHU", department: "電機系", gender: "male" },
+    { id: "demo-m2", name: "測試・陳冠宇", score: 912, school: "NYCU", department: "資工系", gender: "male" },
+    { id: "demo-m3", name: "測試・黃志明", score: 870, school: "NTHU", department: "動機系", gender: "male" },
+    { id: "demo-m4", name: "測試・周柏宇", score: 755, school: "NTHU", department: "工工系", gender: "male" },
+    { id: "demo-f1", name: "測試・張雅婷", score: 940, school: "NYCU", department: "外文系", gender: "female" },
+    { id: "demo-f2", name: "測試・王心怡", score: 888, school: "NTHU", department: "人社院", gender: "female" },
+    { id: "demo-f3", name: "測試・李佳蓉", score: 801, school: "NYCU", department: "生科系", gender: "female" },
+    { id: "demo-f4", name: "測試・吳欣儀", score: 720, school: "OTHER", department: "設計系", gender: "female" },
+  ];
+  return {
+    eventName: DEFAULT_NAME,
+    endAt: DEFAULT_END_AT,
+    updatedAt: now,
+    version: 1,
+    entries: rows.map((row) => ({ ...row, updatedAt: now })),
+  };
+}
+
+/** First visit writes demo scores so the live board can be checked. */
+export async function seedBoardIfEmpty(
+  env: PunchEnv,
+): Promise<{ board: PunchBoard; ready: boolean }> {
+  if (!env.CHUMEI_VOTES) return { board: emptyBoard(), ready: false };
+  const raw = await env.CHUMEI_VOTES.get(BOARD_KEY);
+  if (raw) return readBoard(env);
+  const seeded = demoBoard();
+  await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(seeded));
+  return { board: seeded, ready: true };
+}
+
 function isEntry(value: unknown): value is PunchEntry {
   if (!value || typeof value !== "object") return false;
   const e = value as Partial<PunchEntry>;

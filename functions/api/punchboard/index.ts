@@ -1,4 +1,4 @@
-import { corsOrigin, json, publicPayload, readBoard } from "./_shared";
+import { corsOrigin, json, publicPayload, seedBoardIfEmpty } from "./_shared";
 
 type PagesContext = {
   request: Request;
@@ -10,7 +10,7 @@ export async function onRequestOptions(context: PagesContext) {
 }
 
 export async function onRequestGet(context: PagesContext) {
-  const { board, ready } = await readBoard(context.env);
+  const { board, ready } = await seedBoardIfEmpty(context.env);
   const etag = `"${board.version}-${board.updatedAt}"`;
   if (context.request.headers.get("If-None-Match") === etag) {
     return new Response(null, {
