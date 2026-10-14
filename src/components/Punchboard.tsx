@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   emptyPunchboard,
   getPunchboardEndpoint,
@@ -19,27 +19,50 @@ const POLL_MS = 4000;
 
 const PODIUM_META: Record<
   1 | 2 | 3,
-  { title: string; accent: string; panel: string; score: string }
+  { title: string; panel: string; score: string }
 > = {
   1: {
     title: "冠軍",
-    accent: "bg-brand-yellow text-ink",
     panel: "border-brand-yellow bg-brand-yellow text-ink",
     score: "text-ink",
   },
   2: {
     title: "亞軍",
-    accent: "bg-chalk text-ink",
     panel: "border-white/35 bg-[#2a2a2a] text-chalk",
     score: "text-chalk",
   },
   3: {
     title: "季軍",
-    accent: "bg-[#c47a3a] text-ink",
     panel: "border-[#c47a3a] bg-[#1c140e] text-chalk",
     score: "text-[#e8b27a]",
   },
 };
+
+function asRanked(raw: unknown, gender: PunchGender): RankedPunchEntry[] {
+  if (!Array.isArray(raw)) return [];
+  return raw.flatMap((row, index) => {
+    if (!row || typeof row !== "object") return [];
+    const item = row as Partial<RankedPunchEntry>;
+    const name = String(item.name ?? "").trim();
+    if (!name) return [];
+    const school =
+      item.school === "NYCU" || item.school === "OTHER" || item.school === "NTHU"
+        ? item.school
+        : "OTHER";
+    return [
+      {
+        id: String(item.id ?? `${gender}-${index}`),
+        name,
+        score: Number(item.score) || 0,
+        school,
+        department: String(item.department ?? ""),
+        gender,
+        updatedAt: String(item.updatedAt ?? ""),
+        rank: Number(item.rank) || index + 1,
+      },
+    ];
+  });
+}
 
 function parseBoard(data: Partial<PunchboardPayload>): PunchboardPayload | null {
   if (typeof data.eventName !== "string" || typeof data.endAt !== "string") return null;
@@ -48,8 +71,8 @@ function parseBoard(data: Partial<PunchboardPayload>): PunchboardPayload | null 
     eventName: data.eventName,
     endAt: data.endAt,
     updatedAt: typeof data.updatedAt === "string" ? data.updatedAt : "",
-    male: Array.isArray(data.male) ? data.male : [],
-    female: Array.isArray(data.female) ? data.female : [],
+    male: asRanked(data.male, "male"),
+    female: asRanked(data.female, "female"),
   };
 }
 
@@ -84,46 +107,32 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
   const [board, setBoard] = useState<PunchboardPayload>(emptyPunchboard);
   const [query, setQuery] = useState("");
   const [tab, setTab] = useState<PunchGender>("male");
-  const etagRef = useRef<string | null>(null);
   const Heading = headingLevel;
   const countdown = useCountdown(board.endAt);
 
   useEffect(() => {
-    let cancelled = false;
-    let inflight = false;
+    let alive = true;
 
     const refresh = async () => {
-      if (inflight || document.visibilityState === "hidden") return;
-      inflight = true;
       try {
-        const headers: HeadersInit = {};
-        if (etagRef.current) headers["If-None-Match"] = etagRef.current;
-        const res = await fetch(getPunchboardEndpoint(), {
-          cache: "no-store",
-          headers,
-        });
-        if (cancelled) return;
-        if (res.status === 304) return;
-        if (!res.ok) return;
+        const res = await fetch(getPunchboardEndpoint(), { cache: "no-store" });
+        if (!alive || !res.ok) return;
         const next = parseBoard((await res.json()) as Partial<PunchboardPayload>);
-        if (!next) return;
-        etagRef.current = res.headers.get("ETag");
+        if (!alive || !next) return;
         setBoard(next);
       } catch {
         /* keep last good board */
-      } finally {
-        inflight = false;
       }
     };
 
-    refresh();
+    void refresh();
     const timer = window.setInterval(refresh, POLL_MS);
     const onVisible = () => {
-      if (document.visibilityState === "visible") refresh();
+      if (document.visibilityState === "visible") void refresh();
     };
     document.addEventListener("visibilitychange", onVisible);
     return () => {
-      cancelled = true;
+      alive = false;
       window.clearInterval(timer);
       document.removeEventListener("visibilitychange", onVisible);
     };
@@ -195,10 +204,10 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
               />
               <div className="mt-4 flex flex-wrap gap-2 font-mono-ui text-[12px] tracking-widest">
                 <span className="border border-white/20 px-2 py-1">
-                  男性 {board.male.length}
+                  男性 {filteredMale.length}
                 </span>
                 <span className="border border-white/20 px-2 py-1">
-                  女性 {board.female.length}
+                  女性 {filteredFemale.length}
                 </span>
                 {board.ready ? null : (
                   <span className="border border-brand-yellow px-2 py-1 text-brand-yellow">
@@ -231,11 +240,13 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
 
       <div className="container-main mt-8 grid gap-10 md:grid-cols-2 md:gap-8">
         <GenderBoard
+          key={`male-${filteredMale.map((row) => row.id).join("-") || "empty"}`}
           gender="male"
           rows={filteredMale}
           className={tab === "male" ? "block" : "hidden md:block"}
         />
         <GenderBoard
+          key={`female-${filteredFemale.map((row) => row.id).join("-") || "empty"}`}
           gender="female"
           rows={filteredFemale}
           className={tab === "female" ? "block" : "hidden md:block"}
@@ -265,10 +276,10 @@ function GenderBoard({
       <div className="mb-4 flex items-end justify-between gap-3 border-b-2 border-brand-yellow pb-3">
         <h2 id={`punch-${gender}`} className="m-0 text-2xl font-black md:text-3xl">
           {PUNCH_GENDER_LABEL[gender]}
+          <span className="ml-3 font-mono-ui text-[14px] font-bold tracking-[0.12em] text-brand-yellow">
+            {[first, second, third, ...rest].filter(Boolean).length} 人
+          </span>
         </h2>
-        <p className="font-mono-ui text-[11px] tracking-[0.16em] text-muted">
-          {rows.length} 人
-        </p>
       </div>
       {rows.length === 0 ? (
         <p className="bg-dark-gray p-6 text-sm text-muted">目前沒有符合的成績。</p>
@@ -325,11 +336,14 @@ function PodiumCard({
     <article className={cn("border-2 p-4 md:p-5", meta.panel)}>
       <div className="flex items-center justify-between gap-2">
         <span
-          className={cn(
-            "px-2 py-1 font-mono-ui text-[11px] font-bold tracking-[0.16em]",
-            meta.accent,
-            place === 1 ? "bg-ink text-brand-yellow" : "",
-          )}
+          className="px-2 py-1 font-mono-ui text-[11px] font-bold tracking-[0.16em]"
+          style={
+            place === 1
+              ? { backgroundColor: "#0a0a0a", color: "#ffffff" }
+              : place === 2
+                ? { backgroundColor: "#f0eee8", color: "#0a0a0a" }
+                : { backgroundColor: "#c47a3a", color: "#0a0a0a" }
+          }
         >
           {meta.title}
         </span>
