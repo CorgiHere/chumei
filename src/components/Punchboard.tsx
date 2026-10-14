@@ -353,16 +353,19 @@ function PodiumCard({
       >
         {formatScore(entry.score)}
       </p>
-      <div className="mt-4 flex min-w-0 items-center gap-2.5">
+      <div className="mt-4">
         <SchoolMark school={entry.school} large={featured} />
-        <div className="min-w-0">
-          <p className={cn("truncate text-lg font-black md:text-xl", featured && "md:text-2xl")}>
-            {entry.name}
-          </p>
-          {entry.department ? (
-            <p className="mt-0.5 truncate text-xs opacity-80">{entry.department}</p>
-          ) : null}
-        </div>
+        <p
+          className={cn(
+            "mt-2 font-black leading-snug break-words",
+            featured ? "text-lg md:text-xl" : "text-base md:text-lg",
+          )}
+        >
+          {entry.name}
+        </p>
+        {entry.department ? (
+          <p className="mt-1 text-xs leading-snug break-words opacity-80">{entry.department}</p>
+        ) : null}
       </div>
     </article>
   );
@@ -376,9 +379,9 @@ function RankRow({ entry }: { entry: RankedPunchEntry }) {
       </span>
       <SchoolMark school={entry.school} />
       <div className="min-w-0 flex-1">
-        <p className="truncate text-base font-black">{entry.name}</p>
+        <p className="text-base font-black leading-snug break-words">{entry.name}</p>
         {entry.department ? (
-          <p className="truncate text-xs text-muted">{entry.department}</p>
+          <p className="text-xs leading-snug break-words text-muted">{entry.department}</p>
         ) : null}
       </div>
       <span className="font-num shrink-0 text-[22px] font-bold leading-none">
