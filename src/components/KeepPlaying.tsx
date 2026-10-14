@@ -1,5 +1,7 @@
+import Link from "next/link";
 import { siteConfig } from "@/data/site";
 import { SideExtras } from "@/components/SideExtras";
+import { appPath } from "@/lib/utils";
 
 export function KeepPlaying() {
   return (
@@ -12,6 +14,20 @@ export function KeepPlaying() {
           2027竹梅錦標對抗賽正在規劃能震驚所有人的雷霆活動，你現在就能加入！
         </p>
         <article className="mb-0.5 flex flex-col gap-2.5 bg-dark-gray p-6 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="font-mono-ui text-[11px] tracking-widest text-brand-yellow">
+              11/17 即將開打
+            </p>
+            <h3 className="m-0 mt-2 text-xl font-black">拳擊機大賽</h3>
+            <p className="m-0 mt-2 max-w-[40em] text-sm text-muted">
+              現場打、官網即時上榜。男性／女性分開排名，前三名特別顯眼。
+            </p>
+          </div>
+          <Link href={appPath("/punchboard")} className="btn-dark-outline mt-3 inline-flex self-start text-sm md:mt-0">
+            看即時榜
+          </Link>
+        </article>
+        <article className="mb-0.5 mt-0.5 flex flex-col gap-2.5 bg-dark-gray p-6 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="font-mono-ui text-[11px] tracking-widest text-brand-yellow">
               線上持續開放

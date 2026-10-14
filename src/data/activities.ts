@@ -490,6 +490,40 @@ export const activities: Activity[] = [
     organizerIds: ["chumei-committee"],
     socialLinks: [{ platform: "Instagram", url: siteConfig.instagramUrl }],
   },
+  {
+    id: "act-12",
+    slug: "punchboard",
+    year: 2026,
+    index: 12,
+    title: "拳擊機大賽",
+    subtitle: "11/17 現場打榜",
+    tagline: "一拳定排名",
+    description:
+      "11 月 17 日現場拳擊機活動。確切時段與場地以籌委會公告為準。成績登錄後即時出現在官網排行榜，分男性／女性兩榜，可依姓名、學校、系所查詢。",
+    heroImage: "/images/activities/rps.avif",
+    cardImage: "/images/activities/rps.avif",
+    startAt: "2026-11-17T00:00:00+08:00",
+    endAt: "2026-11-17T23:59:00+08:00",
+    status: "announced",
+    venue: venues.tba,
+    categories: ["實體活動", "個人賽", "非計分項目"],
+    format: "individual",
+    registrationFee: 0,
+    rules: [
+      {
+        title: "成績",
+        content: "以現場拳擊機顯示分數為準，由工作人員登錄。男性與女性分開排名。",
+      },
+      {
+        title: "即時榜",
+        content: "公開排名頁可查詢姓名、分數、學校、系所；前三名會特別標出。",
+      },
+    ],
+    audienceNotes: ["開放觀賽", "即時榜：官網 /punchboard"],
+    isScored: false,
+    organizerIds: ["chumei-committee"],
+    socialLinks: [{ platform: "Instagram", url: siteConfig.instagramUrl }],
+  },
 ];
 
 export function getActivityBySlug(slug: string): Activity | undefined {

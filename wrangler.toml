@@ -7,3 +7,6 @@ pages_build_output_dir = "out"
 [[kv_namespaces]]
 binding = "CHUMEI_VOTES"
 id = "372f9efa74d44b478654007ca240db2c"
+
+# Punchboard admin password: Cloudflare Pages → chumei → Settings →
+# Environment variables → PUNCHBOARD_ADMIN_SECRET (Production). Never commit it.

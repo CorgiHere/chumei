@@ -54,6 +54,7 @@ const staticPaths = [
   "/partners/",
   "/contact/",
   "/path-vote/",
+  "/punchboard/",
 ];
 
 const activitySlugs = extractSlugs(join(root, "src/data/activities.ts"));
@@ -112,9 +113,11 @@ const sitemapTxt = `${urls.map((u) => u.loc).join("\n")}\n`;
 
 const robots = `User-agent: *
 Allow: /
+Disallow: /punchboard/admin/
 
 User-agent: Googlebot
 Allow: /
+Disallow: /punchboard/admin/
 
 Sitemap: ${siteUrl}/sitemap.xml
 Sitemap: ${siteUrl}/sitemap.txt

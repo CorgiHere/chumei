@@ -48,6 +48,8 @@ npm run deploy:cloudflare
 
 Cloudflare 儀表板 → Pages → `chumei` → Custom domains → 綁定 `chumei.org`（可選 `www.chumei.org` 轉址到根網域）。
 
+拳擊機即時榜：`https://chumei.org/punchboard/`。後台（不要公開傳連結）：`https://chumei.org/punchboard/admin/`。在 Pages 專案的 Production 環境變數設定 `PUNCHBOARD_ADMIN_SECRET` 才進得去。
+
 ### GitHub Pages（備用鏡像）
 
 Push `main` 後仍會部署到 `https://corgihere.github.io/chumei/`（workflow：`deploy.yml`）。

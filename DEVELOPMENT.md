@@ -44,6 +44,7 @@ src/
 │  ├─ not-found.tsx
 │  ├─ icon.png / apple-icon.png
 │  ├─ activities/       # 活動總覽 + [slug]
+│  ├─ punchboard/       # 拳擊機即時榜 + admin
 │  ├─ schedule/ scoreboard/ news/ history/ about/
 │  └─ gallery/ join/ partners/ contact/
 ├─ components/          # Header（含清交／交清切換）、Hero、ActivityCard、Scoreboard…
@@ -57,6 +58,7 @@ src/
 - 無後端／CMS：內容改 `src/data` 後需重新 build 部署
 - 活動圖已改為 Instagram 官方貼文實拍／宣傳圖（見下方對照）；無專屬貼文者改用官方遊戲畫面或相關活動圖
 - Instagram 貼文無法直接嵌入；賽果與圖片以人工對齊 IG 後寫入 `src/data` / `public/images`
+- 拳擊機榜：公開 GET 走 KV 單筆 JSON、ETag、邊緣快取 2 秒、前端 4 秒輪詢（隱藏分頁停輪），約 500 人同時開榜可撐。後台密碼在 Cloudflare Pages → `PUNCHBOARD_ADMIN_SECRET`（Production）。路徑 `/punchboard/`、`/punchboard/admin/`。
 
 ---
 
@@ -74,6 +76,7 @@ src/
 | Favicon | ✅ | 黃底 Chu Mei PNG；metadata 用絕對路徑（含 `/chumei`） |
 | 清交／交清切換 | ✅ | Header；`localStorage`；說明文案 `data-keep-order` |
 | SEO | ✅ | JSON-LD 全站；sitemap 完整 URL |
+| 拳擊機即時榜 | ✅ | `/punchboard` 公開榜＋`/punchboard/admin`；KV `punchboard-v1` |
 | CMS／自訂網域 | ❌ | 未做 |
 
 **粗估：資訊架構與全站視覺已可上線。剩餘為 CMS、自訂網域、GSC 收錄。**
@@ -218,6 +221,7 @@ Push `main` 後 Actions 會同時部署 GitHub Pages（`deploy.yml`）與 Cloudf
 
 | 日期 | 內容 |
 |------|------|
+| 2026-10-14 | 11/17 拳擊機大賽即時榜／管理員後台（Pages Function＋KV） |
 | 2026-08-06 | 初版全站＋Pages；IG 賽果對齊；總錦標交大 4：3 |
 | 2026-08-06 | DESIGN_SPEC Phase 1–2；IG 主視覺；basePath／SEO |
 | 2026-08-14 | v7 視覺、真實 JPEG、Hero 對齊、跑馬燈文案、Chu Mei favicon |

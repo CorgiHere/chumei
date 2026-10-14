@@ -9,6 +9,7 @@ import { activities, getActivityBySlug } from "@/data/activities";
 import { partners } from "@/data/history";
 import { siteConfig } from "@/data/site";
 import {
+  appPath,
   formatDate,
   getCalendarUrl,
   getCampusLabel,
@@ -114,6 +115,11 @@ export default async function ActivityDetailPage({ params }: PageProps) {
               >
                 {primaryCtaLabel}
               </a>
+            )}
+            {activity.slug === "punchboard" && (
+              <Link href={appPath("/punchboard")} className="btn-primary">
+                看即時榜
+              </Link>
             )}
             <a
               href={getCalendarUrl(

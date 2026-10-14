@@ -71,4 +71,10 @@ export const venues: Record<string, Venue> = {
     campus: "OTHER",
     description: "透過瀏覽器即可參加，無需到場。",
   },
+  tba: {
+    id: "tba",
+    name: "場地現場公布",
+    campus: "OTHER",
+    description: "確切場地以籌委會公告為準。",
+  },
 };
