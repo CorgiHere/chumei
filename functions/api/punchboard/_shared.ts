@@ -82,37 +82,66 @@ export function emptyBoard(): PunchBoard {
   };
 }
 
+const DEMO_ROWS: Array<Omit<PunchEntry, "updatedAt">> = [
+  { id: "demo-m1", name: "測試・林大為", score: 998, school: "NTHU", department: "電機系", gender: "male" },
+  { id: "demo-m2", name: "測試・陳冠宇", score: 912, school: "NYCU", department: "資工系", gender: "male" },
+  { id: "demo-m3", name: "測試・黃志明", score: 870, school: "NTHU", department: "動機系", gender: "male" },
+  { id: "demo-m4", name: "測試・周柏宇", score: 755, school: "NTHU", department: "工工系", gender: "male" },
+  { id: "demo-m5", name: "測試・許家豪", score: 731, school: "NYCU", department: "電控所", gender: "male" },
+  { id: "demo-m6", name: "測試・鄭偉哲", score: 704, school: "NTHU", department: "物理系", gender: "male" },
+  { id: "demo-m7", name: "測試・蔡承恩", score: 662, school: "NYCU", department: "土木系", gender: "male" },
+  { id: "demo-m8", name: "測試・簡子軒", score: 628, school: "NTHU", department: "計財系", gender: "male" },
+  { id: "demo-m9", name: "測試・呂冠廷", score: 591, school: "NYCU", department: "機械系", gender: "male" },
+  { id: "demo-m10", name: "測試・方柏翰", score: 540, school: "OTHER", department: "企管系", gender: "male" },
+  { id: "demo-f1", name: "測試・張雅婷", score: 940, school: "NYCU", department: "外文系", gender: "female" },
+  { id: "demo-f2", name: "測試・王心怡", score: 888, school: "NTHU", department: "人社院", gender: "female" },
+  { id: "demo-f3", name: "測試・李佳蓉", score: 801, school: "NYCU", department: "生科系", gender: "female" },
+  { id: "demo-f4", name: "測試・吳欣儀", score: 720, school: "OTHER", department: "設計系", gender: "female" },
+  { id: "demo-f5", name: "測試・林予安", score: 693, school: "NTHU", department: "化工系", gender: "female" },
+  { id: "demo-f6", name: "測試・陳詩涵", score: 651, school: "NYCU", department: "傳科系", gender: "female" },
+  { id: "demo-f7", name: "測試・黃詠晴", score: 617, school: "NTHU", department: "醫科系", gender: "female" },
+  { id: "demo-f8", name: "測試・周宜蓁", score: 574, school: "NYCU", department: "護理系", gender: "female" },
+  { id: "demo-f9", name: "測試・許若瑄", score: 533, school: "NTHU", department: "經濟系", gender: "female" },
+  { id: "demo-f10", name: "測試・高子晴", score: 498, school: "OTHER", department: "建築系", gender: "female" },
+];
+
+function demoEntries(now: string): PunchEntry[] {
+  return DEMO_ROWS.map((row) => ({ ...row, updatedAt: now }));
+}
+
 function demoBoard(): PunchBoard {
   const now = new Date().toISOString();
-  const rows: Array<Omit<PunchEntry, "updatedAt">> = [
-    { id: "demo-m1", name: "測試・林大為", score: 998, school: "NTHU", department: "電機系", gender: "male" },
-    { id: "demo-m2", name: "測試・陳冠宇", score: 912, school: "NYCU", department: "資工系", gender: "male" },
-    { id: "demo-m3", name: "測試・黃志明", score: 870, school: "NTHU", department: "動機系", gender: "male" },
-    { id: "demo-m4", name: "測試・周柏宇", score: 755, school: "NTHU", department: "工工系", gender: "male" },
-    { id: "demo-f1", name: "測試・張雅婷", score: 940, school: "NYCU", department: "外文系", gender: "female" },
-    { id: "demo-f2", name: "測試・王心怡", score: 888, school: "NTHU", department: "人社院", gender: "female" },
-    { id: "demo-f3", name: "測試・李佳蓉", score: 801, school: "NYCU", department: "生科系", gender: "female" },
-    { id: "demo-f4", name: "測試・吳欣儀", score: 720, school: "OTHER", department: "設計系", gender: "female" },
-  ];
   return {
     eventName: DEFAULT_NAME,
     endAt: DEFAULT_END_AT,
     updatedAt: now,
     version: 1,
-    entries: rows.map((row) => ({ ...row, updatedAt: now })),
+    entries: demoEntries(now),
   };
 }
 
-/** First visit writes demo scores so the live board can be checked. */
+/** Writes demo scores, and fills in any missing demo ids on later deploys. */
 export async function seedBoardIfEmpty(
   env: PunchEnv,
 ): Promise<{ board: PunchBoard; ready: boolean }> {
   if (!env.CHUMEI_VOTES) return { board: emptyBoard(), ready: false };
   const raw = await env.CHUMEI_VOTES.get(BOARD_KEY);
-  if (raw) return readBoard(env);
-  const seeded = demoBoard();
-  await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(seeded));
-  return { board: seeded, ready: true };
+  if (!raw) {
+    const seeded = demoBoard();
+    await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(seeded));
+    return { board: seeded, ready: true };
+  }
+  const current = await readBoard(env);
+  if (!current.ready) return current;
+  const now = new Date().toISOString();
+  const have = new Set(current.board.entries.map((entry) => entry.id));
+  const extra = demoEntries(now).filter((entry) => !have.has(entry.id));
+  if (extra.length === 0) return current;
+  current.board.entries.push(...extra);
+  current.board.updatedAt = now;
+  current.board.version += 1;
+  await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(current.board));
+  return current;
 }
 
 function isEntry(value: unknown): value is PunchEntry {
