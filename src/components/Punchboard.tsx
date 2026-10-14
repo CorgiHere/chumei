@@ -80,30 +80,43 @@ function formatScore(n: number) {
   return n.toLocaleString("en-US");
 }
 
+function formatRemain(ms: number) {
+  const total = Math.max(0, Math.floor(ms / 1000));
+  const days = Math.floor(total / 86400);
+  const hours = Math.floor((total % 86400) / 3600);
+  const minutes = Math.floor((total % 3600) / 60);
+  const seconds = total % 60;
+  const pad = (n: number) => String(n).padStart(2, "0");
+  const clock = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
+  return days > 0 ? `${days} 天 ${clock}` : clock;
+}
+
 function useCountdown(startAt: string, endAt: string) {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
-    const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    const id = window.setInterval(() => setNow(Date.now()), reduced ? 1000 : 250);
+    const id = window.setInterval(() => setNow(Date.now()), 250);
     return () => window.clearInterval(id);
   }, []);
   const start = new Date(startAt).getTime();
   const end = new Date(endAt).getTime();
   if (!Number.isFinite(start)) {
-    return { phase: "waiting" as const, headline: "11/17", detail: "" };
+    return { phase: "waiting" as const, label: "距離 11/17", clock: "—" };
   }
   if (now < start) {
-    const days = Math.max(1, Math.ceil((start - now) / 86400000));
     return {
       phase: "waiting" as const,
-      headline: "11/17",
-      detail: `還有 ${days} 天`,
+      label: "距離 11/17",
+      clock: formatRemain(start - now),
     };
   }
   if (Number.isFinite(end) && now > end) {
-    return { phase: "ended" as const, headline: "11/17", detail: "本場完賽" };
+    return { phase: "ended" as const, label: "活動狀態", clock: "本場完賽" };
   }
-  return { phase: "live" as const, headline: "11/17", detail: "今天開打" };
+  return {
+    phase: "live" as const,
+    label: "距離結束",
+    clock: Number.isFinite(end) ? formatRemain(end - now) : "進行中",
+  };
 }
 
 export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2" }) {
@@ -180,17 +193,15 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
           <div className="grid gap-px bg-white/10 md:grid-cols-[1.15fr_1fr]">
             <div className="bg-ink px-5 py-6 md:px-7 md:py-8">
               <p className="font-mono-ui text-[11px] tracking-[0.2em] text-brand-yellow">
-                活動日期
+                {countdown.label}
               </p>
-              <p className="font-num mt-3 text-[clamp(40px,9vw,84px)] leading-none font-bold tracking-tight text-brand-yellow">
-                {countdown.headline}
+              <p className="font-num mt-3 text-[clamp(32px,6vw,72px)] leading-none font-bold tracking-tight text-brand-yellow">
+                {countdown.clock}
               </p>
               <p className="mt-4 text-sm text-muted">
                 {countdown.phase === "ended"
                   ? "倒數已結束，以下為最終排名。"
-                  : countdown.phase === "live"
-                    ? "今天開打。現場登錄後約數秒內會出現在榜上。"
-                    : `${countdown.detail}。現場登錄後約數秒內會出現在榜上。`}
+                  : "活動日期 11/17。現場登錄後約數秒內會出現在榜上。"}
               </p>
             </div>
             <div className="bg-dark-gray px-5 py-6 md:px-7 md:py-8">
