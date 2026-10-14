@@ -6,7 +6,6 @@ import {
   getPunchboardEndpoint,
   matchesQuery,
   PUNCH_GENDER_LABEL,
-  PUNCH_SCHOOL_LABEL,
   type PunchboardPayload,
   type PunchGender,
   type PunchSchool,
@@ -354,14 +353,16 @@ function PodiumCard({
       >
         {formatScore(entry.score)}
       </p>
-      <p className={cn("mt-4 truncate text-lg font-black md:text-xl", featured && "md:text-2xl")}>
-        {entry.name}
-      </p>
-      <div className="mt-2 flex flex-wrap items-center gap-2">
-        <SchoolChip school={entry.school} />
-        {entry.department ? (
-          <span className="truncate text-xs opacity-80">{entry.department}</span>
-        ) : null}
+      <div className="mt-4 flex min-w-0 items-center gap-2.5">
+        <SchoolMark school={entry.school} large={featured} />
+        <div className="min-w-0">
+          <p className={cn("truncate text-lg font-black md:text-xl", featured && "md:text-2xl")}>
+            {entry.name}
+          </p>
+          {entry.department ? (
+            <p className="mt-0.5 truncate text-xs opacity-80">{entry.department}</p>
+          ) : null}
+        </div>
       </div>
     </article>
   );
@@ -373,14 +374,12 @@ function RankRow({ entry }: { entry: RankedPunchEntry }) {
       <span className="font-num w-9 shrink-0 text-xl font-bold text-brand-yellow">
         {String(entry.rank).padStart(2, "0")}
       </span>
+      <SchoolMark school={entry.school} />
       <div className="min-w-0 flex-1">
         <p className="truncate text-base font-black">{entry.name}</p>
-        <div className="mt-1 flex min-w-0 items-center gap-2">
-          <SchoolChip school={entry.school} />
-          {entry.department ? (
-            <span className="truncate text-xs text-muted">{entry.department}</span>
-          ) : null}
-        </div>
+        {entry.department ? (
+          <p className="truncate text-xs text-muted">{entry.department}</p>
+        ) : null}
       </div>
       <span className="font-num shrink-0 text-[22px] font-bold leading-none">
         {formatScore(entry.score)}
@@ -389,17 +388,24 @@ function RankRow({ entry }: { entry: RankedPunchEntry }) {
   );
 }
 
-function SchoolChip({ school }: { school: PunchSchool }) {
+const SCHOOL_MARK: Record<PunchSchool, string> = {
+  NTHU: "清",
+  NYCU: "交",
+  OTHER: "他",
+};
+
+function SchoolMark({ school, large = false }: { school: PunchSchool; large?: boolean }) {
   return (
     <span
       className={cn(
-        "shrink-0 px-1.5 py-0.5 font-mono-ui text-[10px] font-bold tracking-widest text-white",
+        "inline-flex shrink-0 items-center justify-center font-black text-white",
+        large ? "size-11 text-xl" : "size-9 text-lg",
         school === "NTHU" && "bg-nthu",
         school === "NYCU" && "bg-nycu",
         school === "OTHER" && "bg-dark-gray text-muted ring-1 ring-white/25",
       )}
     >
-      {PUNCH_SCHOOL_LABEL[school]}
+      {SCHOOL_MARK[school]}
     </span>
   );
 }
