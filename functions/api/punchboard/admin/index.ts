@@ -3,6 +3,7 @@ import {
   DEFAULT_END_AT,
   DEFAULT_NAME,
   json,
+  purgePublicBoardCache,
   readBoard,
   type PunchEntry,
   type PunchEnv,
@@ -196,6 +197,7 @@ export async function onRequestPost(context: PagesContext) {
   board.updatedAt = now;
   board.version += 1;
   await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(board));
+  await purgePublicBoardCache();
   return authedJson(request, {
     ok: true,
     ready: true,

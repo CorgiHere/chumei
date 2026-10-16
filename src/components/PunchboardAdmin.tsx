@@ -94,16 +94,19 @@ export function PunchboardAdmin() {
     };
   }, []);
 
-  const filtered = useMemo(() => {
+  const filteredByGender = useMemo(() => {
     const q = query.trim().toLowerCase();
-    const rows = [...board.entries].sort((a, b) => b.score - a.score);
-    if (!q) return rows;
-    return rows.filter((e) =>
+    const match = (e: PunchEntry) =>
+      !q ||
       [e.name, e.department, PUNCH_SCHOOL_LABEL[e.school], PUNCH_GENDER_LABEL[e.gender]]
         .join(" ")
         .toLowerCase()
-        .includes(q),
-    );
+        .includes(q);
+    const sortRows = (gender: PunchGender) =>
+      board.entries
+        .filter((e) => e.gender === gender && match(e))
+        .sort((a, b) => b.score - a.score);
+    return { male: sortRows("male"), female: sortRows("female") };
   }, [board.entries, query]);
 
   async function login(e: FormEvent) {
@@ -143,11 +146,11 @@ export function PunchboardAdmin() {
     if (res.status === 401) {
       setAuthed(false);
       setError("登入已過期，請再登入一次。");
-      return;
+      return false;
     }
     if (!res.ok) {
       setError("儲存失敗，請再試一次。");
-      return;
+      return false;
     }
     const data = (await res.json()) as AdminState;
     setBoard({
@@ -155,7 +158,8 @@ export function PunchboardAdmin() {
       endAt: data.endAt,
       entries: data.entries ?? [],
     });
-    setNotice("已更新。公開榜約 2–4 秒後會跟上。");
+    setNotice("已更新。公開榜約十秒內會跟上。");
+    return true;
   }
 
   if (loading) {
@@ -245,7 +249,9 @@ export function PunchboardAdmin() {
               department: form.department,
               gender: form.gender,
             },
-          }).then(() => setForm(blankForm));
+          }).then((ok) => {
+            if (ok) setForm(blankForm);
+          });
         }}
       >
         <h2 className="text-xl font-black">{form.id ? "修改成績" : "新增成績"}</h2>
@@ -321,7 +327,7 @@ export function PunchboardAdmin() {
       {notice ? <p className="text-sm text-brand-yellow">{notice}</p> : null}
 
       <div>
-        <div className="mb-3 flex flex-wrap items-end justify-between gap-3">
+        <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
           <h2 className="text-xl font-black">已登錄 {board.entries.length} 人</h2>
           <input
             value={query}
@@ -330,59 +336,45 @@ export function PunchboardAdmin() {
             className="w-full max-w-xs border-2 border-white/20 bg-ink px-3 py-2 text-sm text-chalk outline-none focus:border-brand-yellow"
           />
         </div>
-        <div className="overflow-x-auto border border-white/10">
-          <table className="w-full min-w-[640px] text-left text-sm">
-            <thead className="bg-dark-gray font-mono-ui text-[11px] tracking-widest text-brand-yellow">
-              <tr>
-                <th className="px-3 py-3">分數</th>
-                <th className="px-3 py-3">姓名</th>
-                <th className="px-3 py-3">學校</th>
-                <th className="px-3 py-3">系所</th>
-                <th className="px-3 py-3">榜</th>
-                <th className="px-3 py-3">操作</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.map((row) => (
-                <tr key={row.id} className="border-t border-white/10">
-                  <td className="font-num px-3 py-3 font-bold">{row.score}</td>
-                  <td className="px-3 py-3 font-black">{row.name}</td>
-                  <td className="px-3 py-3">{PUNCH_SCHOOL_LABEL[row.school]}</td>
-                  <td className="px-3 py-3">{row.department}</td>
-                  <td className="px-3 py-3">{PUNCH_GENDER_LABEL[row.gender]}</td>
-                  <td className="px-3 py-3">
-                    <button
-                      type="button"
-                      className="text-link mr-3"
-                      onClick={() =>
-                        setForm({
-                          id: row.id,
-                          name: row.name,
-                          score: String(row.score),
-                          school: row.school,
-                          department: row.department,
-                          gender: row.gender,
-                        })
-                      }
-                    >
-                      改
-                    </button>
-                    <button
-                      type="button"
-                      className="text-link"
-                      onClick={() => {
-                        if (window.confirm(`刪除 ${row.name}？`)) {
-                          void postAction({ action: "delete", id: row.id });
-                        }
-                      }}
-                    >
-                      刪
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+        <div className="grid gap-8 lg:grid-cols-2">
+          <EntryTable
+            title="男性"
+            rows={filteredByGender.male}
+            onEdit={(row) =>
+              setForm({
+                id: row.id,
+                name: row.name,
+                score: String(row.score),
+                school: row.school,
+                department: row.department,
+                gender: row.gender,
+              })
+            }
+            onDelete={(row) => {
+              if (window.confirm(`刪除 ${row.name}？`)) {
+                void postAction({ action: "delete", id: row.id });
+              }
+            }}
+          />
+          <EntryTable
+            title="女性"
+            rows={filteredByGender.female}
+            onEdit={(row) =>
+              setForm({
+                id: row.id,
+                name: row.name,
+                score: String(row.score),
+                school: row.school,
+                department: row.department,
+                gender: row.gender,
+              })
+            }
+            onDelete={(row) => {
+              if (window.confirm(`刪除 ${row.name}？`)) {
+                void postAction({ action: "delete", id: row.id });
+              }
+            }}
+          />
         </div>
       </div>
     </div>
@@ -391,6 +383,81 @@ export function PunchboardAdmin() {
 
 const fieldClass =
   "w-full border-2 border-white/20 bg-ink px-3 py-3 text-chalk outline-none focus:border-brand-yellow";
+
+const actionBtn =
+  "inline-flex min-h-11 items-center justify-center px-3 font-mono-ui text-xs font-bold tracking-widest";
+
+function EntryTable({
+  title,
+  rows,
+  onEdit,
+  onDelete,
+}: {
+  title: string;
+  rows: PunchEntry[];
+  onEdit: (row: PunchEntry) => void;
+  onDelete: (row: PunchEntry) => void;
+}) {
+  return (
+    <section>
+      <h3 className="mb-3 border-b-2 border-brand-yellow pb-2 text-lg font-black">
+        {title}
+        <span className="ml-2 font-mono-ui text-[11px] font-normal tracking-widest text-muted">
+          {rows.length} 人
+        </span>
+      </h3>
+      <div className="overflow-x-auto border border-white/10">
+        <table className="w-full min-w-[520px] text-left text-sm">
+          <thead className="bg-dark-gray font-mono-ui text-[11px] tracking-widest text-brand-yellow">
+            <tr>
+              <th className="px-3 py-3">分數</th>
+              <th className="px-3 py-3">姓名</th>
+              <th className="px-3 py-3">學校</th>
+              <th className="px-3 py-3">系所</th>
+              <th className="px-3 py-3">操作</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.length === 0 ? (
+              <tr>
+                <td colSpan={5} className="px-3 py-6 text-muted">
+                  目前沒有成績。
+                </td>
+              </tr>
+            ) : (
+              rows.map((row) => (
+                <tr key={row.id} className="border-t border-white/10">
+                  <td className="font-num px-3 py-3 font-bold">{row.score}</td>
+                  <td className="px-3 py-3 font-black">{row.name}</td>
+                  <td className="px-3 py-3">{PUNCH_SCHOOL_LABEL[row.school]}</td>
+                  <td className="px-3 py-3">{row.department}</td>
+                  <td className="px-3 py-3">
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        className={`${actionBtn} border-2 border-brand-yellow text-brand-yellow`}
+                        onClick={() => onEdit(row)}
+                      >
+                        修改
+                      </button>
+                      <button
+                        type="button"
+                        className={`${actionBtn} border-2 border-white/35 text-chalk`}
+                        onClick={() => onDelete(row)}
+                      >
+                        刪除
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      </div>
+    </section>
+  );
+}
 
 function Field({
   label,

@@ -1,5 +1,6 @@
 import {
   PUBLIC_CACHE_CONTROL,
+  PUBLIC_CACHE_KEY,
   PUBLIC_CDN_CACHE_CONTROL,
   json,
   publicPayload,
@@ -12,8 +13,6 @@ type PagesContext = {
   env: PunchEnv;
   waitUntil?: (promise: Promise<unknown>) => void;
 };
-
-const CACHE_KEY = "https://chumei.org/api/punchboard/public-v1";
 
 const edgeHeaders = {
   "Cache-Control": PUBLIC_CACHE_CONTROL,
@@ -29,7 +28,7 @@ export async function onRequestOptions(context: PagesContext) {
 
 export async function onRequestGet(context: PagesContext) {
   const cache = caches.default;
-  const cacheKey = new Request(CACHE_KEY, { method: "GET" });
+  const cacheKey = new Request(PUBLIC_CACHE_KEY, { method: "GET" });
   const cached = await cache.match(cacheKey);
   if (cached) {
     const headers = new Headers(cached.headers);

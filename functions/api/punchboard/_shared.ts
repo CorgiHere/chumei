@@ -29,9 +29,18 @@ export type PunchEnv = {
 
 /** Browsers revalidate every poll; the edge serves a shared copy for ~5s. */
 export const PUBLIC_CACHE_CONTROL =
-  "public, max-age=0, s-maxage=5, stale-while-revalidate=20";
+  "public, max-age=0, s-maxage=5, stale-while-revalidate=2";
 export const PUBLIC_CDN_CACHE_CONTROL =
-  "public, max-age=5, stale-while-revalidate=20";
+  "public, max-age=5, stale-while-revalidate=2";
+export const PUBLIC_CACHE_KEY = "https://chumei.org/api/punchboard/public-v1";
+
+export async function purgePublicBoardCache() {
+  try {
+    await caches.default.delete(new Request(PUBLIC_CACHE_KEY, { method: "GET" }));
+  } catch {
+    /* Cache API may be unavailable in some runtimes */
+  }
+}
 
 export const BOARD_KEY = "punchboard-v1";
 export const DEFAULT_NAME = "拳擊機大賽";
@@ -142,7 +151,7 @@ function coerceBoard(raw: string): PunchBoard {
   }
 }
 
-/** Writes demo scores, and fills in any missing demo ids on later deploys. */
+/** Seed demo scores only when the board key is missing. Never revive deleted rows. */
 export async function seedBoardIfEmpty(
   env: PunchEnv,
 ): Promise<{ board: PunchBoard; ready: boolean }> {
@@ -153,16 +162,7 @@ export async function seedBoardIfEmpty(
     await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(seeded));
     return { board: seeded, ready: true };
   }
-  const board = coerceBoard(raw);
-  const now = new Date().toISOString();
-  const have = new Set(board.entries.map((entry) => entry.id));
-  const extra = demoEntries(now).filter((entry) => !have.has(entry.id));
-  if (extra.length === 0) return { board, ready: true };
-  board.entries.push(...extra);
-  board.updatedAt = now;
-  board.version += 1;
-  await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(board));
-  return { board, ready: true };
+  return { board: coerceBoard(raw), ready: true };
 }
 
 function isEntry(value: unknown): value is PunchEntry {
