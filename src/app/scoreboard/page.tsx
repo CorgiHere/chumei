@@ -8,6 +8,7 @@ import { historyYears } from "@/data/history";
 import { siteConfig } from "@/data/site";
 import { formatDateOnly } from "@/lib/utils";
 import { buildPageMetadata } from "@/lib/seo";
+import { SchoolPair } from "@/components/SchoolOrder";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "比分與結果｜清華大學 vs 交通大學總錦標",
@@ -40,8 +41,12 @@ export default function ScoreboardPage() {
           />
           <Scoreboard className="mx-auto max-w-2xl" />
           <p className="mt-6 text-center text-muted">
-            已完成計分 {finished.length}／{scored.length} 場 · 清大{" "}
-            {siteConfig.nthuScore}：{siteConfig.nycuScore} 交大
+            已完成計分 {finished.length}／{scored.length} 場 ·{" "}
+            <SchoolPair
+              nthu={`清大 ${siteConfig.nthuScore}`}
+              between="："
+              nycu={`交大 ${siteConfig.nycuScore}`}
+            />
           </p>
         </div>
         <div className="hazard-stripe-animated h-2" aria-hidden />
@@ -69,8 +74,19 @@ export default function ScoreboardPage() {
                 <thead>
                   <tr className="border-b-2 border-brand-yellow bg-brand-yellow text-left text-ink">
                     <th className="px-4 py-3">活動</th>
-                    <th className="px-4 py-3 text-nthu">清大</th>
-                    <th className="px-4 py-3 text-nycu">交大</th>
+                    <SchoolPair
+                      wrap={false}
+                      nthu={
+                        <th className="px-4 py-3 text-nthu" data-keep-order>
+                          清大
+                        </th>
+                      }
+                      nycu={
+                        <th className="px-4 py-3 text-nycu" data-keep-order>
+                          交大
+                        </th>
+                      }
+                    />
                     <th className="px-4 py-3">勝方</th>
                     <th className="px-4 py-3">狀態</th>
                     <th className="px-4 py-3">日期</th>
@@ -84,12 +100,19 @@ export default function ScoreboardPage() {
                       className="border-b border-white/15 last:border-0"
                     >
                       <td className="px-4 py-3 font-bold">{a.title}</td>
-                      <td className="px-4 py-3 font-black text-nthu">
-                        {a.result?.nthuScore ?? "—"}
-                      </td>
-                      <td className="px-4 py-3 font-black text-nycu">
-                        {a.result?.nycuScore ?? "—"}
-                      </td>
+                      <SchoolPair
+                        wrap={false}
+                        nthu={
+                          <td className="px-4 py-3 font-black text-nthu" data-keep-order>
+                            {a.result?.nthuScore ?? "—"}
+                          </td>
+                        }
+                        nycu={
+                          <td className="px-4 py-3 font-black text-nycu" data-keep-order>
+                            {a.result?.nycuScore ?? "—"}
+                          </td>
+                        }
+                      />
                       <td className="px-4 py-3 text-sm font-bold">
                         {winnerLabel(a.result?.winner)}
                       </td>
@@ -125,12 +148,19 @@ export default function ScoreboardPage() {
                     <StatusBadge status={a.status} showFun={false} />
                   </div>
                   <div className="mt-3 flex gap-4 text-lg font-black">
-                    <span className="text-nthu">
-                      清大 {a.result?.nthuScore ?? "—"}
-                    </span>
-                    <span className="text-nycu">
-                      交大 {a.result?.nycuScore ?? "—"}
-                    </span>
+                    <SchoolPair
+                      className="flex gap-4"
+                      nthu={
+                        <span className="text-nthu" data-keep-order>
+                          清大 {a.result?.nthuScore ?? "—"}
+                        </span>
+                      }
+                      nycu={
+                        <span className="text-nycu" data-keep-order>
+                          交大 {a.result?.nycuScore ?? "—"}
+                        </span>
+                      }
+                    />
                   </div>
                   <p className="mt-2 text-sm text-muted">
                     {formatDateOnly(a.startAt)} · {winnerLabel(a.result?.winner)}
@@ -199,16 +229,22 @@ export default function ScoreboardPage() {
                       {year.name}
                     </p>
                     <p className="mt-2 text-3xl font-black">
-                      <span className="text-nthu">
-                        {year.nthuScore}
-                      </span>
-                      <span className="mx-2 text-muted">：</span>
-                      <span className="text-nycu">
-                        {year.nycuScore}
-                      </span>
+                      <SchoolPair
+                        nthu={
+                          <span className="text-nthu" data-keep-order>
+                            {year.nthuScore}
+                          </span>
+                        }
+                        between={<span className="mx-2 text-muted">：</span>}
+                        nycu={
+                          <span className="text-nycu" data-keep-order>
+                            {year.nycuScore}
+                          </span>
+                        }
+                      />
                     </p>
                     <p className="mt-2 text-sm text-muted">
-                      清大 · 交大
+                      <SchoolPair nthu="清大" between=" · " nycu="交大" />
                     </p>
                   </div>
                 ))}

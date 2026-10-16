@@ -6,6 +6,7 @@ import { siteConfig } from "@/data/site";
 import { withBasePath, appPath } from "@/lib/utils";
 import { galleryItems } from "@/data/history";
 import { HazardBar } from "./HazardBar";
+import { useSchoolSides } from "./SchoolOrder";
 
 const slides = galleryItems.slice(0, 5).map((item) => ({
   src: item.imageUrl,
@@ -42,6 +43,12 @@ export function Hero() {
   }, [outgoing]);
 
   const current = slides[index] ?? slides[0];
+  const [leftSchool, rightSchool] = useSchoolSides("國立清華大學", "國立交通大學");
+  const [leftShort, rightShort] = useSchoolSides("清大", "交大");
+  const [leftScore, rightScore] = useSchoolSides(
+    siteConfig.nthuScore,
+    siteConfig.nycuScore,
+  );
   const renderedIndexes =
     outgoing === null || outgoing === index ? [index] : [outgoing, index];
 
@@ -50,8 +57,8 @@ export function Hero() {
       <HazardBar />
       <div className="container-main grid items-center gap-8 py-12 lg:grid-cols-2 lg:items-stretch lg:gap-12 lg:py-14">
         <div className="flex flex-col justify-center">
-          <p className="eyebrow">
-            國立清華大學 × 國立交通大學　／　{siteConfig.yearName}
+          <p className="eyebrow" data-keep-order>
+            {leftSchool} × {rightSchool}　／　{siteConfig.yearName}
           </p>
           <h1 className="display-title mb-5 text-[clamp(30px,4.5vw,66px)]">
             只要是清交人
@@ -79,11 +86,14 @@ export function Hero() {
               </span>
             </div>
             <div className="mr-6 border-r border-white/15 pr-6 pt-3.5">
-              <b className="font-num block text-[26px] leading-none font-bold">
-                {siteConfig.nthuScore}：{siteConfig.nycuScore}
+              <b className="font-num block text-[26px] leading-none font-bold" data-keep-order>
+                {leftScore}：{rightScore}
               </b>
-              <span className="font-mono-ui text-[11px] tracking-[0.12em] text-muted">
-                清大／交大
+              <span
+                className="font-mono-ui text-[11px] tracking-[0.12em] text-muted"
+                data-keep-order
+              >
+                {leftShort}／{rightShort}
               </span>
             </div>
             <div className="pt-3.5">

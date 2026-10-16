@@ -1,8 +1,11 @@
+"use client";
+
 import Link from "next/link";
 import { siteConfig } from "@/data/site";
 import { activities } from "@/data/activities";
 import { cn, formatDateOnly, appPath } from "@/lib/utils";
 import type { Activity } from "@/types";
+import { SchoolPair, useSchoolOrder } from "./SchoolOrder";
 
 type ScoreboardProps = {
   compact?: boolean;
@@ -54,6 +57,8 @@ export function Scoreboard({
   className,
   showBreakdown = false,
 }: ScoreboardProps) {
+  const { order } = useSchoolOrder();
+  const nycuFirst = order === "jiaoqing";
   const scored = activities
     .filter((a) => a.isScored)
     .sort(
@@ -68,30 +73,66 @@ export function Scoreboard({
           className,
         )}
       >
-        <div className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 bg-brand-yellow px-4 py-5 text-ink md:px-6">
-          <div className="flex min-w-0 items-center gap-5 md:gap-6">
-            <p className="font-sans text-[clamp(28px,4vw,48px)] leading-none font-bold text-[#4A1460] [font-synthesis:weight] [-webkit-text-stroke:0.6px_currentColor]">
-              清大
-            </p>
-            <p className="font-num text-[clamp(28px,4vw,48px)] leading-none font-bold">
-              {siteConfig.nthuScore}
-            </p>
+        <div
+          className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 bg-brand-yellow px-4 py-5 text-ink md:px-6"
+          data-keep-order
+        >
+          <div className={`flex min-w-0 items-center gap-5 md:gap-6 ${nycuFirst ? "flex-row-reverse justify-end" : ""}`}>
+            {nycuFirst ? (
+              <>
+                <div className="flex flex-col items-end gap-1">
+                  <div className="flex items-center gap-5 md:gap-6">
+                    <p className="font-sans text-[clamp(28px,4vw,48px)] leading-none font-bold text-nycu [font-synthesis:weight] [-webkit-text-stroke:0.6px_currentColor]">
+                      交大
+                    </p>
+                    <p className="font-num text-[clamp(28px,4vw,48px)] leading-none font-bold">
+                      {siteConfig.nycuScore}
+                    </p>
+                  </div>
+                  <span className="bg-ink px-2 py-0.5 font-mono-ui text-[11px] tracking-[0.2em] text-brand-yellow">
+                    獲勝
+                  </span>
+                </div>
+              </>
+            ) : (
+              <>
+                <p className="font-sans text-[clamp(28px,4vw,48px)] leading-none font-bold text-[#4A1460] [font-synthesis:weight] [-webkit-text-stroke:0.6px_currentColor]">
+                  清大
+                </p>
+                <p className="font-num text-[clamp(28px,4vw,48px)] leading-none font-bold">
+                  {siteConfig.nthuScore}
+                </p>
+              </>
+            )}
           </div>
           <p className="font-num text-[15px] tracking-[0.16em] text-ink/70">
             VS
           </p>
-          <div className="flex min-w-0 flex-col items-end gap-1">
-            <div className="flex items-center gap-5 md:gap-6">
-              <p className="font-num text-[clamp(28px,4vw,48px)] leading-none font-bold">
-                {siteConfig.nycuScore}
-              </p>
-              <p className="font-sans text-[clamp(28px,4vw,48px)] leading-none font-bold text-nycu [font-synthesis:weight] [-webkit-text-stroke:0.6px_currentColor]">
-                交大
-              </p>
-            </div>
-            <span className="bg-ink px-2 py-0.5 font-mono-ui text-[11px] tracking-[0.2em] text-brand-yellow">
-              獲勝
-            </span>
+          <div className={`flex min-w-0 flex-col gap-1 ${nycuFirst ? "items-start" : "items-end"}`}>
+            {nycuFirst ? (
+              <div className="flex items-center gap-5 md:gap-6">
+                <p className="font-num text-[clamp(28px,4vw,48px)] leading-none font-bold">
+                  {siteConfig.nthuScore}
+                </p>
+                <p className="font-sans text-[clamp(28px,4vw,48px)] leading-none font-bold text-[#4A1460] [font-synthesis:weight] [-webkit-text-stroke:0.6px_currentColor]">
+                  清大
+                </p>
+              </div>
+            ) : (
+              <>
+                <div className="flex items-center gap-5 md:gap-6">
+                  <p className="font-num text-[clamp(28px,4vw,48px)] leading-none font-bold">
+                    {siteConfig.nycuScore}
+                  </p>
+                  <p className="font-sans text-[clamp(28px,4vw,48px)] leading-none font-bold text-nycu [font-synthesis:weight] [-webkit-text-stroke:0.6px_currentColor]">
+                    交大
+                  </p>
+                </div>
+                <span className="bg-ink px-2 py-0.5 font-mono-ui text-[11px] tracking-[0.2em] text-brand-yellow">
+                  獲勝
+                </span>
+              </>
+            )}
           </div>
         </div>
 
@@ -100,33 +141,55 @@ export function Scoreboard({
             <div
               key={a.id}
               className="grid grid-cols-[48px_1fr_48px] items-center gap-2 border-b border-white/15 px-3 py-2.5 last:border-b-0"
+              data-keep-order
             >
-              <WinMark win={a.result?.winner === "NTHU"} school="nthu" />
+              {nycuFirst ? (
+                <WinMark win={a.result?.winner === "NYCU"} school="nycu" />
+              ) : (
+                <WinMark win={a.result?.winner === "NTHU"} school="nthu" />
+              )}
               <EventCell activity={a} />
-              <WinMark win={a.result?.winner === "NYCU"} school="nycu" />
+              {nycuFirst ? (
+                <WinMark win={a.result?.winner === "NTHU"} school="nthu" />
+              ) : (
+                <WinMark win={a.result?.winner === "NYCU"} school="nycu" />
+              )}
             </div>
           ))}
         </div>
 
         <div
           className="hidden gap-x-3 gap-y-4 px-5 py-6 md:grid"
+          data-keep-order
           style={{
             gridTemplateColumns: `repeat(${scored.length}, minmax(0, 1fr))`,
           }}
         >
-          {scored.map((a) => (
-            <div key={`${a.id}-nthu`} className="flex justify-center">
-              <WinMark win={a.result?.winner === "NTHU"} school="nthu" />
-            </div>
-          ))}
+          {nycuFirst
+            ? scored.map((a) => (
+                <div key={`${a.id}-nycu`} className="flex justify-center">
+                  <WinMark win={a.result?.winner === "NYCU"} school="nycu" />
+                </div>
+              ))
+            : scored.map((a) => (
+                <div key={`${a.id}-nthu`} className="flex justify-center">
+                  <WinMark win={a.result?.winner === "NTHU"} school="nthu" />
+                </div>
+              ))}
           {scored.map((a) => (
             <EventCell key={`${a.id}-title`} activity={a} />
           ))}
-          {scored.map((a) => (
-            <div key={`${a.id}-nycu`} className="flex justify-center">
-              <WinMark win={a.result?.winner === "NYCU"} school="nycu" />
-            </div>
-          ))}
+          {nycuFirst
+            ? scored.map((a) => (
+                <div key={`${a.id}-nthu`} className="flex justify-center">
+                  <WinMark win={a.result?.winner === "NTHU"} school="nthu" />
+                </div>
+              ))
+            : scored.map((a) => (
+                <div key={`${a.id}-nycu`} className="flex justify-center">
+                  <WinMark win={a.result?.winner === "NYCU"} school="nycu" />
+                </div>
+              ))}
         </div>
 
         <p className="m-0 border-t border-white/15 px-3 py-3 font-mono-ui text-[12px] tracking-[0.04em] text-chalk/75 md:px-5">
@@ -147,15 +210,22 @@ export function Scoreboard({
           compact ? "text-3xl" : "text-5xl md:text-6xl",
         )}
       >
-        <div className="text-center">
-          <p className="mb-1 font-mono-ui text-xs tracking-[0.12em] text-nthu">清大</p>
-          <p className="font-num font-bold text-nthu">{siteConfig.nthuScore}</p>
-        </div>
-        <span className="font-num text-brand-yellow">:</span>
-        <div className="text-center">
-          <p className="mb-1 font-mono-ui text-xs tracking-[0.12em] text-nycu">交大</p>
-          <p className="font-num font-bold text-nycu">{siteConfig.nycuScore}</p>
-        </div>
+        <SchoolPair
+          className="contents"
+          nthu={
+            <div className="text-center" data-keep-order>
+              <p className="mb-1 font-mono-ui text-xs tracking-[0.12em] text-nthu">清大</p>
+              <p className="font-num font-bold text-nthu">{siteConfig.nthuScore}</p>
+            </div>
+          }
+          between={<span className="font-num text-brand-yellow">:</span>}
+          nycu={
+            <div className="text-center" data-keep-order>
+              <p className="mb-1 font-mono-ui text-xs tracking-[0.12em] text-nycu">交大</p>
+              <p className="font-num font-bold text-nycu">{siteConfig.nycuScore}</p>
+            </div>
+          }
+        />
       </div>
     </div>
   );

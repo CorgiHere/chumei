@@ -6,6 +6,7 @@ import { historyYears } from "@/data/history";
 import { siteConfig } from "@/data/site";
 import { formatDateOnly } from "@/lib/utils";
 import { buildPageMetadata } from "@/lib/seo";
+import { SchoolPair, SchoolScoreBar } from "@/components/SchoolOrder";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "歷屆竹梅｜清大交大竹梅賽年度回顧",
@@ -33,8 +34,6 @@ export default function HistoryPage() {
         <div className="space-y-6">
           {years.map((year) => {
             const isCurrent = year.year === siteConfig.year;
-            const total = year.nthuScore + year.nycuScore || 1;
-            const nthuPct = Math.round((year.nthuScore / total) * 100);
 
             return (
               <article
@@ -62,28 +61,24 @@ export default function HistoryPage() {
                         總比分
                       </p>
                       <p className="text-2xl font-black">
-                        <span className="text-nthu">
-                          {year.nthuScore}
-                        </span>
-                        <span className="mx-1">：</span>
-                        <span className="text-nycu">
-                          {year.nycuScore}
-                        </span>
+                        <SchoolPair
+                          nthu={
+                            <span className="text-nthu" data-keep-order>
+                              {year.nthuScore}
+                            </span>
+                          }
+                          between={<span className="mx-1">：</span>}
+                          nycu={
+                            <span className="text-nycu" data-keep-order>
+                              {year.nycuScore}
+                            </span>
+                          }
+                        />
                       </p>
                     </div>
                   </div>
 
-                  <div className="mt-5 h-3 overflow-hidden border-2 border-white/20">
-                    <div
-                      className="h-full bg-nthu"
-                      style={{ width: `${nthuPct}%` }}
-                      title={`清華 ${year.nthuScore}`}
-                    />
-                  </div>
-                  <div className="mt-2 flex justify-between text-xs font-bold">
-                    <span className="text-nthu">清大</span>
-                    <span className="text-nycu">交大</span>
-                  </div>
+                  <SchoolScoreBar nthuScore={year.nthuScore} nycuScore={year.nycuScore} />
 
                   <p className="mt-5">{year.summary}</p>
                   <p className="mt-2 text-sm text-muted">

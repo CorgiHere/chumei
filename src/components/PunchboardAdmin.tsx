@@ -11,6 +11,7 @@ import {
   type PunchGender,
   type PunchSchool,
 } from "@/lib/punchboard";
+import { useSchoolSides } from "./SchoolOrder";
 
 type AdminState = {
   eventName: string;
@@ -52,6 +53,10 @@ export function PunchboardAdmin() {
   });
   const [form, setForm] = useState(blankForm);
   const [query, setQuery] = useState("");
+  const [firstCampus, secondCampus] = useSchoolSides(
+    { value: "NTHU" as PunchSchool, label: "清大" },
+    { value: "NYCU" as PunchSchool, label: "交大" },
+  );
 
   useEffect(() => {
     let cancelled = false;
@@ -284,8 +289,12 @@ export function PunchboardAdmin() {
               }
               className={fieldClass}
             >
-              <option value="NTHU">清大</option>
-              <option value="NYCU">交大</option>
+              <option value={firstCampus.value} data-keep-order>
+                {firstCampus.label}
+              </option>
+              <option value={secondCampus.value} data-keep-order>
+                {secondCampus.label}
+              </option>
               <option value="OTHER">其他</option>
             </select>
           </Field>

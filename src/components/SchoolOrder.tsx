@@ -7,6 +7,7 @@ import {
   useEffect,
   useMemo,
   useState,
+  type ReactNode,
 } from "react";
 import { usePathname } from "next/navigation";
 
@@ -22,8 +23,39 @@ type SchoolOrderContextValue = {
 
 const SchoolOrderContext = createContext<SchoolOrderContextValue | null>(null);
 
+const ORDER_PAIRS: Array<[string, string]> = [
+  ["國立清華大學 × 國立交通大學", "國立交通大學 × 國立清華大學"],
+  ["國立清華大學、國立交通大學", "國立交通大學、國立清華大學"],
+  ["國立清華大學與國立交通大學", "國立交通大學與國立清華大學"],
+  ["國立清華大學／國立交通大學", "國立交通大學／國立清華大學"],
+  ["清華大學與交通大學", "交通大學與清華大學"],
+  ["清華大學、交通大學", "交通大學、清華大學"],
+  ["清華大學／交通大學", "交通大學／清華大學"],
+  ["清華大學 × 交通大學", "交通大學 × 清華大學"],
+  ["清華大學 vs 交通大學", "交通大學 vs 清華大學"],
+  ["清大 NTHU × 交大 NYCU", "交大 NYCU × 清大 NTHU"],
+  ["清大／交大、NTHU／NYCU", "交大／清大、NYCU／NTHU"],
+  ["清大／交大", "交大／清大"],
+  ["清大 × 交大", "交大 × 清大"],
+  ["清大 · 交大", "交大 · 清大"],
+  ["清大、交大", "交大、清大"],
+  ["清大與交大", "交大與清大"],
+  ["清大交大", "交大清大"],
+  ["清華與交通", "交通與清華"],
+  ["NTHU × NYCU", "NYCU × NTHU"],
+  ["NTHU／NYCU", "NYCU／NTHU"],
+];
+
 function toJiaoqing(text: string) {
-  return text.replaceAll("清交／交清", "交清／清交").replaceAll("清交", "交清");
+  let next = text;
+  for (const [from, to] of ORDER_PAIRS) {
+    next = next.replaceAll(from, to);
+  }
+  next = next.replace(
+    /清大(\s*)(\d+|—)(\s*[：:]\s*)(\d+|—)(\s*)交大/g,
+    "交大$1$4$3$2$5清大",
+  );
+  return next.replaceAll("清交／交清", "交清／清交").replaceAll("清交", "交清");
 }
 
 function applySchoolOrder(order: SchoolOrder) {
@@ -57,7 +89,7 @@ function applySchoolOrder(order: SchoolOrder) {
   }
 }
 
-export function SchoolOrderProvider({ children }: { children: React.ReactNode }) {
+export function SchoolOrderProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [order, setOrderState] = useState<SchoolOrder>("qingjiao");
 
@@ -102,4 +134,81 @@ export function useSchoolOrder() {
     throw new Error("useSchoolOrder must be used within SchoolOrderProvider");
   }
   return ctx;
+}
+
+export function useSchoolSides<T>(nthu: T, nycu: T): [T, T] {
+  const { order } = useSchoolOrder();
+  return order === "jiaoqing" ? [nycu, nthu] : [nthu, nycu];
+}
+
+export function SchoolPair({
+  nthu,
+  nycu,
+  between,
+  className,
+  wrap = true,
+}: {
+  nthu: ReactNode;
+  nycu: ReactNode;
+  between?: ReactNode;
+  className?: string;
+  wrap?: boolean;
+}) {
+  const [first, second] = useSchoolSides(nthu, nycu);
+  if (!wrap) {
+    return (
+      <>
+        {first}
+        {between}
+        {second}
+      </>
+    );
+  }
+  return (
+    <span className={className} data-keep-order>
+      {first}
+      {between}
+      {second}
+    </span>
+  );
+}
+
+export function SchoolScoreBar({
+  nthuScore,
+  nycuScore,
+}: {
+  nthuScore: number;
+  nycuScore: number;
+}) {
+  const { order } = useSchoolOrder();
+  const nycuFirst = order === "jiaoqing";
+  const total = nthuScore + nycuScore || 1;
+  const nthuPct = Math.round((nthuScore / total) * 100);
+  const leftPct = nycuFirst ? 100 - nthuPct : nthuPct;
+  return (
+    <>
+      <div className="mt-5 h-3 overflow-hidden border-2 border-white/20">
+        <div
+          className={nycuFirst ? "h-full bg-nycu" : "h-full bg-nthu"}
+          style={{ width: `${leftPct}%` }}
+          data-keep-order
+        />
+      </div>
+      <div className="mt-2 flex justify-between text-xs font-bold">
+        <SchoolPair
+          className="flex w-full justify-between"
+          nthu={
+            <span className="text-nthu" data-keep-order>
+              清大
+            </span>
+          }
+          nycu={
+            <span className="text-nycu" data-keep-order>
+              交大
+            </span>
+          }
+        />
+      </div>
+    </>
+  );
 }
