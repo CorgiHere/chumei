@@ -193,35 +193,44 @@ export function SiteFlagsAdmin() {
           登出
         </button>
       </div>
-      <p className="text-sm text-muted">三項可分開開關。改完後重新整理前台即可看到。</p>
+      <p className="text-sm text-muted">各項可分開開關。改完後重新整理前台即可看到。</p>
       <ul className="space-y-5">
         {FLAG_ROWS.map((row) => {
           const on = flags[row.key];
           return (
-            <li key={row.key} className="border-t border-white/10 pt-5 first:border-t-0 first:pt-0">
-              <p className="text-lg font-black">{row.title}</p>
-              <p className="mt-1 text-sm text-muted">{row.hint}</p>
-              <div className="mt-3 flex flex-wrap gap-3">
-                <button
-                  type="button"
-                  disabled={saving !== null || on}
-                  className={on ? "btn-primary" : "btn-dark-outline"}
-                  onClick={() => void save(row.key, true)}
-                >
-                  開啟
-                </button>
-                <button
-                  type="button"
-                  disabled={saving !== null || !on}
-                  className={!on ? "btn-primary" : "btn-dark-outline"}
-                  onClick={() => void save(row.key, false)}
-                >
-                  關閉
-                </button>
+            <li
+              key={row.key}
+              className="flex flex-wrap items-center justify-between gap-4 border-t border-white/10 pt-5 first:border-t-0 first:pt-0"
+            >
+              <div className="min-w-0 flex-1">
+                <p className="text-lg font-black">{row.title}</p>
+                <p className="mt-1 text-sm text-muted">{row.hint}</p>
               </div>
-              <p className="mt-2 font-mono-ui text-[12px] tracking-widest text-brand-yellow">
-                現在：{on ? "開" : "關"}
-              </p>
+              <button
+                type="button"
+                role="switch"
+                aria-checked={on}
+                aria-label={`${row.title}，目前${on ? "開" : "關"}`}
+                disabled={saving !== null}
+                onClick={() => void save(row.key, !on)}
+                className={`flex h-11 w-[88px] shrink-0 items-center border-2 p-1 font-mono-ui text-[11px] font-bold tracking-widest ${
+                  on
+                    ? "border-brand-yellow bg-brand-yellow text-ink"
+                    : "border-white/35 bg-ink text-muted"
+                }`}
+              >
+                {on ? (
+                  <>
+                    <span className="flex-1 text-center">開</span>
+                    <span className="h-full w-8 bg-ink" aria-hidden />
+                  </>
+                ) : (
+                  <>
+                    <span className="h-full w-8 bg-white/35" aria-hidden />
+                    <span className="flex-1 text-center">關</span>
+                  </>
+                )}
+              </button>
             </li>
           );
         })}
