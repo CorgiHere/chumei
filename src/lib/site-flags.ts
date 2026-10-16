@@ -1,6 +1,8 @@
 export type SiteFlagsPayload = {
   ready: boolean;
   joinFab: boolean;
+  joinTape: boolean;
+  joinSpin: boolean;
   updatedAt: string;
 };
 

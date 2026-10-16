@@ -9,21 +9,31 @@ import {
   type ReactNode,
 } from "react";
 import { siteConfig } from "@/data/site";
-import { getSiteFlagsEndpoint } from "@/lib/site-flags";
+import { getSiteFlagsEndpoint, type SiteFlagsPayload } from "@/lib/site-flags";
 
 type SiteFlagsContextValue = {
   ready: boolean;
   joinFab: boolean;
+  joinTape: boolean;
+  joinSpin: boolean;
 };
 
 const SiteFlagsContext = createContext<SiteFlagsContextValue>({
   ready: false,
   joinFab: false,
+  joinTape: false,
+  joinSpin: false,
 });
+
+function flagOn(value: unknown) {
+  return value !== false;
+}
 
 export function SiteFlagsProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const [joinFab, setJoinFab] = useState(false);
+  const [joinTape, setJoinTape] = useState(false);
+  const [joinSpin, setJoinSpin] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -36,12 +46,20 @@ export function SiteFlagsProvider({ children }: { children: ReactNode }) {
         if (!alive) return;
         if (!res.ok) {
           setJoinFab(true);
+          setJoinTape(true);
+          setJoinSpin(true);
           return;
         }
-        const data = (await res.json()) as { joinFab?: boolean };
-        setJoinFab(data.joinFab !== false);
+        const data = (await res.json()) as Partial<SiteFlagsPayload>;
+        setJoinFab(flagOn(data.joinFab));
+        setJoinTape(flagOn(data.joinTape));
+        setJoinSpin(flagOn(data.joinSpin));
       } catch {
-        if (alive) setJoinFab(true);
+        if (alive) {
+          setJoinFab(true);
+          setJoinTape(true);
+          setJoinSpin(true);
+        }
       } finally {
         if (alive) setReady(true);
       }
@@ -52,7 +70,9 @@ export function SiteFlagsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <SiteFlagsContext.Provider value={{ ready, joinFab }}>{children}</SiteFlagsContext.Provider>
+    <SiteFlagsContext.Provider value={{ ready, joinFab, joinTape, joinSpin }}>
+      {children}
+    </SiteFlagsContext.Provider>
   );
 }
 

@@ -7,6 +7,8 @@ export const PUBLIC_FLAGS_CACHE_CONTROL =
 
 export type SiteFlags = {
   joinFab: boolean;
+  joinTape: boolean;
+  joinSpin: boolean;
   updatedAt: string;
 };
 
@@ -18,12 +20,22 @@ export type FlagsEnv = {
   PUNCHBOARD_ADMIN_SECRET?: string;
 };
 
+export function flagOn(value: unknown) {
+  return value !== false;
+}
+
 export function defaultFlags(): SiteFlags {
-  return { joinFab: true, updatedAt: "" };
+  return { joinFab: true, joinTape: true, joinSpin: true, updatedAt: "" };
 }
 
 export function publicFlagsPayload(flags: SiteFlags, ready: boolean) {
-  return { ready, joinFab: flags.joinFab, updatedAt: flags.updatedAt };
+  return {
+    ready,
+    joinFab: flags.joinFab,
+    joinTape: flags.joinTape,
+    joinSpin: flags.joinSpin,
+    updatedAt: flags.updatedAt,
+  };
 }
 
 export async function readFlags(env: FlagsEnv): Promise<{ flags: SiteFlags; ready: boolean }> {
@@ -35,7 +47,9 @@ export async function readFlags(env: FlagsEnv): Promise<{ flags: SiteFlags; read
     return {
       ready: true,
       flags: {
-        joinFab: parsed.joinFab !== false,
+        joinFab: flagOn(parsed.joinFab),
+        joinTape: flagOn(parsed.joinTape),
+        joinSpin: flagOn(parsed.joinSpin),
         updatedAt: String(parsed.updatedAt || ""),
       },
     };

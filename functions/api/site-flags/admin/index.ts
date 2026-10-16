@@ -49,7 +49,13 @@ export async function onRequestPost(context: PagesContext) {
     return authedJson(request, { error: "admin_unconfigured", ready: false }, 503);
   }
 
-  let payload: { action?: string; password?: string; joinFab?: boolean } = {};
+  let payload: {
+    action?: string;
+    password?: string;
+    joinFab?: boolean;
+    joinTape?: boolean;
+    joinSpin?: boolean;
+  } = {};
   try {
     payload = (await request.json()) as typeof payload;
   } catch {
@@ -86,8 +92,11 @@ export async function onRequestPost(context: PagesContext) {
     return authedJson(request, { error: "unknown_action" }, 400);
   }
 
+  const current = await readFlags(env);
   const flags = {
-    joinFab: payload.joinFab !== false,
+    joinFab: payload.joinFab === undefined ? current.flags.joinFab : payload.joinFab !== false,
+    joinTape: payload.joinTape === undefined ? current.flags.joinTape : payload.joinTape !== false,
+    joinSpin: payload.joinSpin === undefined ? current.flags.joinSpin : payload.joinSpin !== false,
     updatedAt: new Date().toISOString(),
   };
   await env.CHUMEI_VOTES.put(FLAGS_KEY, JSON.stringify(flags));

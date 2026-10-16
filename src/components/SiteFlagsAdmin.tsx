@@ -1,7 +1,27 @@
 "use client";
 
 import { FormEvent, useEffect, useState } from "react";
-import { getSiteFlagsAdminEndpoint } from "@/lib/site-flags";
+import { getSiteFlagsAdminEndpoint, type SiteFlagsPayload } from "@/lib/site-flags";
+
+type FlagKey = "joinTape" | "joinSpin" | "joinFab";
+
+const FLAG_ROWS: Array<{ key: FlagKey; title: string; hint: string }> = [
+  {
+    key: "joinTape",
+    title: "封鎖條",
+    hint: "進站時整頁拉過的黃色封鎖線動畫。",
+  },
+  {
+    key: "joinSpin",
+    title: "按鈕旋轉",
+    hint: "右下角按鈕持續晃動、翻轉。關閉後按鈕靜止。",
+  },
+  {
+    key: "joinFab",
+    title: "按鈕顯示",
+    hint: "右下角「加入竹梅」、頁尾「加入我們」、關於頁加入圖示。",
+  },
+];
 
 async function adminFetch(init?: RequestInit) {
   return fetch(getSiteFlagsAdminEndpoint(), {
@@ -15,12 +35,20 @@ async function adminFetch(init?: RequestInit) {
   });
 }
 
+function fromPayload(data: Partial<SiteFlagsPayload>) {
+  return {
+    joinFab: data.joinFab !== false,
+    joinTape: data.joinTape !== false,
+    joinSpin: data.joinSpin !== false,
+  };
+}
+
 export function SiteFlagsAdmin() {
   const [password, setPassword] = useState("");
   const [authed, setAuthed] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [joinFab, setJoinFab] = useState(true);
+  const [saving, setSaving] = useState<FlagKey | null>(null);
+  const [flags, setFlags] = useState(fromPayload({}));
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
 
@@ -44,8 +72,8 @@ export function SiteFlagsAdmin() {
           setError("無法連到後台 API。請在 chumei.org 開啟此頁。");
           return;
         }
-        const data = (await res.json()) as { joinFab?: boolean };
-        setJoinFab(data.joinFab !== false);
+        const data = (await res.json()) as Partial<SiteFlagsPayload>;
+        setFlags(fromPayload(data));
         setAuthed(true);
       } catch {
         setError("無法連到後台 API。請在 chumei.org 開啟此頁。");
@@ -76,8 +104,8 @@ export function SiteFlagsAdmin() {
     setAuthed(true);
     const next = await adminFetch();
     if (next.ok) {
-      const data = (await next.json()) as { joinFab?: boolean };
-      setJoinFab(data.joinFab !== false);
+      const data = (await next.json()) as Partial<SiteFlagsPayload>;
+      setFlags(fromPayload(data));
     }
   }
 
@@ -86,29 +114,33 @@ export function SiteFlagsAdmin() {
     setAuthed(false);
   }
 
-  async function save(next: boolean) {
+  async function save(key: FlagKey, value: boolean) {
+    const previous = flags;
+    const next = { ...flags, [key]: value };
     setError("");
     setNotice("");
-    setSaving(true);
-    setJoinFab(next);
+    setSaving(key);
+    setFlags(next);
     try {
       const res = await adminFetch({
         method: "POST",
-        body: JSON.stringify({ action: "save", joinFab: next }),
+        body: JSON.stringify({ action: "save", ...next }),
       });
       if (res.status === 401) {
         setAuthed(false);
         setError("登入已過期，請再登入一次。");
+        setFlags(previous);
         return;
       }
       if (!res.ok) {
-        setJoinFab(!next);
+        setFlags(previous);
         setError("儲存失敗，請再試一次。");
         return;
       }
-      setNotice(next ? "已顯示加入竹梅按鈕。" : "已隱藏加入竹梅按鈕。");
+      const row = FLAG_ROWS.find((item) => item.key === key);
+      setNotice(`已${value ? "開啟" : "關閉"}「${row?.title ?? key}」。`);
     } finally {
-      setSaving(false);
+      setSaving(null);
     }
   }
 
@@ -120,7 +152,7 @@ export function SiteFlagsAdmin() {
     return (
       <form onSubmit={login} className="card max-w-md space-y-4 p-6">
         <p className="text-sm text-muted">
-          控制全站右下角「加入竹梅」按鈕，以及頁尾／關於頁的加入連結。密碼與拳擊機後台相同。
+          分開控制封鎖條動畫、按鈕旋轉、加入竹梅按鈕是否顯示。密碼與拳擊機後台相同。
         </p>
         <label className="block text-sm font-bold" htmlFor="manage-pass">
           後台密碼
@@ -144,35 +176,44 @@ export function SiteFlagsAdmin() {
   return (
     <div className="card max-w-xl space-y-6 p-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
-        <h2 className="text-xl font-black">加入竹梅按鈕</h2>
+        <h2 className="text-xl font-black">加入竹梅效果</h2>
         <button type="button" className="btn-dark-outline text-sm" onClick={logout}>
           登出
         </button>
       </div>
-      <p className="text-sm text-muted">
-        關閉後，訪客看不到右下角黃色按鈕，頁尾「加入我們」與關於頁的加入圖示也會一起隱藏。表單連結本身還在，只是不主動露出。
-      </p>
-      <div className="flex flex-wrap gap-3">
-        <button
-          type="button"
-          disabled={saving || joinFab}
-          className={joinFab ? "btn-primary" : "btn-dark-outline"}
-          onClick={() => void save(true)}
-        >
-          顯示按鈕
-        </button>
-        <button
-          type="button"
-          disabled={saving || !joinFab}
-          className={!joinFab ? "btn-primary" : "btn-dark-outline"}
-          onClick={() => void save(false)}
-        >
-          隱藏按鈕
-        </button>
-      </div>
-      <p className="font-mono-ui text-[12px] tracking-widest text-brand-yellow">
-        現在：{joinFab ? "顯示中" : "已隱藏"}
-      </p>
+      <p className="text-sm text-muted">三項可分開開關。改完後重新整理前台即可看到。</p>
+      <ul className="space-y-5">
+        {FLAG_ROWS.map((row) => {
+          const on = flags[row.key];
+          return (
+            <li key={row.key} className="border-t border-white/10 pt-5 first:border-t-0 first:pt-0">
+              <p className="text-lg font-black">{row.title}</p>
+              <p className="mt-1 text-sm text-muted">{row.hint}</p>
+              <div className="mt-3 flex flex-wrap gap-3">
+                <button
+                  type="button"
+                  disabled={saving !== null || on}
+                  className={on ? "btn-primary" : "btn-dark-outline"}
+                  onClick={() => void save(row.key, true)}
+                >
+                  開啟
+                </button>
+                <button
+                  type="button"
+                  disabled={saving !== null || !on}
+                  className={!on ? "btn-primary" : "btn-dark-outline"}
+                  onClick={() => void save(row.key, false)}
+                >
+                  關閉
+                </button>
+              </div>
+              <p className="mt-2 font-mono-ui text-[12px] tracking-widest text-brand-yellow">
+                現在：{on ? "開" : "關"}
+              </p>
+            </li>
+          );
+        })}
+      </ul>
       {error ? <p className="text-sm text-danger">{error}</p> : null}
       {notice ? <p className="text-sm text-brand-yellow">{notice}</p> : null}
     </div>

@@ -61,13 +61,17 @@ const TOTAL_MS =
   DELAY_BASE_MS + (TAPE_LAYOUT.length - 1) * DELAY_STEP_MS + TAPE_MS + 40;
 
 export function JoinStorm() {
-  const { ready: flagsReady, joinFab } = useSiteFlags();
+  const { ready: flagsReady, joinFab, joinTape, joinSpin } = useSiteFlags();
   const [phase, setPhase] = useState<"boot" | "play" | "ready">("boot");
   const [tapes, setTapes] = useState<Tape[]>([]);
 
   useEffect(() => {
-    if (!flagsReady || !joinFab) {
+    if (!flagsReady) {
       setPhase("boot");
+      return;
+    }
+    if (!joinTape) {
+      setPhase("ready");
       return;
     }
 
@@ -121,7 +125,7 @@ export function JoinStorm() {
       window.removeEventListener("load", kickoff);
       cleanup();
     };
-  }, [flagsReady, joinFab]);
+  }, [flagsReady, joinTape]);
 
   return (
     <>
@@ -157,7 +161,9 @@ export function JoinStorm() {
           })}
         </div>
       )}
-      {phase === "ready" && joinFab && <JoinFab />}
+      {flagsReady && joinFab && (phase === "ready" || !joinTape) && (
+        <JoinFab lively={joinSpin} />
+      )}
     </>
   );
 }
