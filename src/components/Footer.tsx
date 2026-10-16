@@ -3,6 +3,7 @@ import Link from "next/link";
 import { siteConfig } from "@/data/site";
 import { withBasePath, appPath } from "@/lib/utils";
 import { HazardBar } from "./HazardBar";
+import { JoinEntryLink } from "./SiteFlags";
 
 export function Footer() {
   return (
@@ -49,14 +50,9 @@ export function Footer() {
             <p className="mb-2.5 font-mono-ui text-[11px] font-medium tracking-[0.18em] text-brand-yellow">
               參與
             </p>
-            <a
-              href={siteConfig.joinFormUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow"
-            >
+            <JoinEntryLink className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">
               加入我們
-            </a>
+            </JoinEntryLink>
             <Link href={appPath("/punchboard")} className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">
               拳擊機即時榜
             </Link>

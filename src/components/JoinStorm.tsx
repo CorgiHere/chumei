@@ -2,6 +2,7 @@
 
 import { useEffect, useState, type CSSProperties } from "react";
 import { JoinFab } from "@/components/JoinFab";
+import { useSiteFlags } from "@/components/SiteFlags";
 import { cn } from "@/lib/utils";
 
 type Tape = {
@@ -60,10 +61,16 @@ const TOTAL_MS =
   DELAY_BASE_MS + (TAPE_LAYOUT.length - 1) * DELAY_STEP_MS + TAPE_MS + 40;
 
 export function JoinStorm() {
+  const { ready: flagsReady, joinFab } = useSiteFlags();
   const [phase, setPhase] = useState<"boot" | "play" | "ready">("boot");
   const [tapes, setTapes] = useState<Tape[]>([]);
 
   useEffect(() => {
+    if (!flagsReady || !joinFab) {
+      setPhase("boot");
+      return;
+    }
+
     const reduce = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
@@ -114,7 +121,7 @@ export function JoinStorm() {
       window.removeEventListener("load", kickoff);
       cleanup();
     };
-  }, []);
+  }, [flagsReady, joinFab]);
 
   return (
     <>
@@ -150,7 +157,7 @@ export function JoinStorm() {
           })}
         </div>
       )}
-      {phase === "ready" && <JoinFab />}
+      {phase === "ready" && joinFab && <JoinFab />}
     </>
   );
 }

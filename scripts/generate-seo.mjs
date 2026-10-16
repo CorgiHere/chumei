@@ -114,10 +114,12 @@ const sitemapTxt = `${urls.map((u) => u.loc).join("\n")}\n`;
 const robots = `User-agent: *
 Allow: /
 Disallow: /punchboard/admin/
+Disallow: /manage/
 
 User-agent: Googlebot
 Allow: /
 Disallow: /punchboard/admin/
+Disallow: /manage/
 
 Sitemap: ${siteUrl}/sitemap.xml
 Sitemap: ${siteUrl}/sitemap.txt

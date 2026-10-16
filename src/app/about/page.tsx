@@ -12,6 +12,7 @@ import {
   LinktreeIcon,
   MailIcon,
 } from "@/components/BrandIcons";
+import { JoinEntryLink } from "@/components/SiteFlags";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "關於竹梅賽｜清交學生自辦，不是梅竹賽",
@@ -177,16 +178,13 @@ export default function AboutPage() {
               >
                 <MailIcon className="h-5 w-5" />
               </Link>
-              <a
-                href={siteConfig.joinFormUrl}
-                target="_blank"
-                rel="noopener noreferrer"
+              <JoinEntryLink
                 className="btn-dark-outline h-12 w-12 p-0"
                 aria-label="加入竹梅"
                 title="加入竹梅"
               >
                 <JoinIcon className="h-5 w-5" />
-              </a>
+              </JoinEntryLink>
             </div>
           </section>
         </div>
