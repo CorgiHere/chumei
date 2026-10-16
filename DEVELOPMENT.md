@@ -59,7 +59,7 @@ src/
 - 活動圖已改為 Instagram 官方貼文實拍／宣傳圖（見下方對照）；無專屬貼文者改用官方遊戲畫面或相關活動圖
 - Instagram 貼文無法直接嵌入；賽果與圖片以人工對齊 IG 後寫入 `src/data` / `public/images`
 - 拳擊機榜：公開 GET 走 KV 單筆 JSON、邊緣快取 5 秒（`stale-while-revalidate`）、前端 8–10 秒輪詢（隱藏分頁停輪、帶 jitter），目標約 1000 人同時開榜（Free 方案靠 CDN HIT）。後台密碼在 Cloudflare Pages → `PUNCHBOARD_ADMIN_SECRET`（Production）。路徑 `/punchboard/`、`/punchboard/admin/`。
-- 加入竹梅開關：KV `site-flags-v1`（`joinTape` 封鎖條／`joinSpin` 按鈕旋轉／`joinFab` 按鈕顯示），公開 GET `/api/site-flags/`，管理頁 `/manage/`。與拳擊機後台同一組密碼。預設全開。
+- 加入竹梅開關：KV `site-flags-v1`（封鎖條／按鈕旋轉／右下角按鈕／頁尾加入／關於頁圖示），公開 GET `/api/site-flags/`，管理頁 `/manage/`。與拳擊機後台同一組密碼。預設全開。
 
 ---
 

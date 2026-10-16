@@ -55,6 +55,8 @@ export async function onRequestPost(context: PagesContext) {
     joinFab?: boolean;
     joinTape?: boolean;
     joinSpin?: boolean;
+    joinFooter?: boolean;
+    joinAbout?: boolean;
   } = {};
   try {
     payload = (await request.json()) as typeof payload;
@@ -97,6 +99,10 @@ export async function onRequestPost(context: PagesContext) {
     joinFab: payload.joinFab === undefined ? current.flags.joinFab : payload.joinFab !== false,
     joinTape: payload.joinTape === undefined ? current.flags.joinTape : payload.joinTape !== false,
     joinSpin: payload.joinSpin === undefined ? current.flags.joinSpin : payload.joinSpin !== false,
+    joinFooter:
+      payload.joinFooter === undefined ? current.flags.joinFooter : payload.joinFooter !== false,
+    joinAbout:
+      payload.joinAbout === undefined ? current.flags.joinAbout : payload.joinAbout !== false,
     updatedAt: new Date().toISOString(),
   };
   await env.CHUMEI_VOTES.put(FLAGS_KEY, JSON.stringify(flags));

@@ -14,7 +14,7 @@ export default function ManagePage() {
         <PageIntro
           eyebrow="籌委會"
           title="網站管理"
-          subtitle="分開控制封鎖條、按鈕旋轉、加入竹梅按鈕顯示。請用拳擊機後台同一組密碼。"
+          subtitle="分開控制封鎖條、按鈕旋轉、右下角按鈕、頁尾與關於頁加入入口。請用拳擊機後台同一組密碼。"
         />
         <SiteFlagsAdmin />
       </div>

@@ -16,6 +16,8 @@ type SiteFlagsContextValue = {
   joinFab: boolean;
   joinTape: boolean;
   joinSpin: boolean;
+  joinFooter: boolean;
+  joinAbout: boolean;
 };
 
 const SiteFlagsContext = createContext<SiteFlagsContextValue>({
@@ -23,6 +25,8 @@ const SiteFlagsContext = createContext<SiteFlagsContextValue>({
   joinFab: false,
   joinTape: false,
   joinSpin: false,
+  joinFooter: false,
+  joinAbout: false,
 });
 
 function flagOn(value: unknown) {
@@ -34,6 +38,8 @@ export function SiteFlagsProvider({ children }: { children: ReactNode }) {
   const [joinFab, setJoinFab] = useState(false);
   const [joinTape, setJoinTape] = useState(false);
   const [joinSpin, setJoinSpin] = useState(false);
+  const [joinFooter, setJoinFooter] = useState(false);
+  const [joinAbout, setJoinAbout] = useState(false);
 
   useEffect(() => {
     let alive = true;
@@ -48,17 +54,23 @@ export function SiteFlagsProvider({ children }: { children: ReactNode }) {
           setJoinFab(true);
           setJoinTape(true);
           setJoinSpin(true);
+          setJoinFooter(true);
+          setJoinAbout(true);
           return;
         }
         const data = (await res.json()) as Partial<SiteFlagsPayload>;
         setJoinFab(flagOn(data.joinFab));
         setJoinTape(flagOn(data.joinTape));
         setJoinSpin(flagOn(data.joinSpin));
+        setJoinFooter(flagOn(data.joinFooter));
+        setJoinAbout(flagOn(data.joinAbout));
       } catch {
         if (alive) {
           setJoinFab(true);
           setJoinTape(true);
           setJoinSpin(true);
+          setJoinFooter(true);
+          setJoinAbout(true);
         }
       } finally {
         if (alive) setReady(true);
@@ -70,7 +82,9 @@ export function SiteFlagsProvider({ children }: { children: ReactNode }) {
   }, []);
 
   return (
-    <SiteFlagsContext.Provider value={{ ready, joinFab, joinTape, joinSpin }}>
+    <SiteFlagsContext.Provider
+      value={{ ready, joinFab, joinTape, joinSpin, joinFooter, joinAbout }}
+    >
       {children}
     </SiteFlagsContext.Provider>
   );
@@ -83,10 +97,12 @@ export function useSiteFlags() {
 export function JoinEntryLink({
   className,
   children,
+  surface = "footer",
   ...rest
-}: AnchorHTMLAttributes<HTMLAnchorElement>) {
-  const { ready, joinFab } = useSiteFlags();
-  if (!ready || !joinFab) return null;
+}: AnchorHTMLAttributes<HTMLAnchorElement> & { surface?: "footer" | "about" }) {
+  const flags = useSiteFlags();
+  const visible = surface === "about" ? flags.joinAbout : flags.joinFooter;
+  if (!flags.ready || !visible) return null;
   return (
     <a
       href={siteConfig.joinFormUrl}

@@ -179,6 +179,7 @@ export default function AboutPage() {
                 <MailIcon className="h-5 w-5" />
               </Link>
               <JoinEntryLink
+                surface="about"
                 className="btn-dark-outline h-12 w-12 p-0"
                 aria-label="加入竹梅"
                 title="加入竹梅"

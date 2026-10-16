@@ -9,6 +9,8 @@ export type SiteFlags = {
   joinFab: boolean;
   joinTape: boolean;
   joinSpin: boolean;
+  joinFooter: boolean;
+  joinAbout: boolean;
   updatedAt: string;
 };
 
@@ -25,7 +27,14 @@ export function flagOn(value: unknown) {
 }
 
 export function defaultFlags(): SiteFlags {
-  return { joinFab: true, joinTape: true, joinSpin: true, updatedAt: "" };
+  return {
+    joinFab: true,
+    joinTape: true,
+    joinSpin: true,
+    joinFooter: true,
+    joinAbout: true,
+    updatedAt: "",
+  };
 }
 
 export function publicFlagsPayload(flags: SiteFlags, ready: boolean) {
@@ -34,6 +43,8 @@ export function publicFlagsPayload(flags: SiteFlags, ready: boolean) {
     joinFab: flags.joinFab,
     joinTape: flags.joinTape,
     joinSpin: flags.joinSpin,
+    joinFooter: flags.joinFooter,
+    joinAbout: flags.joinAbout,
     updatedAt: flags.updatedAt,
   };
 }
@@ -50,6 +61,8 @@ export async function readFlags(env: FlagsEnv): Promise<{ flags: SiteFlags; read
         joinFab: flagOn(parsed.joinFab),
         joinTape: flagOn(parsed.joinTape),
         joinSpin: flagOn(parsed.joinSpin),
+        joinFooter: flagOn(parsed.joinFooter),
+        joinAbout: flagOn(parsed.joinAbout),
         updatedAt: String(parsed.updatedAt || ""),
       },
     };

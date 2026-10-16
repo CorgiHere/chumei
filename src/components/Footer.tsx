@@ -50,7 +50,10 @@ export function Footer() {
             <p className="mb-2.5 font-mono-ui text-[11px] font-medium tracking-[0.18em] text-brand-yellow">
               參與
             </p>
-            <JoinEntryLink className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">
+            <JoinEntryLink
+              surface="footer"
+              className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow"
+            >
               加入我們
             </JoinEntryLink>
             <Link href={appPath("/punchboard")} className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">

@@ -3,7 +3,7 @@
 import { FormEvent, useEffect, useState } from "react";
 import { getSiteFlagsAdminEndpoint, type SiteFlagsPayload } from "@/lib/site-flags";
 
-type FlagKey = "joinTape" | "joinSpin" | "joinFab";
+type FlagKey = "joinTape" | "joinSpin" | "joinFab" | "joinFooter" | "joinAbout";
 
 const FLAG_ROWS: Array<{ key: FlagKey; title: string; hint: string }> = [
   {
@@ -18,8 +18,18 @@ const FLAG_ROWS: Array<{ key: FlagKey; title: string; hint: string }> = [
   },
   {
     key: "joinFab",
-    title: "按鈕顯示",
-    hint: "右下角「加入竹梅」、頁尾「加入我們」、關於頁加入圖示。",
+    title: "右下角加入竹梅",
+    hint: "畫面右下角的黃色「加入竹梅」按鈕。",
+  },
+  {
+    key: "joinFooter",
+    title: "頁尾加入我們",
+    hint: "頁尾「參與」裡的加入我們連結。",
+  },
+  {
+    key: "joinAbout",
+    title: "關於頁加入圖示",
+    hint: "關於竹梅頁社群列的加入圖示。",
   },
 ];
 
@@ -40,6 +50,8 @@ function fromPayload(data: Partial<SiteFlagsPayload>) {
     joinFab: data.joinFab !== false,
     joinTape: data.joinTape !== false,
     joinSpin: data.joinSpin !== false,
+    joinFooter: data.joinFooter !== false,
+    joinAbout: data.joinAbout !== false,
   };
 }
 
