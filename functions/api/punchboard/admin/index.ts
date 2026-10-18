@@ -6,12 +6,15 @@ import {
   timingSafeEqual,
 } from "../../_admin-auth";
 import {
+  BOARD_HISTORY_KEY,
+  BOARD_HISTORY_LIMIT,
   BOARD_KEY,
   DEFAULT_END_AT,
   DEFAULT_NAME,
   json,
   purgePublicBoardCache,
   readBoard,
+  type PunchBoard,
   type PunchEntry,
   type PunchEnv,
 } from "../_shared";
@@ -22,6 +25,31 @@ type PagesContext = {
 };
 
 const MAX_ENTRIES = 800;
+
+async function pushBoardHistory(env: PunchEnv, board: PunchBoard) {
+  if (!env.CHUMEI_VOTES) return;
+  let list: unknown[] = [];
+  try {
+    const raw = await env.CHUMEI_VOTES.get(BOARD_HISTORY_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw) as unknown;
+      if (Array.isArray(parsed)) list = parsed;
+    }
+  } catch {
+    list = [];
+  }
+  list.unshift({
+    savedAt: board.updatedAt,
+    version: board.version,
+    eventName: board.eventName,
+    endAt: board.endAt,
+    entries: board.entries,
+  });
+  await env.CHUMEI_VOTES.put(
+    BOARD_HISTORY_KEY,
+    JSON.stringify(list.slice(0, BOARD_HISTORY_LIMIT)),
+  );
+}
 
 function clip(value: unknown, max: number) {
   return String(value ?? "").trim().slice(0, max);
@@ -91,6 +119,7 @@ export async function onRequestPost(context: PagesContext) {
     endAt?: string;
     id?: string;
     entry?: Partial<PunchEntry>;
+    entries?: Partial<PunchEntry>[];
   } = {};
   try {
     payload = (await request.json()) as typeof payload;
@@ -149,6 +178,30 @@ export async function onRequestPost(context: PagesContext) {
   } else if (action === "delete") {
     const id = clip(payload.id, 80);
     board.entries = board.entries.filter((e) => e.id !== id);
+  } else if (action === "replace") {
+    if (!Array.isArray(payload.entries)) {
+      return authedJson(request, { error: "invalid_entries" }, 400);
+    }
+    const nextEntries: PunchEntry[] = [];
+    for (const raw of payload.entries) {
+      const parsed = parseEntry(raw);
+      if (parsed) {
+        if (typeof raw.updatedAt === "string" && raw.updatedAt) {
+          parsed.updatedAt = raw.updatedAt.slice(0, 40);
+        }
+        nextEntries.push(parsed);
+      }
+    }
+    if (nextEntries.length > MAX_ENTRIES) {
+      return authedJson(request, { error: "too_many" }, 400);
+    }
+    board.entries = nextEntries;
+    if (payload.eventName !== undefined) {
+      board.eventName = clip(payload.eventName, 80) || DEFAULT_NAME;
+    }
+    if (payload.endAt !== undefined) {
+      board.endAt = clip(payload.endAt, 40) || DEFAULT_END_AT;
+    }
   } else {
     return authedJson(request, { error: "unknown_action" }, 400);
   }
@@ -156,6 +209,7 @@ export async function onRequestPost(context: PagesContext) {
   board.updatedAt = now;
   board.version += 1;
   await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(board));
+  await pushBoardHistory(env, board);
   await purgePublicBoardCache();
   return authedJson(request, {
     ok: true,

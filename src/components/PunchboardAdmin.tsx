@@ -11,6 +11,14 @@ import {
   type PunchGender,
   type PunchSchool,
 } from "@/lib/punchboard";
+import {
+  downloadPunchboardSnapshot,
+  formatBackupTime,
+  latestPunchboardLocal,
+  readPunchboardFile,
+  rememberPunchboardLocal,
+  type PunchLocalSnapshot,
+} from "@/lib/punchboard-local";
 import { useSchoolSides } from "./SchoolOrder";
 
 type AdminState = {
@@ -53,6 +61,7 @@ export function PunchboardAdmin() {
   });
   const [form, setForm] = useState(blankForm);
   const [query, setQuery] = useState("");
+  const [backup, setBackup] = useState<PunchLocalSnapshot | null>(null);
   const [firstCampus, secondCampus] = useSchoolSides(
     { value: "NTHU" as PunchSchool, label: "清大" },
     { value: "NYCU" as PunchSchool, label: "交大" },
@@ -79,7 +88,7 @@ export function PunchboardAdmin() {
           return;
         }
         const data = (await res.json()) as AdminState & { ok?: boolean };
-        setBoard({
+        applyBoard({
           eventName: data.eventName,
           endAt: data.endAt,
           entries: data.entries ?? [],
@@ -114,6 +123,20 @@ export function PunchboardAdmin() {
     return { male: sortRows("male"), female: sortRows("female") };
   }, [board.entries, query]);
 
+  useEffect(() => {
+    if (authed) setBackup(latestPunchboardLocal());
+  }, [authed]);
+
+  function applyBoard(data: AdminState) {
+    const next = {
+      eventName: data.eventName,
+      endAt: data.endAt,
+      entries: data.entries ?? [],
+    };
+    setBoard(next);
+    setBackup(rememberPunchboardLocal(next));
+  }
+
   async function login(e: FormEvent) {
     e.preventDefault();
     setError("");
@@ -130,7 +153,7 @@ export function PunchboardAdmin() {
     const next = await adminFetch();
     if (next.ok) {
       const data = (await next.json()) as AdminState;
-      setBoard({
+      applyBoard({
         eventName: data.eventName,
         endAt: data.endAt,
         entries: data.entries ?? [],
@@ -158,13 +181,30 @@ export function PunchboardAdmin() {
       return false;
     }
     const data = (await res.json()) as AdminState;
-    setBoard({
+    applyBoard({
       eventName: data.eventName,
       endAt: data.endAt,
       entries: data.entries ?? [],
     });
-    setNotice("已更新。公開榜約十秒內會跟上。");
+    setNotice("已更新。公開榜約十秒內會跟上。本機也已存檔。");
     return true;
+  }
+
+  async function restoreSnapshot(snapshot: PunchLocalSnapshot, label: string) {
+    if (
+      !window.confirm(
+        `用${label}覆寫線上榜？目前 ${board.entries.length} 人會被改成備份的 ${snapshot.entries.length} 人。`,
+      )
+    ) {
+      return;
+    }
+    const ok = await postAction({
+      action: "replace",
+      eventName: snapshot.eventName,
+      endAt: snapshot.endAt,
+      entries: snapshot.entries,
+    });
+    if (ok) setNotice(`已用${label}還原。公開榜約十秒內會跟上。`);
   }
 
   if (loading) {
@@ -200,6 +240,55 @@ export function PunchboardAdmin() {
         <button type="button" className="btn-dark-outline text-sm" onClick={logout}>
           登出
         </button>
+      </div>
+
+      <div className="card space-y-3 p-6">
+        <h2 className="text-xl font-black">本機即時存檔</h2>
+        <p className="text-sm text-muted">
+          每次登錄、修改、刪除都會寫進這台電腦的瀏覽器。線上榜被改壞或清空時，可用備份還原。建議現場電腦再按一次下載，另存一份 JSON。
+        </p>
+        <p className="font-mono-ui text-[12px] tracking-widest text-brand-yellow">
+          {backup
+            ? `最近存檔 ${formatBackupTime(backup.savedAt)} · ${backup.entries.length} 人`
+            : "尚無本機存檔"}
+        </p>
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="button"
+            className="btn-primary text-sm"
+            disabled={!backup}
+            onClick={() => backup && downloadPunchboardSnapshot(backup)}
+          >
+            下載 JSON
+          </button>
+          <button
+            type="button"
+            className="btn-dark-outline text-sm"
+            disabled={!latestPunchboardLocal()}
+            onClick={() => {
+              const snap = latestPunchboardLocal();
+              if (snap) void restoreSnapshot(snap, "本機備份");
+            }}
+          >
+            還原本機備份
+          </button>
+          <label className="btn-dark-outline cursor-pointer text-sm">
+            匯入 JSON
+            <input
+              type="file"
+              accept="application/json,.json"
+              className="sr-only"
+              onChange={(e) => {
+                const file = e.target.files?.[0];
+                e.target.value = "";
+                if (!file) return;
+                void readPunchboardFile(file)
+                  .then((snap) => restoreSnapshot(snap, "匯入檔"))
+                  .catch(() => setError("這個檔案不是有效的榜備份。"));
+              }}
+            />
+          </label>
+        </div>
       </div>
 
       <form
