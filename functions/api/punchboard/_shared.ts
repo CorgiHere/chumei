@@ -25,6 +25,10 @@ export type PunchEnv = {
     put(key: string, value: string): Promise<void>;
   };
   PUNCHBOARD_ADMIN_SECRET?: string;
+  RESEND_API_KEY?: string;
+  PUNCHBOARD_MAIL_TO?: string;
+  PUNCHBOARD_MAIL_FROM?: string;
+  PUNCHBOARD_MAIL_WEBHOOK?: string;
 };
 
 /** Browsers revalidate every poll; the edge serves a shared copy for ~5s. */

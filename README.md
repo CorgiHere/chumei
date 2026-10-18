@@ -48,7 +48,7 @@ npm run deploy:cloudflare
 
 Cloudflare 儀表板 → Pages → `chumei` → Custom domains → 綁定 `chumei.org`（可選 `www.chumei.org` 轉址到根網域）。
 
-拳擊機即時榜：`https://chumei.org/punchboard/`。後台（不要公開傳連結）：`https://chumei.org/punchboard/admin/`。在 Pages 專案的 Production 環境變數設定 `PUNCHBOARD_ADMIN_SECRET` 才進得去。
+拳擊機即時榜：`https://chumei.org/punchboard/`。後台（不要公開傳連結）：`https://chumei.org/punchboard/admin/`。在 Pages 專案的 Production 環境變數設定 `PUNCHBOARD_ADMIN_SECRET` 才進得去。前 10 名有變動時寄到 `chu.mei.committee+punchboard@gmail.com`（Gmail 會進同一個信箱，可用篩選獨立標籤）。需 Secret `RESEND_API_KEY`（[Resend](https://resend.com) 免費即可）。
 
 ### GitHub Pages（備用鏡像）
 

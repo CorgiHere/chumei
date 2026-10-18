@@ -18,6 +18,12 @@ import {
   type PunchEntry,
   type PunchEnv,
 } from "../_shared";
+import {
+  notifyTop10IfChanged,
+  parseMailTo,
+  sendCurrentBoard,
+  type MailResult,
+} from "../notify-top10";
 
 type PagesContext = {
   request: Request;
@@ -120,6 +126,7 @@ export async function onRequestPost(context: PagesContext) {
     id?: string;
     entry?: Partial<PunchEntry>;
     entries?: Partial<PunchEntry>[];
+    to?: string;
   } = {};
   try {
     payload = (await request.json()) as typeof payload;
@@ -156,6 +163,26 @@ export async function onRequestPost(context: PagesContext) {
 
   const { board } = await readBoard(env);
   const now = new Date().toISOString();
+
+  if (action === "mail") {
+    const to = parseMailTo(payload.to);
+    if (!to) return authedJson(request, { error: "invalid_email" }, 400);
+    let mailed: MailResult = "skipped";
+    try {
+      mailed = await sendCurrentBoard(env, board, to);
+    } catch {
+      mailed = "failed";
+    }
+    return authedJson(request, {
+      ok: mailed === "sent",
+      mailed,
+      mailedTo: to,
+      eventName: board.eventName,
+      endAt: board.endAt,
+      updatedAt: board.updatedAt,
+      entries: board.entries,
+    });
+  }
 
   if (action === "saveMeta") {
     board.eventName = clip(payload.eventName, 80) || DEFAULT_NAME;
@@ -211,9 +238,18 @@ export async function onRequestPost(context: PagesContext) {
   await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(board));
   await pushBoardHistory(env, board);
   await purgePublicBoardCache();
+  let mailed: MailResult = "skipped";
+  if (action === "upsert" || action === "delete" || action === "replace") {
+    try {
+      mailed = await notifyTop10IfChanged(env, board);
+    } catch {
+      mailed = "failed";
+    }
+  }
   return authedJson(request, {
     ok: true,
     ready: true,
+    mailed,
     eventName: board.eventName,
     endAt: board.endAt,
     updatedAt: board.updatedAt,

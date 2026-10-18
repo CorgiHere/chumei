@@ -58,7 +58,7 @@ src/
 - 無後端／CMS：內容改 `src/data` 後需重新 build 部署
 - 活動圖已改為 Instagram 官方貼文實拍／宣傳圖（見下方對照）；無專屬貼文者改用官方遊戲畫面或相關活動圖
 - Instagram 貼文無法直接嵌入；賽果與圖片以人工對齊 IG 後寫入 `src/data` / `public/images`
-- 拳擊機榜：公開 GET 走 KV 單筆 JSON、邊緣快取 5 秒（`stale-while-revalidate`）、前端 8–10 秒輪詢（隱藏分頁停輪、帶 jitter），目標約 1000 人同時開榜（Free 方案靠 CDN HIT）。後台密碼在 Cloudflare Pages → `PUNCHBOARD_ADMIN_SECRET`（Production）。路徑 `/punchboard/`、`/punchboard/admin/`。每次寫入會本機存檔（localStorage，可下載／還原 JSON），並在 KV `punchboard-v1-history` 留最近 20 版。
+- 拳擊機榜：公開 GET 走 KV 單筆 JSON、邊緣快取 5 秒、前端 8–10 秒輪詢。後台 `PUNCHBOARD_ADMIN_SECRET`。前 10 名有變動時寄到 `chu.mei.committee+punchboard@gmail.com`（需 Pages Secret `RESEND_API_KEY`，或 `PUNCHBOARD_MAIL_WEBHOOK`）。KV `punchboard-v1-history` 另留最近 20 版。路徑 `/punchboard/`、`/punchboard/admin/`。
 - 加入竹梅開關：KV `site-flags-v1`（封鎖條／按鈕旋轉／右下角按鈕／頁尾加入／關於頁圖示），公開 GET `/api/site-flags/`，管理頁 `/manage/`。與拳擊機後台同一組密碼。預設全開。
 
 ---

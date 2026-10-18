@@ -11,14 +11,6 @@ import {
   type PunchGender,
   type PunchSchool,
 } from "@/lib/punchboard";
-import {
-  downloadPunchboardSnapshot,
-  formatBackupTime,
-  latestPunchboardLocal,
-  readPunchboardFile,
-  rememberPunchboardLocal,
-  type PunchLocalSnapshot,
-} from "@/lib/punchboard-local";
 import { useSchoolSides } from "./SchoolOrder";
 
 type AdminState = {
@@ -61,7 +53,8 @@ export function PunchboardAdmin() {
   });
   const [form, setForm] = useState(blankForm);
   const [query, setQuery] = useState("");
-  const [backup, setBackup] = useState<PunchLocalSnapshot | null>(null);
+  const [mailTo, setMailTo] = useState("chu.mei.committee+punchboard@gmail.com");
+  const [mailing, setMailing] = useState(false);
   const [firstCampus, secondCampus] = useSchoolSides(
     { value: "NTHU" as PunchSchool, label: "清大" },
     { value: "NYCU" as PunchSchool, label: "交大" },
@@ -88,7 +81,7 @@ export function PunchboardAdmin() {
           return;
         }
         const data = (await res.json()) as AdminState & { ok?: boolean };
-        applyBoard({
+        setBoard({
           eventName: data.eventName,
           endAt: data.endAt,
           entries: data.entries ?? [],
@@ -123,20 +116,6 @@ export function PunchboardAdmin() {
     return { male: sortRows("male"), female: sortRows("female") };
   }, [board.entries, query]);
 
-  useEffect(() => {
-    if (authed) setBackup(latestPunchboardLocal());
-  }, [authed]);
-
-  function applyBoard(data: AdminState) {
-    const next = {
-      eventName: data.eventName,
-      endAt: data.endAt,
-      entries: data.entries ?? [],
-    };
-    setBoard(next);
-    setBackup(rememberPunchboardLocal(next));
-  }
-
   async function login(e: FormEvent) {
     e.preventDefault();
     setError("");
@@ -153,7 +132,7 @@ export function PunchboardAdmin() {
     const next = await adminFetch();
     if (next.ok) {
       const data = (await next.json()) as AdminState;
-      applyBoard({
+      setBoard({
         eventName: data.eventName,
         endAt: data.endAt,
         entries: data.entries ?? [],
@@ -180,31 +159,60 @@ export function PunchboardAdmin() {
       setError("儲存失敗，請再試一次。");
       return false;
     }
-    const data = (await res.json()) as AdminState;
-    applyBoard({
+    const data = (await res.json()) as AdminState & { mailed?: string };
+    setBoard({
       eventName: data.eventName,
       endAt: data.endAt,
       entries: data.entries ?? [],
     });
-    setNotice("已更新。公開榜約十秒內會跟上。本機也已存檔。");
+    if (data.mailed === "sent") {
+      setNotice("已更新，並把前 10 名寄到 chu.mei.committee+punchboard@gmail.com。");
+    } else if (data.mailed === "unchanged") {
+      setNotice("已更新。前 10 名沒變，未重寄信。");
+    } else if (data.mailed === "failed") {
+      setError("成績已存，但寄信失敗。請檢查 Cloudflare 的 RESEND_API_KEY。");
+    } else if (data.mailed === "skipped") {
+      setNotice("已更新。尚未設定寄信，前 10 名不會寄到信箱。");
+    } else {
+      setNotice("已更新。公開榜約十秒內會跟上。");
+    }
     return true;
   }
 
-  async function restoreSnapshot(snapshot: PunchLocalSnapshot, label: string) {
-    if (
-      !window.confirm(
-        `用${label}覆寫線上榜？目前 ${board.entries.length} 人會被改成備份的 ${snapshot.entries.length} 人。`,
-      )
-    ) {
-      return;
+  async function sendBoardMail(e: FormEvent) {
+    e.preventDefault();
+    setError("");
+    setNotice("");
+    setMailing(true);
+    try {
+      const res = await adminFetch({
+        method: "POST",
+        body: JSON.stringify({ action: "mail", to: mailTo }),
+      });
+      if (res.status === 401) {
+        setAuthed(false);
+        setError("登入已過期，請再登入一次。");
+        return;
+      }
+      const data = (await res.json()) as { mailed?: string; mailedTo?: string; error?: string };
+      if (data.error === "invalid_email" || res.status === 400) {
+        setError("請填正確的信箱。");
+        return;
+      }
+      if (data.mailed === "sent") {
+        setNotice(`已把目前榜單寄到 ${data.mailedTo ?? mailTo}。請也看垃圾郵件。`);
+        return;
+      }
+      if (data.mailed === "skipped") {
+        setError("尚未設定 RESEND_API_KEY，無法寄信。");
+        return;
+      }
+      setError("寄信失敗。Resend 還在測試模式時，只能寄到你註冊 Resend 的那個信箱。");
+    } catch {
+      setError("寄信失敗，請再試一次。");
+    } finally {
+      setMailing(false);
     }
-    const ok = await postAction({
-      action: "replace",
-      eventName: snapshot.eventName,
-      endAt: snapshot.endAt,
-      entries: snapshot.entries,
-    });
-    if (ok) setNotice(`已用${label}還原。公開榜約十秒內會跟上。`);
   }
 
   if (loading) {
@@ -241,55 +249,32 @@ export function PunchboardAdmin() {
           登出
         </button>
       </div>
+      <p className="text-sm text-muted">
+        男性或女性前 10 名有變動時，會寄到 chu.mei.committee+punchboard@gmail.com（同一信箱，可用 Gmail 篩選獨立成標籤、不進主要收件匣）。沒變就不會重寄。成績一定會先存，寄信失敗不影響榜單。
+      </p>
 
-      <div className="card space-y-3 p-6">
-        <h2 className="text-xl font-black">本機即時存檔</h2>
+      <form className="card space-y-4 p-6" onSubmit={sendBoardMail}>
+        <h2 className="text-xl font-black">寄出目前榜單</h2>
         <p className="text-sm text-muted">
-          每次登錄、修改、刪除都會寫進這台電腦的瀏覽器。線上榜被改壞或清空時，可用備份還原。建議現場電腦再按一次下載，另存一份 JSON。
+          把此刻的男女排名寄到指定信箱，用來測試寄信。不會改榜。Resend 未驗證網域時，只能寄到你註冊 Resend 的那個信箱。
         </p>
-        <p className="font-mono-ui text-[12px] tracking-widest text-brand-yellow">
-          {backup
-            ? `最近存檔 ${formatBackupTime(backup.savedAt)} · ${backup.entries.length} 人`
-            : "尚無本機存檔"}
-        </p>
-        <div className="flex flex-wrap gap-3">
-          <button
-            type="button"
-            className="btn-primary text-sm"
-            disabled={!backup}
-            onClick={() => backup && downloadPunchboardSnapshot(backup)}
-          >
-            下載 JSON
-          </button>
-          <button
-            type="button"
-            className="btn-dark-outline text-sm"
-            disabled={!latestPunchboardLocal()}
-            onClick={() => {
-              const snap = latestPunchboardLocal();
-              if (snap) void restoreSnapshot(snap, "本機備份");
-            }}
-          >
-            還原本機備份
-          </button>
-          <label className="btn-dark-outline cursor-pointer text-sm">
-            匯入 JSON
-            <input
-              type="file"
-              accept="application/json,.json"
-              className="sr-only"
-              onChange={(e) => {
-                const file = e.target.files?.[0];
-                e.target.value = "";
-                if (!file) return;
-                void readPunchboardFile(file)
-                  .then((snap) => restoreSnapshot(snap, "匯入檔"))
-                  .catch(() => setError("這個檔案不是有效的榜備份。"));
-              }}
-            />
-          </label>
-        </div>
-      </div>
+        <label className="block text-sm font-bold" htmlFor="mail-to">
+          收件信箱
+        </label>
+        <input
+          id="mail-to"
+          type="email"
+          required
+          value={mailTo}
+          onChange={(e) => setMailTo(e.target.value)}
+          className="w-full border-2 border-white/20 bg-ink px-3 py-3 text-chalk outline-none focus:border-brand-yellow"
+        />
+        <button type="submit" className="btn-primary" disabled={mailing}>
+          {mailing ? "寄送中…" : "寄出榜單"}
+        </button>
+        {error ? <p className="text-sm text-danger">{error}</p> : null}
+        {notice ? <p className="text-sm text-brand-yellow">{notice}</p> : null}
+      </form>
 
       <form
         className="card space-y-4 p-6"
