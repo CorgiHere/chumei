@@ -167,15 +167,11 @@ export async function onRequestPost(context: PagesContext) {
   if (action === "mail") {
     const to = parseMailTo(payload.to);
     if (!to) return authedJson(request, { error: "invalid_email" }, 400);
-    let mailed: MailResult = "skipped";
-    try {
-      mailed = await sendCurrentBoard(env, board, to);
-    } catch {
-      mailed = "failed";
-    }
+    const attempt = await sendCurrentBoard(env, board, to);
     return authedJson(request, {
-      ok: mailed === "sent",
-      mailed,
+      ok: attempt.mailed === "sent",
+      mailed: attempt.mailed,
+      mailError: attempt.mailError,
       mailedTo: to,
       eventName: board.eventName,
       endAt: board.endAt,

@@ -7,6 +7,11 @@ const SCHOOL = { NTHU: "清大", NYCU: "交大", OTHER: "其他" } as const;
 
 export type MailResult = "sent" | "unchanged" | "skipped" | "failed";
 
+export type MailAttempt = {
+  mailed: MailResult;
+  mailError?: string;
+};
+
 function top10(board: PunchBoard) {
   return {
     male: rank(board.entries, "male").slice(0, 10),
@@ -78,12 +83,22 @@ export function parseMailTo(raw: unknown): string | null {
   return email;
 }
 
+async function readError(res: Response) {
+  const text = await res.text();
+  try {
+    const parsed = JSON.parse(text) as { message?: string; error?: string };
+    return String(parsed.message || parsed.error || text).slice(0, 240);
+  } catch {
+    return text.slice(0, 240);
+  }
+}
+
 async function deliver(
   env: PunchEnv,
   to: string,
   subject: string,
   text: string,
-): Promise<boolean> {
+): Promise<{ ok: boolean; error?: string }> {
   const webhook = env.PUNCHBOARD_MAIL_WEBHOOK;
   if (webhook) {
     const res = await fetch(webhook, {
@@ -91,10 +106,12 @@ async function deliver(
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ to, subject, text }),
     });
-    return res.ok;
+    if (res.ok) return { ok: true };
+    return { ok: false, error: await readError(res) };
   }
   const key = env.RESEND_API_KEY;
-  if (!key) return false;
+  if (!key) return { ok: false, error: "missing_key" };
+  const from = env.PUNCHBOARD_MAIL_FROM || "竹梅賽即時榜 <onboarding@resend.dev>";
   const res = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
@@ -102,7 +119,7 @@ async function deliver(
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
-      from: env.PUNCHBOARD_MAIL_FROM || "竹梅賽即時榜 <onboarding@resend.dev>",
+      from,
       to: [to],
       subject,
       text,
@@ -112,7 +129,8 @@ async function deliver(
       tags: [{ name: "category", value: "punchboard-mail" }],
     }),
   });
-  return res.ok;
+  if (res.ok) return { ok: true };
+  return { ok: false, error: await readError(res) };
 }
 
 export async function notifyTop10IfChanged(
@@ -128,7 +146,7 @@ export async function notifyTop10IfChanged(
     const subject = `${SUBJECT_PREFIX} ${board.eventName} 前10名更新`;
     const to = env.PUNCHBOARD_MAIL_TO || DEFAULT_TO;
     const sent = await deliver(env, to, subject, mailBody(board));
-    if (!sent) return "failed";
+    if (!sent.ok) return "failed";
     await env.CHUMEI_VOTES.put(MAIL_FP_KEY, fp);
     return "sent";
   } catch {
@@ -140,13 +158,16 @@ export async function sendCurrentBoard(
   env: PunchEnv,
   board: PunchBoard,
   to: string,
-): Promise<MailResult> {
+): Promise<MailAttempt> {
   try {
-    if (!env.RESEND_API_KEY && !env.PUNCHBOARD_MAIL_WEBHOOK) return "skipped";
+    if (!env.RESEND_API_KEY && !env.PUNCHBOARD_MAIL_WEBHOOK) {
+      return { mailed: "skipped" };
+    }
     const subject = `${SUBJECT_PREFIX} ${board.eventName} 目前榜單`;
     const sent = await deliver(env, to, subject, fullBoardBody(board));
-    return sent ? "sent" : "failed";
+    if (sent.ok) return { mailed: "sent" };
+    return { mailed: "failed", mailError: sent.error };
   } catch {
-    return "failed";
+    return { mailed: "failed", mailError: "network" };
   }
 }

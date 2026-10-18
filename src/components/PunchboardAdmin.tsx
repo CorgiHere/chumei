@@ -194,7 +194,12 @@ export function PunchboardAdmin() {
         setError("登入已過期，請再登入一次。");
         return;
       }
-      const data = (await res.json()) as { mailed?: string; mailedTo?: string; error?: string };
+      const data = (await res.json()) as {
+        mailed?: string;
+        mailedTo?: string;
+        error?: string;
+        mailError?: string;
+      };
       if (data.error === "invalid_email" || res.status === 400) {
         setError("請填正確的信箱。");
         return;
@@ -207,7 +212,10 @@ export function PunchboardAdmin() {
         setError("尚未設定 RESEND_API_KEY，無法寄信。");
         return;
       }
-      setError("寄信失敗。Resend 還在測試模式時，只能寄到你註冊 Resend 的那個信箱。");
+      const hint = data.mailError ? `（${data.mailError}）` : "";
+      setError(
+        `寄信失敗${hint}。要寄到籌委會信箱，請在 Resend 驗證網域，並在 Cloudflare 加 Secret PUNCHBOARD_MAIL_FROM（例如 竹梅賽即時榜 <board@mail.chumei.org>），再重新部署。測試可先改寄 Resend 註冊信箱。`,
+      );
     } catch {
       setError("寄信失敗，請再試一次。");
     } finally {
