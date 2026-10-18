@@ -37,17 +37,10 @@ export const PUNCH_GENDER_LABEL: Record<PunchGender, string> = {
   female: "女性",
 };
 
-const SAME_ORIGIN_HOSTS = new Set([
-  "localhost",
-  "127.0.0.1",
-  "chumei.org",
-  "xn--eyqvve1quev2be32g7sbba230jtip1rbz09du88b.xyz",
-]);
-
 export function getPunchboardEndpoint(): string {
-  if (typeof window === "undefined") return "/api/punchboard/";
+  if (typeof window === "undefined") return "https://chumei.org/api/punchboard/";
   const host = window.location.hostname;
-  if (SAME_ORIGIN_HOSTS.has(host) || host.endsWith(".pages.dev")) {
+  if (host === "chumei.org" || host.endsWith(".pages.dev")) {
     return "/api/punchboard/";
   }
   return "https://chumei.org/api/punchboard/";
