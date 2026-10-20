@@ -14,6 +14,7 @@ import {
   type RankedPunchEntry,
 } from "@/lib/punchboard";
 import { cn, withBasePath } from "@/lib/utils";
+import { ArcadeCabinet } from "./ArcadeCabinet";
 import { useSchoolSides } from "./SchoolOrder";
 
 const pressStart = Press_Start_2P({
@@ -185,18 +186,11 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
   const arcade = pressStart.className;
 
   return (
-    <div data-keep-order className={cn("bg-ink text-white", fusionPixel.className)}>
-      <div
-        className="relative mx-auto w-full max-w-[390px] overflow-hidden bg-[#07133f] px-4 pb-8 pt-5 sm:max-w-[420px] lg:max-w-[920px]"
-        style={{ WebkitFontSmoothing: "none" }}
-      >
-        <div
-          className="pointer-events-none absolute inset-0 opacity-[0.18]"
-          style={{
-            backgroundImage:
-              "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(0,0,0,0.35) 2px, rgba(0,0,0,0.35) 4px)",
-          }}
-        />
+    <ArcadeCabinet
+      keepOrder
+      className="max-w-[390px] sm:max-w-[420px] lg:max-w-[1100px]"
+      innerClassName={cn(fusionPixel.className, "px-4 pb-8 pt-5 lg:px-8")}
+    >
         <div className="flex items-center justify-center gap-2.5">
           <img
             src={withBasePath("/images/partners/whoscall-logo-green.png")}
@@ -270,17 +264,25 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
           className="relative mt-3 w-full rounded-none border-0 border-b-2 border-white/20 bg-transparent px-1 py-1.5 text-center text-[12px] text-white outline-none placeholder:text-white/30 hover:border-[#ffd54a]/70 focus:border-[#ffd54a]"
         />
 
-        <div className="relative mt-4 grid gap-8 lg:grid-cols-2">
+        <div className="relative mt-4 grid items-stretch gap-8 lg:grid-cols-[minmax(0,1fr)_auto_minmax(0,1fr)] lg:gap-x-0">
           <GenderList
-            className={tab === "male" ? "block" : "hidden lg:block"}
+            className={tab === "male" ? "flex" : "hidden lg:flex"}
             kicker="1P"
             label="男生組"
             tone="p1"
             rows={filteredMale}
             arcade={arcade}
           />
+          <div
+            aria-hidden
+            className="relative mx-5 hidden w-[6px] self-stretch lg:block"
+            style={{
+              backgroundImage:
+                "repeating-linear-gradient(to bottom, #ffd54a 0, #ffd54a 8px, transparent 8px, transparent 16px)",
+            }}
+          />
           <GenderList
-            className={tab === "female" ? "block" : "hidden lg:block"}
+            className={tab === "female" ? "flex" : "hidden lg:flex"}
             kicker="2P"
             label="女生組"
             tone="p2"
@@ -294,8 +296,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
             連線中
           </p>
         )}
-      </div>
-    </div>
+    </ArcadeCabinet>
   );
 }
 
@@ -353,7 +354,7 @@ function GenderList({
   arcade: string;
 }) {
   return (
-    <section className={className}>
+    <section className={cn("h-full min-h-0 flex-col", className)}>
       <div className="mb-3 hidden pointer-events-none lg:block">
         <TabButton
           active
@@ -365,9 +366,11 @@ function GenderList({
         />
       </div>
       {rows.length === 0 ? (
-        <p className="py-8 text-center text-[12px] text-white/55">目前沒有符合的成績。</p>
+        <p className="flex-1 py-8 text-center text-[12px] text-white/55">
+          目前沒有符合的成績。
+        </p>
       ) : (
-        <ol>
+        <ol className="flex-1">
           {rows.map((row) => (
             <li key={row.id} className="border-b-2 border-white/10">
               <RankRow entry={row} arcade={arcade} />
@@ -375,7 +378,9 @@ function GenderList({
           ))}
         </ol>
       )}
-      <SchoolTotals rows={rows} arcade={arcade} />
+      <div className="mt-auto pt-5">
+        <SchoolTotals rows={rows} arcade={arcade} />
+      </div>
     </section>
   );
 }
@@ -429,7 +434,7 @@ function SchoolTotals({
     { label: "交大", score: nycu, tone: "nycu" as const },
   );
   return (
-    <div className="relative mt-5 flex items-center justify-between rounded-none border-4 border-[#ff4f9a] px-3 py-2.5 text-[12px]">
+    <div className="relative mt-auto flex items-center justify-between rounded-none border-4 border-[#ff4f9a] px-3 py-2.5 text-[12px]">
       <span>
         {left.label}{" "}
         <span

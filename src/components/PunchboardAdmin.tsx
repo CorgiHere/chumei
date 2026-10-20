@@ -14,6 +14,7 @@ import {
   type PunchSchool,
 } from "@/lib/punchboard";
 import { cn, withBasePath } from "@/lib/utils";
+import { ArcadeCabinet } from "./ArcadeCabinet";
 import { useSchoolSides } from "./SchoolOrder";
 
 const pressStart = Press_Start_2P({
@@ -503,33 +504,31 @@ export function PunchboardAdmin() {
 
 function AdminFrame({ children }: { children: React.ReactNode }) {
   return (
-    <div
-      className={cn(fusionPixel.className, "bg-ink text-white")}
-      style={{ WebkitFontSmoothing: "none" }}
+    <ArcadeCabinet
+      className="max-w-[1520px]"
+      innerClassName={cn(fusionPixel.className, "px-5 py-6 lg:px-10")}
     >
-      <div className="mx-auto max-w-5xl bg-[#07133f] px-4 py-6">
-        <div className="mb-6 flex items-center justify-center gap-2.5">
-          <img
-            src={withBasePath("/images/partners/whoscall-logo-green.png")}
-            alt="Whoscall"
-            className="h-6 w-auto"
-          />
-          <span className="text-white/70">×</span>
-          <img
-            src={withBasePath("/images/brand/chumei-logo.png")}
-            alt="Chu Mei"
-            className="h-8 w-auto"
-          />
-        </div>
+      <div className="mb-6 flex items-center justify-center gap-2.5">
         <img
-          src={withBasePath("/images/activities/whoscall-openflat-banner.png")}
-          alt="詐騙來電，Whoscall 開扁"
-          className="mx-auto mb-6 max-w-md w-full"
-          style={{ imageRendering: "pixelated" }}
+          src={withBasePath("/images/partners/whoscall-logo-green.png")}
+          alt="Whoscall"
+          className="h-6 w-auto"
         />
-        {children}
+        <span className="text-white/70">×</span>
+        <img
+          src={withBasePath("/images/brand/chumei-logo.png")}
+          alt="Chu Mei"
+          className="h-8 w-auto"
+        />
       </div>
-    </div>
+      <img
+        src={withBasePath("/images/activities/whoscall-openflat-banner.png")}
+        alt="詐騙來電，Whoscall 開扁"
+        className="mx-auto mb-6 max-w-md w-full"
+        style={{ imageRendering: "pixelated" }}
+      />
+      {children}
+    </ArcadeCabinet>
   );
 }
 
