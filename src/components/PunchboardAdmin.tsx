@@ -1,6 +1,8 @@
 "use client";
 
 import { FormEvent, useEffect, useMemo, useState } from "react";
+import { Press_Start_2P } from "next/font/google";
+import localFont from "next/font/local";
 import {
   getPunchboardAdminEndpoint,
   PUNCH_GENDER_LABEL,
@@ -11,7 +13,19 @@ import {
   type PunchGender,
   type PunchSchool,
 } from "@/lib/punchboard";
+import { cn, withBasePath } from "@/lib/utils";
 import { useSchoolSides } from "./SchoolOrder";
+
+const pressStart = Press_Start_2P({
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const fusionPixel = localFont({
+  src: "../../public/fonts/fusion-pixel-12px-zh-tw.woff2",
+  display: "swap",
+});
 
 type AdminState = {
   eventName: string;
@@ -224,49 +238,59 @@ export function PunchboardAdmin() {
   }
 
   if (loading) {
-    return <p className="text-sm text-muted">檢查登入狀態…</p>;
+    return (
+      <AdminFrame>
+        <p className="text-[#ffd54a]">檢查登入狀態…</p>
+      </AdminFrame>
+    );
   }
 
   if (!authed) {
     return (
-      <form onSubmit={login} className="card max-w-md space-y-4 p-6">
-        <p className="text-sm text-muted">只有籌委會現場登錄成績。請用 Cloudflare 設定的後台密碼登入。</p>
-        <label className="block text-sm font-bold" htmlFor="admin-pass">
-          後台密碼
-        </label>
-        <input
-          id="admin-pass"
-          type="password"
-          autoComplete="current-password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="w-full border-2 border-white/20 bg-ink px-3 py-3 text-chalk outline-none focus:border-brand-yellow"
-        />
-        {error ? <p className="text-sm text-danger">{error}</p> : null}
-        <button type="submit" className="btn-primary">
-          進入後台
-        </button>
-      </form>
+      <AdminFrame>
+        <form onSubmit={login} className={panelClass}>
+          <p className={cn(pressStart.className, "text-[10px] text-[#ffd54a]")}>ADMIN</p>
+          <p className="text-[12px] text-white/70">
+            只有籌委會現場登錄成績。請用 Cloudflare 設定的後台密碼登入。
+          </p>
+          <label className="block text-[12px]" htmlFor="admin-pass">
+            後台密碼
+          </label>
+          <input
+            id="admin-pass"
+            type="password"
+            autoComplete="current-password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            className={fieldClass}
+          />
+          {error ? <p className="text-[12px] text-[#ff6b6b]">{error}</p> : null}
+          <button type="submit" className={btnPrimary}>
+            進入後台
+          </button>
+        </form>
+      </AdminFrame>
     );
   }
 
   return (
-    <div className="space-y-8">
+    <AdminFrame>
+    <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-end gap-3">
-        <button type="button" className="btn-dark-outline text-sm" onClick={logout}>
+        <button type="button" className={btnGhost} onClick={logout}>
           登出
         </button>
       </div>
-      <p className="text-sm text-muted">
-        男性或女性前 10 名有變動時，會寄到 chu.mei.committee+punchboard@gmail.com（同一信箱，可用 Gmail 篩選獨立成標籤、不進主要收件匣）。沒變就不會重寄。成績一定會先存，寄信失敗不影響榜單。
+      <p className="text-[12px] text-white/55">
+        男生組或女生組前 10 名有變動時，會寄到 chu.mei.committee+punchboard@gmail.com。沒變就不會重寄。成績一定會先存，寄信失敗不影響榜單。
       </p>
 
-      <form className="card space-y-4 p-6" onSubmit={sendBoardMail}>
-        <h2 className="text-xl font-black">寄出目前榜單</h2>
-        <p className="text-sm text-muted">
-          把此刻的男女排名寄到指定信箱，用來測試寄信。不會改榜。Resend 未驗證網域時，只能寄到你註冊 Resend 的那個信箱。
+      <form className={panelClass} onSubmit={sendBoardMail}>
+        <h2 className={cn(pressStart.className, "text-[12px] text-[#ffd54a]")}>MAIL</h2>
+        <p className="text-[12px] text-white/70">
+          把此刻的男女排名寄到指定信箱，用來測試寄信。不會改榜。
         </p>
-        <label className="block text-sm font-bold" htmlFor="mail-to">
+        <label className="block text-[12px]" htmlFor="mail-to">
           收件信箱
         </label>
         <input
@@ -275,17 +299,17 @@ export function PunchboardAdmin() {
           required
           value={mailTo}
           onChange={(e) => setMailTo(e.target.value)}
-          className="w-full border-2 border-white/20 bg-ink px-3 py-3 text-chalk outline-none focus:border-brand-yellow"
+          className={fieldClass}
         />
-        <button type="submit" className="btn-primary" disabled={mailing}>
+        <button type="submit" className={btnPrimary} disabled={mailing}>
           {mailing ? "寄送中…" : "寄出榜單"}
         </button>
-        {error ? <p className="text-sm text-danger">{error}</p> : null}
-        {notice ? <p className="text-sm text-brand-yellow">{notice}</p> : null}
+        {error ? <p className="text-[12px] text-[#ff6b6b]">{error}</p> : null}
+        {notice ? <p className="text-[12px] text-[#ffd54a]">{notice}</p> : null}
       </form>
 
       <form
-        className="card space-y-4 p-6"
+        className={panelClass}
         onSubmit={(e) => {
           e.preventDefault();
           void postAction({
@@ -295,17 +319,17 @@ export function PunchboardAdmin() {
           });
         }}
       >
-        <h2 className="text-xl font-black">活動設定</h2>
-        <label className="block text-sm font-bold" htmlFor="event-name">
+        <h2 className={cn(pressStart.className, "text-[12px] text-[#ffd54a]")}>EVENT</h2>
+        <label className="block text-[12px]" htmlFor="event-name">
           活動名稱
         </label>
         <input
           id="event-name"
           value={board.eventName}
           onChange={(e) => setBoard((b) => ({ ...b, eventName: e.target.value }))}
-          className="w-full border-2 border-white/20 bg-ink px-3 py-3 text-chalk outline-none focus:border-brand-yellow"
+          className={fieldClass}
         />
-        <label className="block text-sm font-bold" htmlFor="event-end">
+        <label className="block text-[12px]" htmlFor="event-end">
           結束時間（倒數用）
         </label>
         <input
@@ -315,15 +339,15 @@ export function PunchboardAdmin() {
           onChange={(e) =>
             setBoard((b) => ({ ...b, endAt: fromLocalInput(e.target.value) }))
           }
-          className="w-full border-2 border-white/20 bg-ink px-3 py-3 text-chalk outline-none focus:border-brand-yellow"
+          className={fieldClass}
         />
-        <button type="submit" className="btn-primary">
+        <button type="submit" className={btnPrimary}>
           儲存活動設定
         </button>
       </form>
 
       <form
-        className="card space-y-4 p-6"
+        className={panelClass}
         onSubmit={(e) => {
           e.preventDefault();
           void postAction({
@@ -341,7 +365,9 @@ export function PunchboardAdmin() {
           });
         }}
       >
-        <h2 className="text-xl font-black">{form.id ? "修改成績" : "新增成績"}</h2>
+        <h2 className={cn(pressStart.className, "text-[12px] text-[#ffd54a]")}>
+          {form.id ? "EDIT" : "NEW"}
+        </h2>
         <div className="grid gap-4 md:grid-cols-2">
           <Field label="姓名" htmlFor="p-name">
             <input
@@ -397,39 +423,41 @@ export function PunchboardAdmin() {
               }
               className={fieldClass}
             >
-              <option value="male">男性</option>
-              <option value="female">女性</option>
+              <option value="male">1P 男生組</option>
+              <option value="female">2P 女生組</option>
             </select>
           </Field>
         </div>
         <div className="flex flex-wrap gap-3">
-          <button type="submit" className="btn-primary">
+          <button type="submit" className={btnPrimary}>
             {form.id ? "更新這筆" : "登錄成績"}
           </button>
           {form.id ? (
-            <button type="button" className="btn-dark-outline" onClick={() => setForm(blankForm)}>
+            <button type="button" className={btnGhost} onClick={() => setForm(blankForm)}>
               取消編輯
             </button>
           ) : null}
         </div>
       </form>
 
-      {error ? <p className="text-sm text-danger">{error}</p> : null}
-      {notice ? <p className="text-sm text-brand-yellow">{notice}</p> : null}
+      {error ? <p className="text-[12px] text-[#ff6b6b]">{error}</p> : null}
+      {notice ? <p className="text-[12px] text-[#ffd54a]">{notice}</p> : null}
 
       <div>
         <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
-          <h2 className="text-xl font-black">已登錄 {board.entries.length} 人</h2>
+          <h2 className={cn(pressStart.className, "text-[12px] text-[#ffd54a]")}>
+            {board.entries.length} PLAYERS
+          </h2>
           <input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="搜尋"
-            className="w-full max-w-xs border-2 border-white/20 bg-ink px-3 py-2 text-sm text-chalk outline-none focus:border-brand-yellow"
+            className={`${fieldClass} max-w-xs py-2`}
           />
         </div>
         <div className="grid gap-8 lg:grid-cols-2">
           <EntryTable
-            title="男性"
+            title="1P 男生組"
             rows={filteredByGender.male}
             onEdit={(row) =>
               setForm({
@@ -448,7 +476,7 @@ export function PunchboardAdmin() {
             }}
           />
           <EntryTable
-            title="女性"
+            title="2P 女生組"
             rows={filteredByGender.female}
             onEdit={(row) =>
               setForm({
@@ -469,14 +497,51 @@ export function PunchboardAdmin() {
         </div>
       </div>
     </div>
+    </AdminFrame>
   );
 }
 
-const fieldClass =
-  "w-full border-2 border-white/20 bg-ink px-3 py-3 text-chalk outline-none focus:border-brand-yellow";
+function AdminFrame({ children }: { children: React.ReactNode }) {
+  return (
+    <div
+      className={cn(fusionPixel.className, "bg-ink text-white")}
+      style={{ WebkitFontSmoothing: "none" }}
+    >
+      <div className="mx-auto max-w-5xl bg-[#07133f] px-4 py-6">
+        <div className="mb-6 flex items-center justify-center gap-2.5">
+          <img
+            src={withBasePath("/images/partners/whoscall-logo-green.png")}
+            alt="Whoscall"
+            className="h-6 w-auto"
+          />
+          <span className="text-white/70">×</span>
+          <img
+            src={withBasePath("/images/brand/chumei-logo.png")}
+            alt="Chu Mei"
+            className="h-8 w-auto"
+          />
+        </div>
+        <img
+          src={withBasePath("/images/activities/whoscall-openflat-banner.png")}
+          alt="詐騙來電，Whoscall 開扁"
+          className="mx-auto mb-6 max-w-md w-full"
+          style={{ imageRendering: "pixelated" }}
+        />
+        {children}
+      </div>
+    </div>
+  );
+}
 
+const panelClass = "space-y-4 border-4 border-[#2ee0d6]/35 p-5";
+const fieldClass =
+  "w-full rounded-none border-2 border-white/25 bg-[#06102f] px-3 py-3 text-white outline-none focus:border-[#ffd54a]";
+const btnPrimary =
+  "cursor-pointer border-4 border-[#c9a000] bg-[#ffd000] px-4 py-3 text-[#1a1400] hover:bg-[#ffe34d] disabled:opacity-60";
+const btnGhost =
+  "cursor-pointer border-4 border-[#2ee0d6] px-4 py-3 text-[#9ff6f2] hover:bg-[#2ee0d6] hover:text-[#06203a]";
 const actionBtn =
-  "inline-flex min-h-11 items-center justify-center px-3 font-mono-ui text-xs font-bold tracking-widest";
+  "inline-flex min-h-11 cursor-pointer items-center justify-center px-3 text-[12px]";
 
 function EntryTable({
   title,
@@ -491,19 +556,17 @@ function EntryTable({
 }) {
   return (
     <section>
-      <h3 className="mb-3 border-b-2 border-brand-yellow pb-2 text-lg font-black">
+      <h3 className="mb-3 border-b-4 border-[#ffd54a] pb-2 text-[16px]">
         {title}
-        <span className="ml-2 font-mono-ui text-[11px] font-normal tracking-widest text-muted">
-          {rows.length} 人
-        </span>
+        <span className="ml-2 text-[12px] text-white/45">{rows.length} 人</span>
       </h3>
-      <div className="overflow-x-auto border border-white/10">
-        <table className="w-full min-w-[520px] text-left text-sm">
-          <thead className="bg-dark-gray font-mono-ui text-[11px] tracking-widest text-brand-yellow">
+      <div className="overflow-x-auto border-4 border-white/15">
+        <table className="w-full min-w-[520px] text-left text-[12px]">
+          <thead className="bg-[#06102f] text-[#ffd54a]">
             <tr>
               <th className="px-3 py-3">分數</th>
               <th className="px-3 py-3">姓名</th>
-              <th className="px-3 py-3">學校</th>
+              <th className="px-3 py-3">校</th>
               <th className="px-3 py-3">系所</th>
               <th className="px-3 py-3">操作</th>
             </tr>
@@ -511,29 +574,40 @@ function EntryTable({
           <tbody>
             {rows.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-3 py-6 text-muted">
+                <td colSpan={5} className="px-3 py-6 text-white/45">
                   目前沒有成績。
                 </td>
               </tr>
             ) : (
               rows.map((row) => (
-                <tr key={row.id} className="border-t border-white/10">
-                  <td className="font-num px-3 py-3 font-bold">{row.score}</td>
-                  <td className="px-3 py-3 font-black">{row.name}</td>
-                  <td className="px-3 py-3">{PUNCH_SCHOOL_LABEL[row.school]}</td>
+                <tr key={row.id} className="border-t-2 border-white/10 hover:bg-[#2ee0d6]/15">
+                  <td className={cn(pressStart.className, "px-3 py-3 text-[12px]")}>{row.score}</td>
+                  <td className="px-3 py-3">{row.name}</td>
+                  <td className="px-3 py-3">
+                    <span
+                      className={cn(
+                        "inline-flex size-7 items-center justify-center text-white",
+                        row.school === "NTHU" && "bg-nthu",
+                        row.school === "NYCU" && "bg-nycu",
+                        row.school === "OTHER" && "bg-white/25 text-white/80",
+                      )}
+                    >
+                      {row.school === "NTHU" ? "清" : row.school === "NYCU" ? "交" : "他"}
+                    </span>
+                  </td>
                   <td className="px-3 py-3">{row.department}</td>
                   <td className="px-3 py-3">
                     <div className="flex flex-wrap gap-2">
                       <button
                         type="button"
-                        className={`${actionBtn} border-2 border-brand-yellow text-brand-yellow`}
+                        className={`${actionBtn} border-2 border-[#ffd54a] text-[#ffd54a] hover:bg-[#ffd54a] hover:text-[#1a1400]`}
                         onClick={() => onEdit(row)}
                       >
                         修改
                       </button>
                       <button
                         type="button"
-                        className={`${actionBtn} border-2 border-white/35 text-chalk`}
+                        className={`${actionBtn} border-2 border-white/35 text-white hover:bg-white hover:text-[#07133f]`}
                         onClick={() => onDelete(row)}
                       >
                         刪除
@@ -561,7 +635,7 @@ function Field({
 }) {
   return (
     <div>
-      <label className="mb-1 block text-sm font-bold" htmlFor={htmlFor}>
+      <label className="mb-1 block text-[12px]" htmlFor={htmlFor}>
         {label}
       </label>
       {children}

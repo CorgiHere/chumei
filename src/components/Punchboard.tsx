@@ -182,12 +182,12 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
     () => board.female.filter((row) => matchesQuery(row, query)),
     [board.female, query],
   );
-  const rows = tab === "male" ? filteredMale : filteredFemale;
+  const arcade = pressStart.className;
 
   return (
     <div data-keep-order className={cn("bg-ink text-white", fusionPixel.className)}>
       <div
-        className="relative mx-auto w-full max-w-[390px] overflow-hidden bg-[#07133f] px-4 pb-8 pt-5 sm:max-w-[420px]"
+        className="relative mx-auto w-full max-w-[390px] overflow-hidden bg-[#07133f] px-4 pb-8 pt-5 sm:max-w-[420px] lg:max-w-[920px]"
         style={{ WebkitFontSmoothing: "none" }}
       >
         <div
@@ -223,18 +223,18 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
         <img
           src={withBasePath("/images/activities/whoscall-openflat-banner.png")}
           alt="詐騙來電，Whoscall 開扁"
-          className="relative mx-auto mt-3 w-full"
+          className="relative mx-auto mt-3 w-full max-w-[420px]"
           style={{ imageRendering: "pixelated" }}
         />
 
-        <div className="mt-5 grid grid-cols-2 gap-3">
+        <div className="mt-5 grid grid-cols-2 gap-3 lg:hidden">
           <TabButton
             active={tab === "male"}
             tone="p1"
             onClick={() => setTab("male")}
             kicker="1P"
             label="男生組"
-            arcade={pressStart.className}
+            arcade={arcade}
           />
           <TabButton
             active={tab === "female"}
@@ -242,7 +242,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
             onClick={() => setTab("female")}
             kicker="2P"
             label="女生組"
-            arcade={pressStart.className}
+            arcade={arcade}
           />
         </div>
 
@@ -270,19 +270,24 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
           className="relative mt-3 w-full rounded-none border-0 border-b-2 border-white/20 bg-transparent px-1 py-1.5 text-center text-[12px] text-white outline-none placeholder:text-white/30 hover:border-[#ffd54a]/70 focus:border-[#ffd54a]"
         />
 
-        {rows.length === 0 ? (
-          <p className="mt-6 py-8 text-center text-sm text-white/55">目前沒有符合的成績。</p>
-        ) : (
-          <ol className="relative mt-3">
-            {rows.map((row) => (
-              <li key={row.id} className="border-b-2 border-white/10">
-                <RankRow entry={row} arcade={pressStart.className} />
-              </li>
-            ))}
-          </ol>
-        )}
-
-        <SchoolTotals rows={rows} arcade={pressStart.className} />
+        <div className="relative mt-4 grid gap-8 lg:grid-cols-2">
+          <GenderList
+            className={tab === "male" ? "block" : "hidden lg:block"}
+            kicker="1P"
+            label="男生組"
+            tone="p1"
+            rows={filteredMale}
+            arcade={arcade}
+          />
+          <GenderList
+            className={tab === "female" ? "block" : "hidden lg:block"}
+            kicker="2P"
+            label="女生組"
+            tone="p2"
+            rows={filteredFemale}
+            arcade={arcade}
+          />
+        </div>
 
         {board.ready ? null : (
           <p className="mt-3 text-center font-mono-ui text-[11px] tracking-widest text-[#5ef0ea]">
@@ -329,6 +334,49 @@ function TabButton({
       <span className={cn(arcade, "text-[16px]")}>{kicker}</span>
       <span className="mt-2 text-[12px]">{label}</span>
     </button>
+  );
+}
+
+function GenderList({
+  className,
+  kicker,
+  label,
+  tone,
+  rows,
+  arcade,
+}: {
+  className?: string;
+  kicker: string;
+  label: string;
+  tone: "p1" | "p2";
+  rows: RankedPunchEntry[];
+  arcade: string;
+}) {
+  return (
+    <section className={className}>
+      <div className="mb-3 hidden pointer-events-none lg:block">
+        <TabButton
+          active
+          tone={tone}
+          onClick={() => undefined}
+          kicker={kicker}
+          label={label}
+          arcade={arcade}
+        />
+      </div>
+      {rows.length === 0 ? (
+        <p className="py-8 text-center text-[12px] text-white/55">目前沒有符合的成績。</p>
+      ) : (
+        <ol>
+          {rows.map((row) => (
+            <li key={row.id} className="border-b-2 border-white/10">
+              <RankRow entry={row} arcade={arcade} />
+            </li>
+          ))}
+        </ol>
+      )}
+      <SchoolTotals rows={rows} arcade={arcade} />
+    </section>
   );
 }
 
