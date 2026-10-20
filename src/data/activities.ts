@@ -495,13 +495,13 @@ export const activities: Activity[] = [
     slug: "punchboard",
     year: 2026,
     index: 12,
-    title: "拳擊機大賽",
-    subtitle: "11/17 現場打榜",
-    tagline: "一拳定排名",
+    title: "詐騙來電，Whoscall 開扁",
+    subtitle: "Whoscall 合作｜11/17 現場拳擊機",
+    tagline: "一拳開扁詐騙來電",
     description:
-      "11 月 17 日現場拳擊機活動。確切時段與場地以籌委會公告為準。成績登錄後即時出現在官網排行榜，分男性／女性兩榜，可依姓名、學校、系所查詢。",
-    heroImage: "/images/activities/rps.avif",
-    cardImage: "/images/activities/rps.avif",
+      "11 月 17 日現場拳擊機活動，活動名稱「詐騙來電，Whoscall 開扁」。確切時段與場地以籌委會公告為準。成績登錄後即時出現在官網排行榜，分男生組／女生組，可依姓名、學校、系所查詢。",
+    heroImage: "/images/activities/whoscall-openflat.png",
+    cardImage: "/images/activities/whoscall-openflat.png",
     startAt: "2026-11-17T00:00:00+08:00",
     endAt: "2026-11-17T23:59:00+08:00",
     status: "announced",
@@ -512,7 +512,7 @@ export const activities: Activity[] = [
     rules: [
       {
         title: "成績",
-        content: "以現場拳擊機顯示分數為準，由工作人員登錄。男性與女性分開排名。",
+        content: "以現場拳擊機顯示分數為準，由工作人員登錄。男生組與女生組分開排名。",
       },
       {
         title: "即時榜",
@@ -522,6 +522,7 @@ export const activities: Activity[] = [
     audienceNotes: ["開放觀賽", "即時榜：官網 /punchboard"],
     isScored: false,
     organizerIds: ["chumei-committee"],
+    partnerIds: ["p-whoscall"],
     socialLinks: [{ platform: "Instagram", url: siteConfig.instagramUrl }],
   },
 ];

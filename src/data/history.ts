@@ -38,6 +38,15 @@ export const partners: Partner[] = [
     note: "協辦日本麻將推廣賽",
     logo: "/images/partners/nthu-japanese-mahjong.webp",
   },
+  {
+    id: "p-whoscall",
+    name: "Whoscall",
+    type: "sponsor",
+    note: "11/17 詐騙來電，Whoscall 開扁",
+    logo: "/images/partners/whoscall-logo-green.png",
+    logoWide: true,
+    url: "https://whoscall.com",
+  },
 ];
 
 export const galleryItems: GalleryItem[] = [

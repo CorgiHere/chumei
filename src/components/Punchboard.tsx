@@ -1,43 +1,34 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import { Press_Start_2P } from "next/font/google";
+import localFont from "next/font/local";
 import {
   emptyPunchboard,
   getPunchboardEndpoint,
   matchesQuery,
-  PUNCH_GENDER_LABEL,
   PUNCHBOARD_START_AT,
   type PunchboardPayload,
   type PunchGender,
   type PunchSchool,
   type RankedPunchEntry,
 } from "@/lib/punchboard";
-import { cn } from "@/lib/utils";
-import { HazardBar } from "./HazardBar";
+import { cn, withBasePath } from "@/lib/utils";
+import { useSchoolSides } from "./SchoolOrder";
+
+const pressStart = Press_Start_2P({
+  weight: "400",
+  subsets: ["latin"],
+  display: "swap",
+});
+
+const fusionPixel = localFont({
+  src: "../../public/fonts/fusion-pixel-12px-zh-tw.woff2",
+  display: "swap",
+});
 
 const POLL_MS = 8000;
 const POLL_JITTER_MS = 2000;
-
-const PODIUM_META: Record<
-  1 | 2 | 3,
-  { title: string; panel: string; score: string }
-> = {
-  1: {
-    title: "冠軍",
-    panel: "border-brand-yellow bg-brand-yellow text-ink",
-    score: "text-ink",
-  },
-  2: {
-    title: "亞軍",
-    panel: "border-white/35 bg-[#2a2a2a] text-chalk",
-    score: "text-chalk",
-  },
-  3: {
-    title: "季軍",
-    panel: "border-[#c47a3a] bg-[#1c140e] text-chalk",
-    score: "text-[#e8b27a]",
-  },
-};
 
 function asRanked(raw: unknown, gender: PunchGender): RankedPunchEntry[] {
   if (!Array.isArray(raw)) return [];
@@ -81,6 +72,21 @@ function formatScore(n: number) {
   return n.toLocaleString("en-US");
 }
 
+function ordinal(n: number) {
+  const v = n % 100;
+  if (v >= 11 && v <= 13) return `${n}TH`;
+  switch (n % 10) {
+    case 1:
+      return `${n}ST`;
+    case 2:
+      return `${n}ND`;
+    case 3:
+      return `${n}RD`;
+    default:
+      return `${n}TH`;
+  }
+}
+
 function formatRemain(ms: number) {
   const total = Math.max(0, Math.floor(ms / 1000));
   const days = Math.floor(total / 86400);
@@ -93,14 +99,16 @@ function formatRemain(ms: number) {
 }
 
 function useCountdown(startAt: string, endAt: string) {
-  const [now, setNow] = useState(() => Date.now());
+  const [now, setNow] = useState<number | null>(null);
   useEffect(() => {
-    const id = window.setInterval(() => setNow(Date.now()), 250);
+    const tick = () => setNow(Date.now());
+    tick();
+    const id = window.setInterval(tick, 250);
     return () => window.clearInterval(id);
   }, []);
   const start = new Date(startAt).getTime();
   const end = new Date(endAt).getTime();
-  if (!Number.isFinite(start)) {
+  if (now === null || !Number.isFinite(start)) {
     return { phase: "waiting" as const, label: "距離 11/17", clock: "—" };
   }
   if (now < start) {
@@ -118,6 +126,10 @@ function useCountdown(startAt: string, endAt: string) {
     label: "距離結束",
     clock: Number.isFinite(end) ? formatRemain(end - now) : "進行中",
   };
+}
+
+function schoolTotal(rows: RankedPunchEntry[], school: PunchSchool) {
+  return rows.filter((row) => row.school === school).reduce((sum, row) => sum + row.score, 0);
 }
 
 export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2" }) {
@@ -170,270 +182,231 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
     () => board.female.filter((row) => matchesQuery(row, query)),
     [board.female, query],
   );
+  const rows = tab === "male" ? filteredMale : filteredFemale;
 
   return (
-    <div>
-      <div className="container-main">
-        <div className="flex flex-wrap items-center gap-3">
-          <p
-            className={cn(
-              "inline-flex min-h-8 items-center gap-2 bg-brand-yellow px-3 font-mono-ui text-[11px] font-bold tracking-[0.18em] text-ink",
-            )}
-          >
-            <span
-              className="size-2 shrink-0 bg-ink motion-safe:animate-pulse"
-              aria-hidden
-            />
-            {countdown.phase === "ended" ? "FINAL" : "LIVE"}
-          </p>
-          <p className="eyebrow m-0">11/17（二）</p>
-        </div>
-        <Heading className="display-title mt-4 text-[clamp(28px,5vw,56px)] leading-[1.15]">
-          {board.eventName}
-          <span className="mark"> 即時榜</span>
-        </Heading>
-        <p className="mt-3 max-w-2xl text-[15px] text-muted">
-          現場拳擊機分數公開排名。分男性／女性兩榜，分數高到低。電腦與手機都會自動更新。
-        </p>
-
-        <div className="mt-8 overflow-hidden border-2 border-brand-yellow">
-          <HazardBar animated={countdown.phase !== "ended"} className="h-3" />
-          <div className="grid gap-px bg-white/10 md:grid-cols-[1.15fr_1fr]">
-            <div className="bg-ink px-5 py-6 md:px-7 md:py-8">
-              <p className="font-mono-ui text-[11px] tracking-[0.2em] text-brand-yellow">
-                {countdown.label}
-              </p>
-              <p className="font-num mt-3 text-[clamp(32px,6vw,72px)] leading-none font-bold tracking-tight text-brand-yellow">
-                {countdown.clock}
-              </p>
-              <p className="mt-4 text-sm text-muted">
-                {countdown.phase === "ended"
-                  ? "倒數已結束，以下為最終排名。"
-                  : "活動日期 11/17。現場登錄後約十秒內會出現在榜上。"}
-              </p>
-            </div>
-            <div className="bg-dark-gray px-5 py-6 md:px-7 md:py-8">
-              <label
-                className="font-mono-ui text-[11px] tracking-[0.2em] text-brand-yellow"
-                htmlFor="punch-search"
-              >
-                查詢姓名／學校／系所
-              </label>
-              <input
-                id="punch-search"
-                value={query}
-                onChange={(e) => setQuery(e.target.value)}
-                placeholder="例如：王小明、清大、電機"
-                className="mt-4 w-full border-2 border-white/20 bg-ink px-3 py-3 text-[15px] text-chalk outline-none placeholder:text-muted focus:border-brand-yellow"
-              />
-              {board.ready ? null : (
-                <p className="mt-3 font-mono-ui text-[12px] tracking-widest text-brand-yellow">
-                  連線中
-                </p>
-              )}
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-6 flex gap-2 md:hidden">
-          {(["male", "female"] as const).map((g) => (
-            <button
-              key={g}
-              type="button"
-              onClick={() => setTab(g)}
-              className={cn(
-                "min-h-12 flex-1 px-3 font-mono-ui text-sm tracking-widest",
-                tab === g
-                  ? "bg-brand-yellow text-ink"
-                  : "bg-dark-gray text-chalk",
-              )}
-            >
-              {PUNCH_GENDER_LABEL[g]}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      <div className="container-main mt-8 grid gap-10 md:grid-cols-2 md:gap-8">
-        <GenderBoard
-          key={`male-${filteredMale.map((row) => row.id).join("-") || "empty"}`}
-          gender="male"
-          rows={filteredMale}
-          className={tab === "male" ? "block" : "hidden md:block"}
-        />
-        <GenderBoard
-          key={`female-${filteredFemale.map((row) => row.id).join("-") || "empty"}`}
-          gender="female"
-          rows={filteredFemale}
-          className={tab === "female" ? "block" : "hidden md:block"}
-        />
-      </div>
-    </div>
-  );
-}
-
-function GenderBoard({
-  gender,
-  rows,
-  className,
-}: {
-  gender: PunchGender;
-  rows: RankedPunchEntry[];
-  className?: string;
-}) {
-  const first = rows.find((r) => r.rank === 1);
-  const second = rows.find((r) => r.rank === 2);
-  const third = rows.find((r) => r.rank === 3);
-  const rest = rows.filter((r) => r.rank > 3);
-  const hasPodium = Boolean(first || second || third);
-
-  return (
-    <section className={className} aria-labelledby={`punch-${gender}`}>
-      <div className="mb-4 flex items-end justify-between gap-3 border-b-2 border-brand-yellow pb-3">
-        <h2 id={`punch-${gender}`} className="m-0 text-2xl font-black md:text-3xl">
-          {PUNCH_GENDER_LABEL[gender]}
-          <span className="ml-3 font-mono-ui text-[14px] font-bold tracking-[0.12em] text-brand-yellow">
-            {[first, second, third, ...rest].filter(Boolean).length} 人
-          </span>
-        </h2>
-      </div>
-      {rows.length === 0 ? (
-        <p className="bg-dark-gray p-6 text-sm text-muted">目前沒有符合的成績。</p>
-      ) : (
-        <>
-          {hasPodium ? (
-            <ol className="grid grid-cols-1 items-end gap-2 md:grid-cols-3">
-              {first ? (
-                <li className="md:order-2">
-                  <PodiumCard entry={first} featured />
-                </li>
-              ) : null}
-              {second ? (
-                <li className="md:order-1 md:pt-8">
-                  <PodiumCard entry={second} />
-                </li>
-              ) : (
-                <li className="hidden md:order-1 md:block" aria-hidden />
-              )}
-              {third ? (
-                <li className="md:order-3 md:pt-12">
-                  <PodiumCard entry={third} />
-                </li>
-              ) : (
-                <li className="hidden md:order-3 md:block" aria-hidden />
-              )}
-            </ol>
-          ) : null}
-          {rest.length > 0 ? (
-            <ol className="mt-4 divide-y divide-white/10 border border-white/12 bg-charcoal">
-              {rest.map((row) => (
-                <li key={row.id}>
-                  <RankRow entry={row} />
-                </li>
-              ))}
-            </ol>
-          ) : null}
-        </>
-      )}
-    </section>
-  );
-}
-
-function PodiumCard({
-  entry,
-  featured = false,
-}: {
-  entry: RankedPunchEntry;
-  featured?: boolean;
-}) {
-  const place = entry.rank === 1 || entry.rank === 2 || entry.rank === 3 ? entry.rank : 3;
-  const meta = PODIUM_META[place];
-  return (
-    <article className={cn("border-2 p-4 md:p-5", meta.panel)}>
-      <div className="flex items-center justify-between gap-2">
-        <span
-          className="px-2 py-1 font-mono-ui text-[11px] font-bold tracking-[0.16em]"
-          style={
-            place === 1
-              ? { backgroundColor: "#0a0a0a", color: "#ffffff" }
-              : place === 2
-                ? { backgroundColor: "#f0eee8", color: "#0a0a0a" }
-                : { backgroundColor: "#c47a3a", color: "#0a0a0a" }
-          }
-        >
-          {meta.title}
-        </span>
-        <span className="font-num text-2xl font-bold leading-none opacity-70">
-          {String(entry.rank).padStart(2, "0")}
-        </span>
-      </div>
-      <p
-        className={cn(
-          "font-num mt-4 leading-none font-bold",
-          featured
-            ? "text-[clamp(44px,8vw,72px)]"
-            : "text-[clamp(32px,6vw,48px)]",
-          meta.score,
-        )}
+    <div data-keep-order className={cn("bg-ink text-white", fusionPixel.className)}>
+      <div
+        className="relative mx-auto w-full max-w-[390px] overflow-hidden bg-[#07133f] px-4 pb-8 pt-5 sm:max-w-[420px]"
+        style={{ WebkitFontSmoothing: "none" }}
       >
-        {formatScore(entry.score)}
-      </p>
-      <div className="mt-4">
-        <SchoolMark school={entry.school} large={featured} />
+        <div
+          className="pointer-events-none absolute inset-0 opacity-[0.18]"
+          style={{
+            backgroundImage:
+              "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(0,0,0,0.35) 2px, rgba(0,0,0,0.35) 4px)",
+          }}
+        />
+        <div className="flex items-center justify-center gap-2.5">
+          <img
+            src={withBasePath("/images/partners/whoscall-logo-green.png")}
+            alt="Whoscall"
+            className="h-6 w-auto"
+          />
+          <span className="text-white/70">×</span>
+          <img
+            src={withBasePath("/images/brand/chumei-logo.png")}
+            alt="Chu Mei"
+            className="h-8 w-auto"
+          />
+        </div>
         <p
           className={cn(
-            "mt-2 font-black leading-snug break-words",
-            featured ? "text-lg md:text-xl" : "text-base md:text-lg",
+            pressStart.className,
+            "relative mt-2 text-center text-[8px] leading-relaxed text-white/50",
           )}
         >
-          {entry.name}
+          {countdown.phase === "ended" ? "FINAL" : "LIVE"} 11/17 {countdown.clock}
         </p>
-        {entry.department ? (
-          <p className="mt-1 text-xs leading-snug break-words opacity-80">{entry.department}</p>
-        ) : null}
+
+        <Heading className="sr-only">詐騙來電，Whoscall 開扁</Heading>
+        <img
+          src={withBasePath("/images/activities/whoscall-openflat-banner.png")}
+          alt="詐騙來電，Whoscall 開扁"
+          className="relative mx-auto mt-3 w-full"
+          style={{ imageRendering: "pixelated" }}
+        />
+
+        <div className="mt-5 grid grid-cols-2 gap-3">
+          <TabButton
+            active={tab === "male"}
+            tone="p1"
+            onClick={() => setTab("male")}
+            kicker="1P"
+            label="男生組"
+            arcade={pressStart.className}
+          />
+          <TabButton
+            active={tab === "female"}
+            tone="p2"
+            onClick={() => setTab("female")}
+            kicker="2P"
+            label="女生組"
+            arcade={pressStart.className}
+          />
+        </div>
+
+        <p
+          className={cn(
+            pressStart.className,
+            "relative mt-6 text-center text-[16px] leading-none text-[#ffd54a]",
+          )}
+          style={{ textShadow: "2px 2px 0 #5a3a00, -1px 0 0 #5a3a00, 0 -1px 0 #5a3a00" }}
+        >
+          HIGH SCORE
+        </p>
+        <p className="relative mt-3 text-center text-[12px] leading-relaxed tracking-wide text-white/80">
+          反詐達人就是你！即刻開扁
+        </p>
+
+        <label className="sr-only" htmlFor="punch-search">
+          查詢姓名／學校／系所
+        </label>
+        <input
+          id="punch-search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="查姓名、學校、系所"
+          className="relative mt-3 w-full rounded-none border-0 border-b-2 border-white/20 bg-transparent px-1 py-1.5 text-center text-[12px] text-white outline-none placeholder:text-white/30 hover:border-[#ffd54a]/70 focus:border-[#ffd54a]"
+        />
+
+        {rows.length === 0 ? (
+          <p className="mt-6 py-8 text-center text-sm text-white/55">目前沒有符合的成績。</p>
+        ) : (
+          <ol className="relative mt-3">
+            {rows.map((row) => (
+              <li key={row.id} className="border-b-2 border-white/10">
+                <RankRow entry={row} arcade={pressStart.className} />
+              </li>
+            ))}
+          </ol>
+        )}
+
+        <SchoolTotals rows={rows} arcade={pressStart.className} />
+
+        {board.ready ? null : (
+          <p className="mt-3 text-center font-mono-ui text-[11px] tracking-widest text-[#5ef0ea]">
+            連線中
+          </p>
+        )}
       </div>
-    </article>
+    </div>
   );
 }
 
-function RankRow({ entry }: { entry: RankedPunchEntry }) {
+function TabButton({
+  active,
+  tone,
+  onClick,
+  kicker,
+  label,
+  arcade,
+}: {
+  active: boolean;
+  tone: "p1" | "p2";
+  onClick: () => void;
+  kicker: string;
+  label: string;
+  arcade: string;
+}) {
+  const filled =
+    tone === "p1"
+      ? "border-4 border-[#c9a000] bg-[#ffd000] text-[#1a1400] hover:bg-[#ffe34d] hover:shadow-[4px_4px_0_#8a6a00]"
+      : "border-4 border-[#148f88] bg-[#2ee0d6] text-[#06203a] hover:bg-[#5ff0e8] hover:shadow-[4px_4px_0_#0a6a66]";
+  const idle =
+    tone === "p1"
+      ? "border-4 border-[#ffd000]/55 bg-transparent text-[#ffe9a3] hover:bg-[#ffd000] hover:text-[#1a1400] hover:shadow-[4px_4px_0_#8a6a00]"
+      : "border-4 border-[#2ee0d6] bg-transparent text-[#9ff6f2] hover:bg-[#2ee0d6] hover:text-[#06203a] hover:shadow-[4px_4px_0_#0a6a66]";
   return (
-    <div className="flex items-center gap-3 px-3 py-3.5 md:px-4">
-      <span className="font-num w-9 shrink-0 text-xl font-bold text-brand-yellow">
-        {String(entry.rank).padStart(2, "0")}
+    <button
+      type="button"
+      onClick={onClick}
+      className={cn(
+        "relative flex min-h-[76px] cursor-pointer flex-col items-center justify-center rounded-md px-2 leading-none",
+        active ? filled : idle,
+      )}
+    >
+      <span className={cn(arcade, "text-[16px]")}>{kicker}</span>
+      <span className="mt-2 text-[12px]">{label}</span>
+    </button>
+  );
+}
+
+function RankRow({
+  entry,
+  arcade,
+}: {
+  entry: RankedPunchEntry;
+  arcade: string;
+}) {
+  return (
+    <div className="flex cursor-default items-center gap-2 py-2 hover:bg-[#2ee0d6]/15">
+      <span className={cn(arcade, "w-12 shrink-0 text-[10px] text-[#ffd54a]")}>
+        {ordinal(entry.rank)}
       </span>
-      <SchoolMark school={entry.school} />
       <div className="min-w-0 flex-1">
-        <p className="text-base font-black leading-snug break-words">{entry.name}</p>
-        {entry.department ? (
-          <p className="text-xs leading-snug break-words text-muted">{entry.department}</p>
+        <p className="truncate text-[12px] leading-tight">{entry.name}</p>
+        {entry.department.trim() ? (
+          <p className="truncate text-[10px] leading-tight text-white/45">{entry.department}</p>
         ) : null}
       </div>
-      <span className="font-num shrink-0 text-[22px] font-bold leading-none">
+      <span
+        className={cn(
+          "inline-flex shrink-0 items-center rounded-none px-1.5 py-0.5 text-[12px] text-white",
+          entry.school === "NTHU" && "bg-nthu",
+          entry.school === "NYCU" && "bg-nycu",
+          entry.school === "OTHER" && "bg-white/25 text-white/80",
+        )}
+      >
+        {entry.school === "NTHU" ? "清" : entry.school === "NYCU" ? "交" : "他"}
+      </span>
+      <span className={cn(arcade, "w-14 shrink-0 text-right text-[12px] text-white")}>
         {formatScore(entry.score)}
       </span>
     </div>
   );
 }
 
-const SCHOOL_MARK: Record<PunchSchool, string> = {
-  NTHU: "清",
-  NYCU: "交",
-  OTHER: "他",
-};
-
-function SchoolMark({ school, large = false }: { school: PunchSchool; large?: boolean }) {
+function SchoolTotals({
+  rows,
+  arcade,
+}: {
+  rows: RankedPunchEntry[];
+  arcade: string;
+}) {
+  const nthu = schoolTotal(rows, "NTHU");
+  const nycu = schoolTotal(rows, "NYCU");
+  const [left, right] = useSchoolSides(
+    { label: "清大", score: nthu, tone: "nthu" as const },
+    { label: "交大", score: nycu, tone: "nycu" as const },
+  );
   return (
-    <span
-      className={cn(
-        "inline-flex shrink-0 items-center justify-center font-black text-white",
-        large ? "size-11 text-xl" : "size-9 text-lg",
-        school === "NTHU" && "bg-nthu",
-        school === "NYCU" && "bg-nycu",
-        school === "OTHER" && "bg-dark-gray text-muted ring-1 ring-white/25",
-      )}
-    >
-      {SCHOOL_MARK[school]}
-    </span>
+    <div className="relative mt-5 flex items-center justify-between rounded-none border-4 border-[#ff4f9a] px-3 py-2.5 text-[12px]">
+      <span>
+        {left.label}{" "}
+        <span
+          className={cn(
+            arcade,
+            "text-[12px]",
+            left.tone === "nthu" ? "text-[#ffd54a]" : "text-[#6ea8ff]",
+          )}
+        >
+          {formatScore(left.score)}
+        </span>
+      </span>
+      <span className={cn(arcade, "text-[10px] text-[#ff4f9a]")}>VS</span>
+      <span>
+        <span
+          className={cn(
+            arcade,
+            "text-[12px]",
+            right.tone === "nthu" ? "text-[#ffd54a]" : "text-[#6ea8ff]",
+          )}
+        >
+          {formatScore(right.score)}
+        </span>{" "}
+        {right.label}
+      </span>
+    </div>
   );
 }

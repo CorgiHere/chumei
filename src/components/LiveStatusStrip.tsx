@@ -4,7 +4,7 @@ import { appPath } from "@/lib/utils";
 
 const items = [
   `2026 總錦標 交大 ${siteConfig.nycuScore}：${siteConfig.nthuScore} 清大`,
-  "11/17 拳擊機大賽 · 即時排名",
+  "11/17 詐騙來電，Whoscall 開扁 · 即時排名",
   "2027 雷霆活動規劃中",
   "學生自發 · 永遠以學生為核心",
   "清大 × 交大 · NTHU × NYCU",

@@ -35,9 +35,13 @@ export default function PartnersPage() {
                 <Image
                   src={withBasePath(p.logo)}
                   alt={p.name}
-                  width={80}
-                  height={80}
-                  className="mb-3 h-20 w-20 rounded-full bg-white object-contain"
+                  width={p.logoWide ? 240 : 80}
+                  height={p.logoWide ? 48 : 80}
+                  className={
+                    p.logoWide
+                      ? "mb-3 h-12 w-auto max-w-[220px] object-contain"
+                      : "mb-3 h-20 w-20 rounded-full bg-white object-contain"
+                  }
                 />
               )}
               <p className="font-mono-ui text-[11px] font-semibold tracking-[0.12em] text-brand-yellow">

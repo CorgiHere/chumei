@@ -18,9 +18,9 @@ export function KeepPlaying() {
             <p className="font-mono-ui text-[11px] tracking-widest text-brand-yellow">
               11/17 即將開打
             </p>
-            <h3 className="m-0 mt-2 text-xl font-black">拳擊機大賽</h3>
+            <h3 className="m-0 mt-2 text-xl font-black">詐騙來電，Whoscall 開扁</h3>
             <p className="m-0 mt-2 max-w-[40em] text-sm text-muted">
-              現場打、官網即時上榜。男性／女性分開排名，前三名特別顯眼。
+              現場拳擊機打榜，官網即時上榜。男生組／女生組分開排名。
             </p>
           </div>
           <Link href={appPath("/punchboard")} className="btn-dark-outline mt-3 inline-flex self-start text-sm md:mt-0">

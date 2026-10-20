@@ -4,18 +4,16 @@ import { buildPageMetadata } from "@/lib/seo";
 import { PUNCHBOARD_DEFAULT_NAME } from "@/lib/punchboard";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: `${PUNCHBOARD_DEFAULT_NAME}即時排名｜11/17 清交拳擊機`,
+  title: `${PUNCHBOARD_DEFAULT_NAME}即時排名｜11/17`,
   description:
-    "2026 年 11 月 17 日竹梅賽拳擊機大賽即時排名。依男性／女性分榜，顯示姓名、分數、學校與系所，前三名特別標出。",
+    "2026 年 11 月 17 日竹梅賽「詐騙來電，Whoscall 開扁」即時排名。男生組／女生組分榜，顯示姓名、分數與學校。",
   path: "/punchboard",
 });
 
 export default function PunchboardPage() {
   return (
-    <div className="bg-ink pb-8 text-chalk">
-      <div className="section-space">
-        <Punchboard headingLevel="h1" />
-      </div>
+    <div className="bg-ink pb-10 text-white">
+      <Punchboard headingLevel="h1" />
     </div>
   );
 }

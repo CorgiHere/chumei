@@ -57,7 +57,7 @@ export function Footer() {
               加入我們
             </JoinEntryLink>
             <Link href={appPath("/punchboard")} className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">
-              拳擊機即時榜
+              Whoscall 開扁即時榜
             </Link>
             <Link href={appPath("/path-vote")} className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">
               小徑正名

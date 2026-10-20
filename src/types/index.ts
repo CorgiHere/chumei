@@ -121,6 +121,8 @@ export type Partner = {
   name: string;
   type: "organizer" | "sponsor" | "club" | "venue" | "equipment" | "media";
   logo?: string;
+  /** Wide wordmark instead of a square mark */
+  logoWide?: boolean;
   url?: string;
   /** If true, appear in homepage partners strip */
   showOnHome?: boolean;

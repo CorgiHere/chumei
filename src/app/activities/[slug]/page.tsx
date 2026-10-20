@@ -155,9 +155,13 @@ export default async function ActivityDetailPage({ params }: PageProps) {
                         <Image
                           src={withBasePath(p.logo)}
                           alt=""
-                          width={48}
-                          height={48}
-                          className="h-12 w-12 shrink-0 rounded-full bg-white object-contain"
+                          width={p.logoWide ? 160 : 48}
+                          height={p.logoWide ? 32 : 48}
+                          className={
+                            p.logoWide
+                              ? "h-8 w-auto max-w-[160px] shrink-0 object-contain"
+                              : "h-12 w-12 shrink-0 rounded-full bg-white object-contain"
+                          }
                         />
                       )}
                       <div>

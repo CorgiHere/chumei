@@ -49,7 +49,7 @@ export async function purgePublicBoardCache() {
 export const BOARD_KEY = "punchboard-v1";
 export const BOARD_HISTORY_KEY = "punchboard-v1-history";
 export const BOARD_HISTORY_LIMIT = 20;
-export const DEFAULT_NAME = "拳擊機大賽";
+export const DEFAULT_NAME = "詐騙來電，Whoscall 開扁";
 export const DEFAULT_END_AT = "2026-11-17T23:59:00+08:00";
 
 export function corsOrigin(request: Request) {
