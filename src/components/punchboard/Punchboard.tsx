@@ -19,7 +19,7 @@ import {
 import { cn, withBasePath } from "@/lib/utils";
 import { ArcadeCabinet, PunchBrandLockup } from "./ArcadeCabinet";
 import { PunchBattleHud } from "./PunchBattleHud";
-import { useSchoolSides } from "./SchoolOrder";
+import { useSchoolSides } from "../SchoolOrder";
 
 const BOARD_SLOTS = 10;
 const SCHOOL_TAGS: Array<{ id: PunchSchool; label: string }> = [
@@ -35,7 +35,7 @@ const pressStart = Press_Start_2P({
 });
 
 const fusionPixel = localFont({
-  src: "../../public/fonts/fusion-pixel-12px-zh-tw.woff2",
+  src: "../../../public/fonts/fusion-pixel-12px-zh-tw.woff2",
   display: "swap",
 });
 
@@ -816,7 +816,7 @@ function ScoreDiploma({
     <div
       className={cn(
         fusion,
-        "fixed inset-0 z-[200] flex items-center justify-center bg-black/92 p-3",
+        "fixed inset-0 z-[200] flex items-center justify-center bg-black/92 p-1",
       )}
       role="dialog"
       aria-modal="true"
@@ -824,19 +824,19 @@ function ScoreDiploma({
       onClick={onClose}
     >
       <div
-        className="relative w-full max-w-[min(480px,94vw)]"
+        className="relative max-h-[98dvh] w-auto max-w-[min(801px,98vw)]"
         onClick={(event) => event.stopPropagation()}
         style={{ WebkitFontSmoothing: "none" }}
       >
-        <div className="relative">
+        <div className="relative mx-auto w-fit">
           <img
-            src={withBasePath("/images/activities/punch-diploma-bg.png")}
+            src={withBasePath("/images/punchboard/diploma-bg.png")}
             alt=""
-            className="block h-auto w-full"
+            className="block h-auto max-h-[98dvh] w-auto max-w-[min(801px,98vw)]"
           />
           <div className="absolute inset-0 text-white">
             <DiplomaField
-              className={cn(arcade, "text-[clamp(40px,9.2vw,68px)] leading-none tracking-tight")}
+              className={cn(arcade, "text-[clamp(48px,10vw,92px)] leading-none tracking-tight")}
               top="26.6%"
               height="15.2%"
               left="18%"
@@ -847,7 +847,7 @@ function ScoreDiploma({
             <DiplomaField
               className={cn(
                 arcade,
-                "punch-diploma-rank text-[clamp(22px,5.4vw,36px)] leading-none",
+                "punch-diploma-rank text-[clamp(26px,6vw,48px)] leading-none",
               )}
               top="52.2%"
               height="5.6%"
@@ -900,7 +900,7 @@ function ScoreDiploma({
         <button
           type="button"
           onClick={onClose}
-          className="mx-auto mt-4 block cursor-pointer border-4 border-white/40 bg-black px-4 py-2 text-[14px] text-white"
+          className="absolute bottom-3 left-1/2 z-1 -translate-x-1/2 cursor-pointer border-4 border-white/40 bg-black px-4 py-2 text-[14px] text-white"
         >
           關閉
         </button>

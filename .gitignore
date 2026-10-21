@@ -23,6 +23,8 @@
 # misc
 .DS_Store
 *.pem
+.tmp-fav/
+.wrangler/
 
 # debug
 npm-debug.log*

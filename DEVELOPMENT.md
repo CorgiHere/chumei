@@ -38,18 +38,26 @@ Pages 站點掛在 `https://…/chumei/`，路徑前綴由 Next 設定處理。*
 ### 目錄結構（重點）
 
 ```text
+assets/                 # 設計原稿（不上線）
+├─ brand/
+└─ punchboard/          # 獎狀底圖、像素素材來源
+functions/              # Cloudflare Pages Functions（拳擊機／投票／站台開關）
+public/images/
+├─ activities/ gallery/ brand/ partners/ path-vote/ side/
+└─ punchboard/          # 拳擊機正式切圖（含 diploma-bg）
+scripts/
+├─ build-cloudflare.mjs / generate-seo.mjs / strip-preconnect.mjs
+└─ content/             # 一次性圖片／活動內容腳本
 src/
 ├─ app/                 # 路由頁面（靜態產生）
 │  ├─ page.tsx          # 首頁
-│  ├─ not-found.tsx
-│  ├─ icon.png / apple-icon.png
-│  ├─ activities/       # 活動總覽 + [slug]
-│  ├─ punchboard/       # 拳擊機即時榜 + admin
-│  ├─ schedule/ scoreboard/ news/ history/ about/
-│  └─ gallery/ join/ partners/ contact/
-├─ components/          # Header（含清交／交清切換）、Hero、ActivityCard、Scoreboard…
+│  ├─ punchboard/       # 即時榜 + admin
+│  └─ activities/ schedule/ scoreboard/ news/ …
+├─ components/
+│  ├─ punchboard/       # Punchboard、後台、TEAM BATTLE HUD、機台框
+│  └─ Header、Hero、ActivityCard、Scoreboard…
 ├─ data/                # activities / news / history / venues / site
-├─ lib/                 # utils、seo、activity-filters
+├─ lib/                 # utils、seo、punchboard API、activity-filters
 └─ types/
 ```
 

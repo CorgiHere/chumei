@@ -17,7 +17,7 @@ import {
 } from "@/lib/punchboard";
 import { cn, withBasePath } from "@/lib/utils";
 import { ArcadeCabinet, PunchBrandLockup } from "./ArcadeCabinet";
-import { useSchoolSides } from "./SchoolOrder";
+import { useSchoolSides } from "../SchoolOrder";
 
 const pressStart = Press_Start_2P({
   weight: "400",
@@ -26,7 +26,7 @@ const pressStart = Press_Start_2P({
 });
 
 const fusionPixel = localFont({
-  src: "../../public/fonts/fusion-pixel-12px-zh-tw.woff2",
+  src: "../../../public/fonts/fusion-pixel-12px-zh-tw.woff2",
   display: "swap",
 });
 

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Punchboard } from "@/components/Punchboard";
+import { Punchboard } from "@/components/punchboard";
 import { buildPageMetadata } from "@/lib/seo";
 import { PUNCHBOARD_DEFAULT_NAME } from "@/lib/punchboard";
 
