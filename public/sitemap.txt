@@ -9,6 +9,7 @@ https://chumei.org/gallery/
 https://chumei.org/partners/
 https://chumei.org/contact/
 https://chumei.org/path-vote/
+https://chumei.org/punchboard/
 https://chumei.org/activities/kong-vs-godzilla/
 https://chumei.org/activities/dinosaur-race/
 https://chumei.org/activities/alcohol-calculus/
@@ -20,6 +21,7 @@ https://chumei.org/activities/two-school-rps/
 https://chumei.org/activities/galaga-president/
 https://chumei.org/activities/barcode-taiko/
 https://chumei.org/activities/lawn-scream/
+https://chumei.org/activities/punchboard/
 https://chumei.org/news/championship-announcement/
 https://chumei.org/news/rps-results/
 https://chumei.org/news/barcode-results/

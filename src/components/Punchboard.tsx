@@ -161,7 +161,7 @@ function schoolTotal(rows: RankedPunchEntry[], school: PunchSchool) {
   return rows.filter((row) => row.school === school).reduce((sum, row) => sum + row.score, 0);
 }
 
-function boardSlots(rows: RankedPunchEntry[]) {
+function boardSlots(rows: RankedPunchEntry[]): Array<RankedPunchEntry | null> {
   const visible = uniqueByPerson(rows)
     .sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;

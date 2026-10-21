@@ -214,8 +214,8 @@ export function personKey(name: string, gender: Gender) {
   return `${gender}:${nameKey}`;
 }
 
-export function uniqueByPerson(entries: PunchEntry[]): PunchEntry[] {
-  const best = new Map<string, PunchEntry>();
+export function uniqueByPerson<T extends PunchEntry>(entries: T[]): T[] {
+  const best = new Map<string, T>();
   for (const entry of entries) {
     const key = personKey(entry.name, entry.gender);
     const prev = best.get(key);
