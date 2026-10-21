@@ -12,8 +12,10 @@ import {
   DEFAULT_END_AT,
   DEFAULT_NAME,
   json,
+  personKey,
   purgePublicBoardCache,
   readBoard,
+  uniqueByPerson,
   type PunchBoard,
   type PunchEntry,
   type PunchEnv,
@@ -70,11 +72,13 @@ function parseEntry(raw: Partial<PunchEntry>, fallbackId?: string): PunchEntry |
   if (!name || !Number.isFinite(score) || score < 0 || score > 999999) return null;
   if (school !== "NTHU" && school !== "NYCU" && school !== "OTHER") return null;
   if (gender !== "male" && gender !== "female") return null;
+  const schoolOther = school === "OTHER" ? clip(raw.schoolOther, 40) : "";
   return {
     id: clip(raw.id || fallbackId || crypto.randomUUID(), 80) || crypto.randomUUID(),
     name,
     score: Math.round(score),
     school,
+    schoolOther,
     department,
     gender,
     updatedAt: new Date().toISOString(),
@@ -186,9 +190,13 @@ export async function onRequestPost(context: PagesContext) {
   } else if (action === "upsert") {
     const next = parseEntry(payload.entry ?? {});
     if (!next) return authedJson(request, { error: "invalid_entry" }, 400);
-    const idx = board.entries.findIndex((e) => e.id === next.id);
+    const key = personKey(next.name, next.gender);
+    const byId = board.entries.findIndex((e) => e.id === next.id);
+    const byPerson = board.entries.findIndex((e) => personKey(e.name, e.gender) === key);
+    const idx = byId >= 0 ? byId : byPerson;
     if (idx >= 0) {
       const prev = board.entries[idx];
+      next.id = prev.id;
       next.updatedAt = prev.score === next.score ? prev.updatedAt : now;
       board.entries[idx] = next;
     } else {
@@ -218,7 +226,7 @@ export async function onRequestPost(context: PagesContext) {
     if (nextEntries.length > MAX_ENTRIES) {
       return authedJson(request, { error: "too_many" }, 400);
     }
-    board.entries = nextEntries;
+    board.entries = uniqueByPerson(nextEntries);
     if (payload.eventName !== undefined) {
       board.eventName = clip(payload.eventName, 80) || DEFAULT_NAME;
     }
@@ -229,6 +237,7 @@ export async function onRequestPost(context: PagesContext) {
     return authedJson(request, { error: "unknown_action" }, 400);
   }
 
+  board.entries = uniqueByPerson(board.entries);
   board.updatedAt = now;
   board.version += 1;
   await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(board));

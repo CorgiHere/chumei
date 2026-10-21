@@ -1,15 +1,46 @@
-import { cn } from "@/lib/utils";
+import { cn, withBasePath } from "@/lib/utils";
+
+export function PunchBrandLockup() {
+  return (
+    <div className="flex items-center justify-center gap-3 sm:gap-4">
+      <img
+        src={withBasePath("/images/partners/whoscall-logo-green.png")}
+        alt="Whoscall"
+        className="h-11 w-auto sm:h-14"
+      />
+      <span className="text-xl text-white/70 sm:text-3xl">×</span>
+      <img
+        src={withBasePath("/images/brand/chumei-logo.png")}
+        alt="Chu Mei"
+        className="h-14 w-auto sm:h-16"
+      />
+    </div>
+  );
+}
+
+export function PixelNubs({ tone = "cyan" }: { tone?: "cyan" | "gold" }) {
+  return (
+    <>
+      <span className="punch-pixel-nub" data-tone={tone} data-pos="tl" />
+      <span className="punch-pixel-nub" data-tone={tone} data-pos="tr" />
+      <span className="punch-pixel-nub" data-tone={tone} data-pos="bl" />
+      <span className="punch-pixel-nub" data-tone={tone} data-pos="br" />
+    </>
+  );
+}
 
 export function ArcadeCabinet({
   children,
   className,
   innerClassName,
   keepOrder,
+  bare,
 }: {
   children: React.ReactNode;
   className?: string;
   innerClassName?: string;
   keepOrder?: boolean;
+  bare?: boolean;
 }) {
   return (
     <div
@@ -35,28 +66,37 @@ export function ArcadeCabinet({
           background: "linear-gradient(to left, #0a0a0a, rgba(7,19,63,0.35), transparent)",
         }}
       />
-      <div className="relative mx-auto w-full lg:px-8 lg:py-8">
+      <div className="relative mx-auto w-full px-3 py-6 lg:px-12 lg:py-10">
         <div
           className={cn(
-            "relative mx-auto w-full overflow-hidden bg-[#07133f]",
-            "lg:border-y-4 lg:border-[#12306e]",
-            "lg:shadow-[12px_0_0_#050814,-12px_0_0_#050814,0_0_0_4px_#0d1a44,0_0_72px_rgba(46,224,214,0.1)]",
+            "relative mx-auto w-full",
+            !bare && "punch-pixel-frame punch-pixel-frame--outer",
             className,
           )}
+          style={
+            bare
+              ? undefined
+              : {
+                  border: "32px solid transparent",
+                  borderImageSource: `url(${withBasePath("/images/punchboard/outer-frame.svg")})`,
+                  borderImageSlice: "48 fill",
+                  borderImageRepeat: "stretch",
+                  backgroundColor: "#061535",
+                }
+          }
         >
-          <div
-            className="pointer-events-none absolute inset-0 z-1 opacity-[0.16]"
-            style={{
-              backgroundImage:
-                "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(0,0,0,0.35) 2px, rgba(0,0,0,0.35) 4px)",
-            }}
-          />
-          <div className="pointer-events-none absolute inset-x-0 top-0 z-2 hidden h-1 bg-linear-to-r from-[#ffd54a] via-[#2ee0d6] to-[#ffd54a] lg:block" />
-          <div className="pointer-events-none absolute inset-x-0 bottom-0 z-2 hidden h-1 bg-linear-to-r from-[#2ee0d6] via-[#ffd54a] to-[#2ee0d6] lg:block" />
-          <span className="pointer-events-none absolute left-0 top-0 z-2 hidden size-3 bg-[#ffd54a] lg:block" />
-          <span className="pointer-events-none absolute right-0 top-0 z-2 hidden size-3 bg-[#2ee0d6] lg:block" />
-          <span className="pointer-events-none absolute bottom-0 left-0 z-2 hidden size-3 bg-[#2ee0d6] lg:block" />
-          <span className="pointer-events-none absolute bottom-0 right-0 z-2 hidden size-3 bg-[#ffd54a] lg:block" />
+          {bare ? null : (
+            <>
+              <div className="punch-pixel-grid pointer-events-none absolute inset-8 z-1 opacity-70" />
+              <div
+                className="pointer-events-none absolute inset-8 z-1 opacity-[0.18]"
+                style={{
+                  backgroundImage:
+                    "repeating-linear-gradient(to bottom, transparent 0, transparent 2px, rgba(0,0,0,0.4) 2px, rgba(0,0,0,0.4) 4px)",
+                }}
+              />
+            </>
+          )}
           <div className={cn("relative z-3", innerClassName)}>{children}</div>
         </div>
       </div>

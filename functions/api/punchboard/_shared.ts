@@ -6,6 +6,7 @@ export type PunchEntry = {
   name: string;
   score: number;
   school: School;
+  schoolOther?: string;
   department: string;
   gender: Gender;
   updatedAt: string;
@@ -104,26 +105,26 @@ export function emptyBoard(): PunchBoard {
 }
 
 const DEMO_ROWS: Array<Omit<PunchEntry, "updatedAt">> = [
-  { id: "demo-m1", name: "測試・林大為", score: 998, school: "NTHU", department: "電機系", gender: "male" },
-  { id: "demo-m2", name: "測試・陳冠宇", score: 912, school: "NYCU", department: "資工系", gender: "male" },
-  { id: "demo-m3", name: "測試・黃志明", score: 870, school: "NTHU", department: "動機系", gender: "male" },
-  { id: "demo-m4", name: "測試・周柏宇", score: 755, school: "NTHU", department: "工工系", gender: "male" },
-  { id: "demo-m5", name: "測試・許家豪", score: 731, school: "NYCU", department: "電控所", gender: "male" },
-  { id: "demo-m6", name: "測試・鄭偉哲", score: 704, school: "NTHU", department: "物理系", gender: "male" },
-  { id: "demo-m7", name: "測試・蔡承恩", score: 662, school: "NYCU", department: "土木系", gender: "male" },
-  { id: "demo-m8", name: "測試・簡子軒", score: 628, school: "NTHU", department: "計財系", gender: "male" },
-  { id: "demo-m9", name: "測試・呂冠廷", score: 591, school: "NYCU", department: "機械系", gender: "male" },
-  { id: "demo-m10", name: "測試・方柏翰", score: 540, school: "OTHER", department: "企管系", gender: "male" },
-  { id: "demo-f1", name: "測試・張雅婷", score: 940, school: "NYCU", department: "外文系", gender: "female" },
-  { id: "demo-f2", name: "測試・王心怡", score: 888, school: "NTHU", department: "人社院", gender: "female" },
-  { id: "demo-f3", name: "測試・李佳蓉", score: 801, school: "NYCU", department: "生科系", gender: "female" },
-  { id: "demo-f4", name: "測試・吳欣儀", score: 720, school: "OTHER", department: "設計系", gender: "female" },
-  { id: "demo-f5", name: "測試・林予安", score: 693, school: "NTHU", department: "化工系", gender: "female" },
-  { id: "demo-f6", name: "測試・陳詩涵", score: 651, school: "NYCU", department: "傳科系", gender: "female" },
-  { id: "demo-f7", name: "測試・黃詠晴", score: 617, school: "NTHU", department: "醫科系", gender: "female" },
-  { id: "demo-f8", name: "測試・周宜蓁", score: 574, school: "NYCU", department: "護理系", gender: "female" },
-  { id: "demo-f9", name: "測試・許若瑄", score: 533, school: "NTHU", department: "經濟系", gender: "female" },
-  { id: "demo-f10", name: "測試・高子晴", score: 498, school: "OTHER", department: "建築系", gender: "female" },
+  { id: "demo-m1", name: "測試・林大為", score: 998, school: "NTHU", schoolOther: "", department: "電機系", gender: "male" },
+  { id: "demo-m2", name: "測試・陳冠宇", score: 912, school: "NYCU", schoolOther: "", department: "資工系", gender: "male" },
+  { id: "demo-m3", name: "測試・黃志明", score: 870, school: "NTHU", schoolOther: "", department: "動機系", gender: "male" },
+  { id: "demo-m4", name: "測試・周柏宇", score: 755, school: "NTHU", schoolOther: "", department: "工工系", gender: "male" },
+  { id: "demo-m5", name: "測試・許家豪", score: 731, school: "NYCU", schoolOther: "", department: "電控所", gender: "male" },
+  { id: "demo-m6", name: "測試・鄭偉哲", score: 704, school: "NTHU", schoolOther: "", department: "物理系", gender: "male" },
+  { id: "demo-m7", name: "測試・蔡承恩", score: 662, school: "NYCU", schoolOther: "", department: "土木系", gender: "male" },
+  { id: "demo-m8", name: "測試・簡子軒", score: 628, school: "NTHU", schoolOther: "", department: "計財系", gender: "male" },
+  { id: "demo-m9", name: "測試・呂冠廷", score: 591, school: "NYCU", schoolOther: "", department: "機械系", gender: "male" },
+  { id: "demo-m10", name: "測試・方柏翰", score: 540, school: "OTHER", schoolOther: "台科大", department: "企管系", gender: "male" },
+  { id: "demo-f1", name: "測試・張雅婷", score: 940, school: "NYCU", schoolOther: "", department: "外文系", gender: "female" },
+  { id: "demo-f2", name: "測試・王心怡", score: 888, school: "NTHU", schoolOther: "", department: "人社院", gender: "female" },
+  { id: "demo-f3", name: "測試・李佳蓉", score: 801, school: "NYCU", schoolOther: "", department: "生科系", gender: "female" },
+  { id: "demo-f4", name: "測試・吳欣儀", score: 720, school: "OTHER", schoolOther: "實踐", department: "設計系", gender: "female" },
+  { id: "demo-f5", name: "測試・林予安", score: 693, school: "NTHU", schoolOther: "", department: "化工系", gender: "female" },
+  { id: "demo-f6", name: "測試・陳詩涵", score: 651, school: "NYCU", schoolOther: "", department: "傳科系", gender: "female" },
+  { id: "demo-f7", name: "測試・黃詠晴", score: 617, school: "NTHU", schoolOther: "", department: "醫科系", gender: "female" },
+  { id: "demo-f8", name: "測試・周宜蓁", score: 574, school: "NYCU", schoolOther: "", department: "護理系", gender: "female" },
+  { id: "demo-f9", name: "測試・許若瑄", score: 533, school: "NTHU", schoolOther: "", department: "經濟系", gender: "female" },
+  { id: "demo-f10", name: "測試・高子晴", score: 498, school: "OTHER", schoolOther: "北科大", department: "建築系", gender: "female" },
 ];
 
 function demoEntries(now: string): PunchEntry[] {
@@ -144,13 +145,15 @@ function demoBoard(): PunchBoard {
 function coerceBoard(raw: string): PunchBoard {
   try {
     const parsed = JSON.parse(raw) as Partial<PunchBoard>;
-    const entries = Array.isArray(parsed.entries) ? parsed.entries.filter(isEntry) : [];
+    const entries = Array.isArray(parsed.entries)
+      ? parsed.entries.filter(isEntry).map(withSchoolOther)
+      : [];
     return {
       eventName: String(parsed.eventName || DEFAULT_NAME).slice(0, 80),
       endAt: String(parsed.endAt || DEFAULT_END_AT).slice(0, 40),
       updatedAt: String(parsed.updatedAt || ""),
       version: Number(parsed.version) || 0,
-      entries,
+      entries: uniqueByPerson(entries),
     };
   } catch {
     return emptyBoard();
@@ -169,6 +172,14 @@ export async function seedBoardIfEmpty(
     return { board: seeded, ready: true };
   }
   return { board: coerceBoard(raw), ready: true };
+}
+
+function withSchoolOther(entry: PunchEntry): PunchEntry {
+  const custom = typeof entry.schoolOther === "string" ? entry.schoolOther.trim() : "";
+  return {
+    ...entry,
+    schoolOther: entry.school === "OTHER" ? custom.slice(0, 40) : "",
+  };
 }
 
 function isEntry(value: unknown): value is PunchEntry {
@@ -194,8 +205,36 @@ export async function readBoard(
   return { ready: true, board: coerceBoard(raw) };
 }
 
+export function personKey(name: string, gender: Gender) {
+  const nameKey = name
+    .normalize("NFKC")
+    .replace(/[・·‧．.．\-—–_]/g, "")
+    .replace(/\s+/g, "")
+    .toLowerCase();
+  return `${gender}:${nameKey}`;
+}
+
+export function uniqueByPerson(entries: PunchEntry[]): PunchEntry[] {
+  const best = new Map<string, PunchEntry>();
+  for (const entry of entries) {
+    const key = personKey(entry.name, entry.gender);
+    const prev = best.get(key);
+    if (!prev) {
+      best.set(key, entry);
+      continue;
+    }
+    const betterScore = entry.score > prev.score;
+    const sameScoreEarlier =
+      entry.score === prev.score && entry.updatedAt.localeCompare(prev.updatedAt) < 0;
+    if (betterScore || sameScoreEarlier) {
+      best.set(key, { ...entry, id: prev.id });
+    }
+  }
+  return [...best.values()];
+}
+
 export function rank(entries: PunchEntry[], gender: Gender) {
-  return entries
+  return uniqueByPerson(entries)
     .filter((e) => e.gender === gender)
     .sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
@@ -210,7 +249,7 @@ export function publicPayload(board: PunchBoard, ready: boolean) {
     eventName: board.eventName,
     endAt: board.endAt,
     updatedAt: board.updatedAt,
-    male: rank(board.entries, "male"),
-    female: rank(board.entries, "female"),
+    male: rank(board.entries, "male").slice(0, 10),
+    female: rank(board.entries, "female").slice(0, 10),
   };
 }

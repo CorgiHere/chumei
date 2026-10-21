@@ -24,7 +24,7 @@ function fingerprint(board: PunchBoard) {
     rows
       .map(
         (row) =>
-          `${row.rank}\t${row.id}\t${row.name}\t${row.score}\t${row.school}\t${row.department}`,
+          `${row.rank}\t${row.id}\t${row.name}\t${row.score}\t${row.school}\t${row.schoolOther}\t${row.department}`,
       )
       .join("\n");
   const top = top10(board);
@@ -34,7 +34,10 @@ function fingerprint(board: PunchBoard) {
 function formatList(title: string, rows: ReturnType<typeof rank>) {
   if (rows.length === 0) return `${title}\n（尚無成績）\n`;
   const lines = rows.map((row) => {
-    const school = SCHOOL[row.school] ?? row.school;
+    const school =
+      row.school === "OTHER"
+        ? row.schoolOther.trim() || "其他"
+        : (SCHOOL[row.school] ?? row.school);
     const dept = row.department ? ` ${row.department}` : "";
     return `${String(row.rank).padStart(2, "0")}. ${row.name}  ${row.score}  ${school}${dept}`;
   });

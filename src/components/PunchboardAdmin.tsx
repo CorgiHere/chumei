@@ -6,15 +6,17 @@ import localFont from "next/font/local";
 import {
   getPunchboardAdminEndpoint,
   PUNCH_GENDER_LABEL,
+  punchSchoolDisplay,
   PUNCH_SCHOOL_LABEL,
   PUNCHBOARD_DEFAULT_END_AT,
   PUNCHBOARD_DEFAULT_NAME,
+  uniqueByPerson,
   type PunchEntry,
   type PunchGender,
   type PunchSchool,
 } from "@/lib/punchboard";
 import { cn, withBasePath } from "@/lib/utils";
-import { ArcadeCabinet } from "./ArcadeCabinet";
+import { ArcadeCabinet, PunchBrandLockup } from "./ArcadeCabinet";
 import { useSchoolSides } from "./SchoolOrder";
 
 const pressStart = Press_Start_2P({
@@ -39,6 +41,7 @@ const blankForm = {
   name: "",
   score: "",
   school: "NTHU" as PunchSchool,
+  schoolOther: "",
   department: "",
   gender: "male" as PunchGender,
 };
@@ -120,12 +123,19 @@ export function PunchboardAdmin() {
     const q = query.trim().toLowerCase();
     const match = (e: PunchEntry) =>
       !q ||
-      [e.name, e.department, PUNCH_SCHOOL_LABEL[e.school], PUNCH_GENDER_LABEL[e.gender]]
+      [
+        e.name,
+        e.department,
+        e.schoolOther,
+        PUNCH_SCHOOL_LABEL[e.school],
+        punchSchoolDisplay(e),
+        PUNCH_GENDER_LABEL[e.gender],
+      ]
         .join(" ")
         .toLowerCase()
         .includes(q);
     const sortRows = (gender: PunchGender) =>
-      board.entries
+      uniqueByPerson(board.entries)
         .filter((e) => e.gender === gender && match(e))
         .sort((a, b) => b.score - a.score);
     return { male: sortRows("male"), female: sortRows("female") };
@@ -358,6 +368,7 @@ export function PunchboardAdmin() {
               name: form.name,
               score: Number(form.score),
               school: form.school,
+              schoolOther: form.schoolOther,
               department: form.department,
               gender: form.gender,
             },
@@ -393,9 +404,14 @@ export function PunchboardAdmin() {
             <select
               id="p-school"
               value={form.school}
-              onChange={(e) =>
-                setForm((f) => ({ ...f, school: e.target.value as PunchSchool }))
-              }
+              onChange={(e) => {
+                const school = e.target.value as PunchSchool;
+                setForm((f) => ({
+                  ...f,
+                  school,
+                  schoolOther: school === "OTHER" ? f.schoolOther : "",
+                }));
+              }}
               className={fieldClass}
             >
               <option value={firstCampus.value} data-keep-order>
@@ -404,9 +420,21 @@ export function PunchboardAdmin() {
               <option value={secondCampus.value} data-keep-order>
                 {secondCampus.label}
               </option>
-              <option value="OTHER">其他</option>
+              <option value="OTHER">其他（自行輸入）</option>
             </select>
           </Field>
+          {form.school === "OTHER" ? (
+            <Field label="學校名稱" htmlFor="p-school-other">
+              <input
+                id="p-school-other"
+                required
+                value={form.schoolOther}
+                placeholder="例如：台科大"
+                onChange={(e) => setForm((f) => ({ ...f, schoolOther: e.target.value }))}
+                className={fieldClass}
+              />
+            </Field>
+          ) : null}
           <Field label="系所" htmlFor="p-dept">
             <input
               id="p-dept"
@@ -424,8 +452,8 @@ export function PunchboardAdmin() {
               }
               className={fieldClass}
             >
-              <option value="male">1P 男生組</option>
-              <option value="female">2P 女生組</option>
+              <option value="male">男生組</option>
+              <option value="female">女生組</option>
             </select>
           </Field>
         </div>
@@ -458,7 +486,7 @@ export function PunchboardAdmin() {
         </div>
         <div className="grid gap-8 lg:grid-cols-2">
           <EntryTable
-            title="1P 男生組"
+            title="男生組"
             rows={filteredByGender.male}
             onEdit={(row) =>
               setForm({
@@ -466,6 +494,7 @@ export function PunchboardAdmin() {
                 name: row.name,
                 score: String(row.score),
                 school: row.school,
+                schoolOther: row.schoolOther ?? "",
                 department: row.department,
                 gender: row.gender,
               })
@@ -477,7 +506,7 @@ export function PunchboardAdmin() {
             }}
           />
           <EntryTable
-            title="2P 女生組"
+            title="女生組"
             rows={filteredByGender.female}
             onEdit={(row) =>
               setForm({
@@ -485,6 +514,7 @@ export function PunchboardAdmin() {
                 name: row.name,
                 score: String(row.score),
                 school: row.school,
+                schoolOther: row.schoolOther ?? "",
                 department: row.department,
                 gender: row.gender,
               })
@@ -508,18 +538,8 @@ function AdminFrame({ children }: { children: React.ReactNode }) {
       className="max-w-[1520px]"
       innerClassName={cn(fusionPixel.className, "px-5 py-6 lg:px-10")}
     >
-      <div className="mb-6 flex items-center justify-center gap-2.5">
-        <img
-          src={withBasePath("/images/partners/whoscall-logo-green.png")}
-          alt="Whoscall"
-          className="h-6 w-auto"
-        />
-        <span className="text-white/70">×</span>
-        <img
-          src={withBasePath("/images/brand/chumei-logo.png")}
-          alt="Chu Mei"
-          className="h-8 w-auto"
-        />
+      <div className="mb-6">
+        <PunchBrandLockup />
       </div>
       <img
         src={withBasePath("/images/activities/whoscall-openflat-banner.png")}
@@ -583,16 +603,18 @@ function EntryTable({
                   <td className={cn(pressStart.className, "px-3 py-3 text-[12px]")}>{row.score}</td>
                   <td className="px-3 py-3">{row.name}</td>
                   <td className="px-3 py-3">
-                    <span
-                      className={cn(
-                        "inline-flex size-7 items-center justify-center text-white",
-                        row.school === "NTHU" && "bg-nthu",
-                        row.school === "NYCU" && "bg-nycu",
-                        row.school === "OTHER" && "bg-white/25 text-white/80",
-                      )}
-                    >
-                      {row.school === "NTHU" ? "清" : row.school === "NYCU" ? "交" : "他"}
-                    </span>
+                    {row.school === "OTHER" ? (
+                      <span className="text-white/85">{(row.schoolOther ?? "").trim() || "其他"}</span>
+                    ) : (
+                      <span
+                        className={cn(
+                          "inline-flex size-7 items-center justify-center text-white",
+                          row.school === "NTHU" ? "bg-nthu" : "bg-nycu",
+                        )}
+                      >
+                        {row.school === "NTHU" ? "清" : "交"}
+                      </span>
+                    )}
                   </td>
                   <td className="px-3 py-3">{row.department}</td>
                   <td className="px-3 py-3">
