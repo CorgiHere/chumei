@@ -43,6 +43,11 @@ export function DownloadWhoscall({
   if (variant === "banner") {
     return (
       <div className={cn("punch-dl-banner", className)}>
+        <img
+          src={withBasePath("/images/punchboard/download-sky.png")}
+          alt=""
+          className="punch-dl-banner__sky"
+        />
         <div className="punch-dl-banner__mark">
           <WhoscallMark className="h-10 w-10 sm:h-11 sm:w-11" />
         </div>

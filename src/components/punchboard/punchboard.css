@@ -817,32 +817,24 @@
   position: relative;
   display: flex;
   width: 100%;
-  min-height: 4.25rem;
+  min-height: 4.75rem;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.75rem 1rem;
   overflow: hidden;
-  border: 2px solid #15dce8;
-  background:
-    linear-gradient(180deg, #0a1c40 0%, #07132d 62%, #0a2048 100%);
-  padding: 0.7rem 0.85rem;
-  box-shadow:
-    0 0 0 2px #071028,
-    0 0 14px rgba(21, 220, 232, 0.28);
+  background: transparent;
+  padding: 0.85rem 1.15rem;
 }
 
-.punch-dl-banner::before {
+.punch-dl-banner__sky {
   position: absolute;
-  inset: auto 0 0;
-  height: 1.15rem;
-  background:
-    radial-gradient(10px 7px at 8% 120%, #163a68 72%, transparent 73%),
-    radial-gradient(16px 9px at 22% 130%, #1a4274 72%, transparent 73%),
-    radial-gradient(12px 8px at 48% 125%, #14365f 72%, transparent 73%),
-    radial-gradient(18px 10px at 74% 135%, #1b4578 72%, transparent 73%),
-    radial-gradient(11px 7px at 94% 120%, #163a68 72%, transparent 73%);
-  content: "";
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: fill;
   pointer-events: none;
+  image-rendering: pixelated;
 }
 
 .punch-dl-banner__mark {
@@ -851,39 +843,7 @@
   display: flex;
   align-items: center;
   padding-right: 0.85rem;
-  box-shadow: 1px 0 0 #2a4a78;
-}
-
-.punch-dl-banner__mark::after,
-.punch-dl-banner__mark::before {
-  position: absolute;
-  background: #9ff7fa;
-  content: "";
-  pointer-events: none;
-}
-
-.punch-dl-banner__mark::before {
-  top: -2px;
-  right: 8px;
-  width: 5px;
-  height: 5px;
-  box-shadow:
-    2px 0 0 #9ff7fa,
-    -2px 0 0 #9ff7fa,
-    0 2px 0 #9ff7fa,
-    0 -2px 0 #9ff7fa;
-}
-
-.punch-dl-banner__mark::after {
-  right: -2px;
-  bottom: 4px;
-  width: 3px;
-  height: 3px;
-  box-shadow:
-    1px 0 0 #9ff7fa,
-    -1px 0 0 #9ff7fa,
-    0 1px 0 #9ff7fa,
-    0 -1px 0 #9ff7fa;
+  box-shadow: 1px 0 0 rgba(158, 247, 250, 0.35);
 }
 
 .punch-dl-banner__copy {
