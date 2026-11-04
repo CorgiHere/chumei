@@ -66,10 +66,17 @@ const urls = [
     priority:
       path === "/"
         ? "1.0"
-        : path === "/activities/" || path === "/scoreboard/"
+        : path === "/activities/" ||
+            path === "/scoreboard/" ||
+            path === "/punchboard/"
           ? "0.9"
           : "0.7",
-    changefreq: path === "/news/" || path === "/" ? "weekly" : "monthly",
+    changefreq:
+      path === "/punchboard/"
+        ? "daily"
+        : path === "/news/" || path === "/"
+          ? "weekly"
+          : "monthly",
   })),
   ...activitySlugs.map((slug) => ({
     loc: `${siteUrl}/activities/${slug}/`,

@@ -20,12 +20,22 @@ export function KeepPlaying() {
             </p>
             <h3 className="m-0 mt-2 text-xl font-black">詐騙來電，Whoscall 開扁</h3>
             <p className="m-0 mt-2 max-w-[40em] text-sm text-muted">
-              現場拳擊機打榜，官網即時上榜。男生組／女生組分開排名。
+              11 月 17 日清交現場拳擊機，Whoscall 合作。先填表單領 ID，男生組／女生組即時上榜。
             </p>
           </div>
-          <Link href={appPath("/punchboard")} className="btn-dark-outline mt-3 inline-flex self-start text-sm md:mt-0">
-            看即時榜
-          </Link>
+          <div className="mt-3 flex flex-wrap gap-2 md:mt-0">
+            <a
+              href={siteConfig.punchFormUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="btn-primary inline-flex text-sm"
+            >
+              立即報名
+            </a>
+            <Link href={appPath("/punchboard")} className="btn-dark-outline inline-flex text-sm">
+              看即時榜
+            </Link>
+          </div>
         </article>
         <article className="mb-0.5 mt-0.5 flex flex-col gap-2.5 bg-dark-gray p-6 md:flex-row md:items-end md:justify-between">
           <div>

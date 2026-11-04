@@ -3,6 +3,19 @@ import { siteConfig } from "./site";
 
 export const newsPosts: NewsPost[] = [
   {
+    id: "news-12",
+    slug: "whoscall-openflat-registration",
+    title: "詐騙來電，Whoscall 開扁開放報名",
+    summary:
+      "11 月 17 日清交現場拳擊機打榜。先填表單領 ID，成績即時上官方排行榜。",
+    category: "registration",
+    publishedAt: "2026-11-05T00:00:00+08:00",
+    relatedActivityIds: ["act-12"],
+    content: `<p>2026 竹梅賽與 <strong>Whoscall</strong> 合作，11 月 17 日舉辦現場拳擊機「<strong>詐騙來電，Whoscall 開扁</strong>」。</p>
+<p>全報名：請先填 <a href="${siteConfig.punchFormUrl}">報名表</a>，現場憑 ID 登錄成績。男生組／女生組分開排名，即時榜：<a href="https://chumei.org/punchboard/">chumei.org/punchboard</a>。</p>
+<p>活動說明見 <a href="https://chumei.org/activities/punchboard/">活動頁</a>。下載 Whoscall：<a href="${siteConfig.whoscallDownloadUrl}">官方連結</a>。</p>`,
+  },
+  {
     id: "news-01",
     slug: "championship-announcement",
     title: "⚡️竹梅賽總錦標公告：交大 4：3 獲勝",

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Hero } from "@/components/Hero";
 import { LiveStatusStrip } from "@/components/LiveStatusStrip";
 import { KeepPlaying } from "@/components/KeepPlaying";
+import { OpenFlatBand } from "@/components/OpenFlatBand";
 import { AboutBand } from "@/components/AboutBand";
 import { Scoreboard } from "@/components/Scoreboard";
 import { ActivityCard } from "@/components/ActivityCard";
@@ -20,7 +21,8 @@ import { preload } from "react-dom";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "竹梅賽 Chu Mei｜2026 清大 × 交大官方網站",
-  description: siteConfig.description,
+  description:
+    "竹梅賽（Chu Mei）清大 × 交大官方網站。11/17「詐騙來電，Whoscall 開扁」拳擊機即時榜開放報名；不是梅竹賽。",
   path: "/",
   absoluteTitle: true,
 });
@@ -52,6 +54,7 @@ export default function HomePage() {
       <JsonLd data={[gamesEventJsonLd(), faqJsonLd()]} />
       <Hero />
       <LiveStatusStrip />
+      <OpenFlatBand />
 
       <section
         id="path-vote"

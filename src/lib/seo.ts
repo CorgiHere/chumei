@@ -144,6 +144,15 @@ export const SEO_KEYWORDS = [
   "竹梅官方",
   "竹梅官網",
   "雷霆活動",
+  "Whoscall",
+  "Whoscall 開扁",
+  "詐騙來電",
+  "詐騙來電 Whoscall 開扁",
+  "竹梅拳擊機",
+  "拳擊機大賽",
+  "拳擊機排行榜",
+  "清交拳擊機",
+  "開扁",
   String(siteConfig.year),
 ];
 
@@ -289,6 +298,8 @@ export function organizationJsonLd() {
       "辦公椅錦標賽",
       "兩校憑拳",
       "大草坪大尖叫",
+      "詐騙來電，Whoscall 開扁",
+      "Whoscall",
     ],
     areaServed: ["新竹", "國立清華大學", "國立交通大學", "國立陽明交通大學"],
     url: home,
@@ -346,6 +357,8 @@ export function websiteJsonLd() {
       { "@type": "Thing", name: "學生自辦" },
       { "@type": "Thing", name: "竹梅" },
       { "@type": "Thing", name: "竹梅賽" },
+      { "@type": "Thing", name: "Whoscall" },
+      { "@type": "Thing", name: "詐騙來電，Whoscall 開扁" },
       { "@type": "Thing", name: "梅竹" },
       { "@type": "Thing", name: "梅竹賽" },
     ],
@@ -422,6 +435,14 @@ export function faqJsonLd() {
         acceptedAnswer: {
           "@type": "Answer",
           text: `2026 竹梅錦標對抗賽由交通大學（交大／NYCU）以 ${siteConfig.nycuScore}：${siteConfig.nthuScore} 擊敗國立清華大學（清大／NTHU）。計分項目包含恐龍賽跑、酒精微積分、辦公椅錦標賽、麻將、刷條碼競速與兩校憑拳。`,
+        },
+      },
+      {
+        "@type": "Question",
+        name: "詐騙來電，Whoscall 開扁是什麼？",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: "2026 年 11 月 17 日竹梅賽與 Whoscall 合作的現場拳擊機活動。須先填報名表領 ID，成績即時出現在 chumei.org/punchboard，分男生組與女生組。",
         },
       },
       {

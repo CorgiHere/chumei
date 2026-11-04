@@ -5,7 +5,7 @@ export const siteConfig: SiteConfig = {
   yearName: "2026 竹梅賽",
   tagline: "總錦標：交通大學 4：3 獲勝",
   description:
-    "竹梅賽（竹梅、Chu Mei、chumei games）致力於在清交大搞一些蝦趴事，為無聊的新竹帶來最好玩的活動。不是梅竹賽。籌備恐龍賽跑、大草坪大尖叫、酒精微積分、辦公椅競速、刷條碼競速到猜拳送機票等。",
+    "竹梅賽（竹梅、Chu Mei、chumei games）致力於在清交大搞一些蝦趴事，為無聊的新竹帶來最好玩的活動。不是梅竹賽。11/17「詐騙來電，Whoscall 開扁」拳擊機即時榜開放報名；另有恐龍賽跑、酒精微積分、辦公椅競速等到猜拳送機票。",
   nthuScore: 3,
   nycuScore: 4,
   instagramUrl: "https://www.instagram.com/chumei2026/",

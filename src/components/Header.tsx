@@ -17,6 +17,8 @@ const navItems = [
   { href: appPath("/about"), label: "關於", n: "07" },
 ];
 
+const openFlatHref = appPath("/punchboard");
+
 export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
   const pathname = usePathname();
@@ -74,6 +76,18 @@ export function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          <Link
+            href={openFlatHref}
+            onClick={() => setMenuOpen(false)}
+            className={cn(
+              "border-2 px-2.5 py-1.5 font-mono-ui text-[12px] tracking-[0.06em] no-underline sm:px-3 sm:text-[13px]",
+              isActive(openFlatHref)
+                ? "border-brand-yellow bg-brand-yellow text-ink"
+                : "border-brand-yellow bg-transparent text-brand-yellow hover:bg-brand-yellow hover:text-ink",
+            )}
+          >
+            開扁
+          </Link>
           <SchoolOrderToggle className="hidden sm:inline-flex" />
 
           <button
@@ -106,6 +120,14 @@ export function Header() {
           aria-label="手機導覽"
         >
           <div className="container-main flex flex-1 flex-col gap-1 overflow-y-auto py-8">
+            <Link
+              href={openFlatHref}
+              className="mb-2 flex items-center gap-4 border-2 border-brand-yellow bg-brand-yellow px-4 py-4 text-ink no-underline"
+              onClick={() => setMenuOpen(false)}
+            >
+              <span className="font-mono-ui text-xs tracking-[0.14em]">08</span>
+              <span className="text-2xl font-black">開扁即時榜</span>
+            </Link>
             {navItems.map((item) => (
               <Link
                 key={item.n}
