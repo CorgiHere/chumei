@@ -824,6 +824,9 @@
   overflow: hidden;
   background: transparent;
   padding: 0.85rem 1.15rem;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
 }
 
 .punch-dl-banner__sky {
@@ -888,7 +891,7 @@
   box-shadow: 0 3px 0 #0a7a32;
 }
 
-.punch-dl-banner__btn:hover {
+.punch-dl-banner:hover .punch-dl-banner__btn {
   background: #15c652;
 }
 

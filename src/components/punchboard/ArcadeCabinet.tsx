@@ -42,21 +42,25 @@ export function DownloadWhoscall({
   }
   if (variant === "banner") {
     return (
-      <div className={cn("punch-dl-banner", className)}>
+      <a
+        {...downloadHref}
+        className={cn("punch-dl-banner", className)}
+        aria-label="下載 Whoscall"
+      >
         <img
           src={withBasePath("/images/punchboard/download-sky.png")}
           alt=""
           className="punch-dl-banner__sky"
         />
-        <div className="punch-dl-banner__mark">
+        <span className="punch-dl-banner__mark">
           <WhoscallMark className="h-10 w-10 sm:h-11 sm:w-11" />
-        </div>
-        <p className="punch-dl-banner__copy">
+        </span>
+        <span className="punch-dl-banner__copy">
           開扁詐騙來電前，先把
           <span className="punch-dl-banner__name">Whoscall</span>
           裝好。
-        </p>
-        <a {...downloadHref} className="punch-dl-banner__btn">
+        </span>
+        <span className="punch-dl-banner__btn">
           <svg viewBox="0 0 16 16" className="h-4 w-4" aria-hidden>
             <path
               fill="currentColor"
@@ -64,8 +68,8 @@ export function DownloadWhoscall({
             />
           </svg>
           下載
-        </a>
-      </div>
+        </span>
+      </a>
     );
   }
   return (
