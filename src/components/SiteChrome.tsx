@@ -3,6 +3,7 @@
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { JoinStorm } from "@/components/JoinStorm";
+import { OpenFlatFloat } from "@/components/OpenFlatFloat";
 import { SchoolOrderProvider } from "@/components/SchoolOrder";
 import { SiteFlagsProvider } from "@/components/SiteFlags";
 
@@ -14,6 +15,7 @@ export function SiteChrome({ children }: { children: React.ReactNode }) {
         <main className="flex-1">{children}</main>
         <Footer />
         <JoinStorm />
+        <OpenFlatFloat />
       </SiteFlagsProvider>
     </SchoolOrderProvider>
   );

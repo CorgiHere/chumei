@@ -826,8 +826,6 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
             />
           </div>
         </div>
-        <DownloadWhoscall variant="fab" />
-
         <TeamBattle male={board.male} female={board.female} arcade={arcade} />
 
         {board.ready ? null : (
