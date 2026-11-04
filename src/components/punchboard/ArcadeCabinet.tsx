@@ -73,7 +73,7 @@ export function DownloadWhoscall({
     );
   }
   return (
-    <a {...downloadHref} className={cn("punch-dl-cta", className)}>
+    <a {...downloadHref} className={cn("punch-dl-cta mx-auto", className)}>
       <span className="punch-dl-cta__mark">
         <WhoscallMark className="h-9 w-9" />
       </span>

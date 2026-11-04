@@ -86,7 +86,7 @@ export function Header() {
                 : "border-brand-yellow bg-transparent text-brand-yellow hover:bg-brand-yellow hover:text-ink",
             )}
           >
-            開扁
+            拳擊機
           </Link>
           <SchoolOrderToggle className="hidden sm:inline-flex" />
 
@@ -126,7 +126,7 @@ export function Header() {
               onClick={() => setMenuOpen(false)}
             >
               <span className="font-mono-ui text-xs tracking-[0.14em]">08</span>
-              <span className="text-2xl font-black">開扁即時榜</span>
+              <span className="text-2xl font-black">拳擊機即時榜</span>
             </Link>
             {navItems.map((item) => (
               <Link

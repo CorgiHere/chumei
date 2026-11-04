@@ -4,14 +4,17 @@ import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNod
 import { Press_Start_2P } from "next/font/google";
 import localFont from "next/font/local";
 import {
+  clipPunchScore,
   emptyPunchboard,
   getPunchboardEndpoint,
   matchesQuery,
-  personKey,
+  normalizePlayerId,
+  parsePunchCue,
   punchSchoolDisplay,
   PUNCHBOARD_START_AT,
   uniqueByPerson,
   type PunchboardPayload,
+  type PunchCue,
   type PunchGender,
   type PunchSchool,
   type RankedPunchEntry,
@@ -42,6 +45,8 @@ const fusionPixel = localFont({
 
 const POLL_MS = 8000;
 const POLL_JITTER_MS = 2000;
+const CLIMB_STEP_MS = 320;
+const CLIMB_HOLD_MS = 1200;
 
 function asRanked(raw: unknown, gender: PunchGender): RankedPunchEntry[] {
   if (!Array.isArray(raw)) return [];
@@ -59,7 +64,7 @@ function asRanked(raw: unknown, gender: PunchGender): RankedPunchEntry[] {
       {
         id,
         name,
-        score: Number(item.score) || 0,
+        score: clipPunchScore(item.score),
         school,
         schoolOther: String(item.schoolOther ?? ""),
         department: String(item.department ?? ""),
@@ -80,11 +85,13 @@ function parseBoard(data: Partial<PunchboardPayload>): PunchboardPayload | null 
     updatedAt: typeof data.updatedAt === "string" ? data.updatedAt : "",
     male: rankGender(asRanked(data.male, "male")),
     female: rankGender(asRanked(data.female, "female")),
+    cue: parsePunchCue(data.cue),
   };
 }
 
 function rankGender(rows: RankedPunchEntry[]): RankedPunchEntry[] {
   return uniqueByPerson(rows)
+    .filter((row) => row.score > 0)
     .sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
       return a.updatedAt.localeCompare(b.updatedAt);
@@ -97,25 +104,22 @@ function topTen(rows: RankedPunchEntry[]) {
   return rows.slice(0, BOARD_SLOTS);
 }
 
-function findArrival(prev: RankedPunchEntry[], next: RankedPunchEntry[]) {
-  const before = new Map(prev.map((row) => [personKey(row), row]));
-  let best: RankedPunchEntry | null = null;
-  for (const row of next) {
-    const old = before.get(personKey(row));
-    const isNew = !old;
-    const climbed = Boolean(old && (row.score > old.score || row.rank < old.rank));
-    if (!isNew && !climbed) continue;
-    if (!best || row.rank < best.rank) best = row;
-  }
-  return best;
+function findCuedPlayer(
+  male: RankedPunchEntry[],
+  female: RankedPunchEntry[],
+  cue: PunchCue | null | undefined,
+) {
+  if (!cue) return null;
+  const id = normalizePlayerId(cue.id);
+  return (
+    male.find((row) => normalizePlayerId(row.id) === id) ??
+    female.find((row) => normalizePlayerId(row.id) === id) ??
+    null
+  );
 }
 
 function formatScore(n: number) {
   return n.toLocaleString("en-US");
-}
-
-function rankLabel(n: number) {
-  return `第${n}名`;
 }
 
 function formatRemain(ms: number) {
@@ -164,13 +168,50 @@ function schoolTotal(rows: RankedPunchEntry[], school: PunchSchool) {
 }
 
 function boardSlots(rows: RankedPunchEntry[]): Array<RankedPunchEntry | null> {
-  const visible = uniqueByPerson(rows)
+  const slots: Array<RankedPunchEntry | null> = Array.from({ length: BOARD_SLOTS }, () => null);
+  const leftover: RankedPunchEntry[] = [];
+  for (const row of uniqueByPerson(rows)) {
+    const index = row.rank - 1;
+    if (index >= 0 && index < BOARD_SLOTS && !slots[index]) slots[index] = row;
+    else leftover.push(row);
+  }
+  leftover.sort((a, b) => {
+    if (b.score !== a.score) return b.score - a.score;
+    return a.updatedAt.localeCompare(b.updatedAt);
+  });
+  for (const row of leftover) {
+    const empty = slots.findIndex((slot) => !slot);
+    if (empty < 0) break;
+    slots[empty] = { ...row, rank: empty + 1 };
+  }
+  return slots;
+}
+
+function climbView(
+  rows: RankedPunchEntry[],
+  gender: PunchGender,
+  arrival: RankedPunchEntry | null,
+  shownRank: number | null,
+): RankedPunchEntry[] {
+  if (!arrival || shownRank == null || arrival.gender !== gender) return rows;
+  const packed = uniqueByPerson(rows.filter((row) => row.id !== arrival.id))
     .sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
       return a.updatedAt.localeCompare(b.updatedAt);
     })
-    .slice(0, BOARD_SLOTS);
-  return Array.from({ length: BOARD_SLOTS }, (_, index) => visible[index] ?? null);
+    .map((row, index) => ({ ...row, rank: index + 1 }));
+  if (shownRank > BOARD_SLOTS) return packed;
+  const shown = Math.max(arrival.rank, shownRank);
+  return [
+    ...packed.filter((row) => row.rank < shown),
+    { ...arrival, rank: shown },
+    ...packed.filter((row) => row.rank >= shown).map((row) => ({ ...row, rank: row.rank + 1 })),
+  ];
+}
+
+function climbStartRank(rows: RankedPunchEntry[], arrival: RankedPunchEntry) {
+  const packed = uniqueByPerson(rows.filter((row) => row.id !== arrival.id)).length;
+  return Math.min(BOARD_SLOTS + 1, Math.max(arrival.rank + 1, packed + 2));
 }
 
 function punchArt(file: string) {
@@ -250,7 +291,7 @@ function AwardPodium({
     <div className="relative z-1 grid grid-cols-[1fr_1.1fr_1fr] items-end gap-1.5 sm:gap-2">
       {places.map(({ place, entry }) => (
         <PodiumPlace
-          key={place}
+          key={`${place}-${entry?.id ?? "empty"}`}
           place={place}
           entry={entry}
           arcade={arcade}
@@ -296,7 +337,7 @@ function PodiumPlace({
           score: "text-[16px]",
         };
   const body = (
-    <div className="flex w-full min-w-0 flex-col items-center [container-type:inline-size]">
+    <div className="flex w-full min-w-0 flex-col items-center @container">
       <PrizeMark place={place} />
       <p className={cn("w-full px-0.5 text-center leading-none whitespace-nowrap text-white", look.name)}>
         {entry ? entry.name : "尚未有紀錄"}
@@ -318,8 +359,8 @@ function PodiumPlace({
     </div>
   );
   const wrapClass = cn(
-    "min-w-0",
-    rising && "punch-row-in",
+    "min-w-0 overflow-hidden",
+    rising && "punch-climb",
     hit && "punch-hit",
     dim && "punch-dim",
   );
@@ -331,6 +372,7 @@ function PodiumPlace({
       type="button"
       onClick={() => onSelect(entry)}
       className={cn(wrapClass, "cursor-pointer hover:brightness-110")}
+      data-punch-climb={rising ? "" : undefined}
     >
       {body}
     </button>
@@ -439,9 +481,9 @@ function GenderList({
         </>
       ) : null}
       {showList ? (
-        <ol className="mt-2 flex-1">
+        <ol className="mt-2 flex-1 overflow-hidden">
           {rest.map((row, index) => (
-            <li key={row?.id ?? `empty-${index + 3}`}>
+            <li key={`${index + 4}-${row?.id ?? "empty"}`} className="overflow-hidden">
               {row ? (
                 <RankRow
                   entry={row}
@@ -509,10 +551,11 @@ function RankRow({
       className={cn(
         "punch-hud-row w-full cursor-pointer text-left hover:bg-white/5",
         tone === "gold" && "punch-hud-row--gold",
-        rising && "punch-row-in",
+        rising && "punch-climb",
         hit && "punch-hit",
         dim && "punch-dim",
       )}
+      data-punch-climb={rising ? "" : undefined}
     >
       <span className={cn(arcade, "text-center text-[10px] leading-none text-[#ffd54a]")}>{rank}</span>
       <p className="whitespace-nowrap text-[16px] leading-tight text-white">{entry.name}</p>
@@ -556,15 +599,30 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
   const [school, setSchool] = useState<PunchSchool | null>(null);
   const [tab, setTab] = useState<PunchGender>("male");
   const [arrival, setArrival] = useState<RankedPunchEntry | null>(null);
+  const [shownRank, setShownRank] = useState<number | null>(null);
   const [diploma, setDiploma] = useState<RankedPunchEntry | null>(null);
-  const seenRef = useRef(false);
+  const [infoShot, setInfoShot] = useState<"poster" | "safety" | null>(null);
   const queueRef = useRef<RankedPunchEntry[]>([]);
+  const cueRef = useRef("");
   const prevRef = useRef<{ male: RankedPunchEntry[]; female: RankedPunchEntry[] }>({
     male: [],
     female: [],
   });
   const Heading = headingLevel;
   const countdown = useCountdown(PUNCHBOARD_START_AT, board.endAt);
+
+  const playCue = (cue: PunchCue | null | undefined, male: RankedPunchEntry[], female: RankedPunchEntry[]) => {
+    if (!cue || cue.nonce === cueRef.current) return;
+    const incoming = findCuedPlayer(male, female, cue);
+    if (!incoming) return;
+    cueRef.current = cue.nonce;
+    setTab(incoming.gender);
+    setArrival((current) => {
+      if (!current) return incoming;
+      queueRef.current.push(incoming);
+      return current;
+    });
+  };
 
   useEffect(() => {
     let alive = true;
@@ -581,23 +639,8 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
         if (!alive || !next) return;
         const male = topTen(next.male);
         const female = topTen(next.female);
-        let incoming: RankedPunchEntry | null = null;
-        if (seenRef.current) {
-          incoming =
-            findArrival(prevRef.current.male, male) ??
-            findArrival(prevRef.current.female, female);
-          if (incoming) {
-            const hit = incoming;
-            setArrival((current) => {
-              if (!current) return hit;
-              queueRef.current.push(hit);
-              return current;
-            });
-          }
-        }
-        seenRef.current = true;
         prevRef.current = { male, female };
-        if (incoming) setTab(incoming.gender);
+        playCue(next.cue, male, female);
         setBoard({ ...next, male, female });
       } catch {
         /* keep last good board */
@@ -620,6 +663,43 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
     };
   }, []);
 
+  useEffect(() => {
+    if (!arrival) {
+      setShownRank(null);
+      return;
+    }
+    const source = arrival.gender === "male" ? prevRef.current.male : prevRef.current.female;
+    let rank = climbStartRank(source, arrival);
+    setShownRank(rank);
+    const hop = window.setInterval(() => {
+      rank -= 1;
+      if (rank <= arrival.rank) {
+        setShownRank(arrival.rank);
+        window.clearInterval(hop);
+        return;
+      }
+      setShownRank(rank);
+    }, CLIMB_STEP_MS);
+    const hops = Math.max(1, rank - arrival.rank);
+    const done = window.setTimeout(() => {
+      const next = queueRef.current.shift() ?? null;
+      setArrival(next);
+    }, hops * CLIMB_STEP_MS + CLIMB_HOLD_MS);
+    return () => {
+      window.clearInterval(hop);
+      window.clearTimeout(done);
+    };
+  }, [arrival]);
+
+  const maleView = useMemo(
+    () => climbView(board.male, "male", arrival, shownRank),
+    [arrival, board.male, shownRank],
+  );
+  const femaleView = useMemo(
+    () => climbView(board.female, "female", arrival, shownRank),
+    [arrival, board.female, shownRank],
+  );
+
   const seeking = query.trim().length > 0 || school !== null;
   const hitIds = useMemo(() => {
     const ids = new Set<string>();
@@ -637,7 +717,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
     <>
     <ArcadeCabinet
       keepOrder
-      className="max-w-[390px] sm:max-w-[420px] md:max-w-[736px] lg:max-w-[1240px]"
+      className="max-w-97.5 sm:max-w-105 md:max-w-184 lg:max-w-310"
       innerClassName={cn(fusionPixel.className, "px-4 pb-8 pt-4 lg:px-8")}
     >
         <div
@@ -649,21 +729,10 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
             opacity: 0.35,
           }}
         />
-        <div className="relative z-[1]">
+        <div className="relative z-1">
         <div className="relative flex items-center justify-center">
           <PunchBrandLockup />
         </div>
-        {arrival ? (
-          <ArrivalBurst
-            entry={arrival}
-            arcade={arcade}
-            onDone={() => {
-              const next = queueRef.current.shift() ?? null;
-              setArrival(next);
-            }}
-          />
-        ) : null}
-
         <div className="relative mt-1">
           <Heading className="sr-only">詐騙來電，Whoscall 開扁</Heading>
           <img
@@ -718,7 +787,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
           </button>
         </div>
 
-        <div className="relative z-1 mx-auto mt-4 flex w-full max-w-[360px] flex-col items-center gap-2">
+        <div className="relative z-1 mx-auto mt-4 flex w-full max-w-90 flex-col items-center gap-2">
           <div className="flex w-[min(100%,280px)] items-stretch border-4 border-[#15DCE8] bg-[#07132D] focus-within:border-[#ffd54a]">
             <span
               className={cn(
@@ -769,6 +838,22 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
           >
             還沒報名？先填表單
           </a>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            <button
+              type="button"
+              onClick={() => setInfoShot("poster")}
+              className="inline-flex min-h-11 cursor-pointer items-center justify-center border-4 border-[#15DCE8] bg-[#07132D] px-4 text-[16px] leading-none text-[#A8BEDD] hover:border-[#ffd54a] hover:text-[#ffd54a]"
+            >
+              活動資訊
+            </button>
+            <button
+              type="button"
+              onClick={() => setInfoShot("safety")}
+              className="inline-flex min-h-11 cursor-pointer items-center justify-center border-4 border-[#15DCE8] bg-[#07132D] px-4 text-[16px] leading-none text-[#A8BEDD] hover:border-[#ffd54a] hover:text-[#ffd54a]"
+            >
+              使用須知
+            </button>
+          </div>
         </div>
 
         <div className="relative mt-8 space-y-3">
@@ -777,7 +862,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
               className={tab === "male" ? "flex" : "hidden lg:flex"}
               label="男生組"
               tone="gold"
-              rows={board.male}
+              rows={maleView}
               risingId={arrival?.id}
               arcade={arcade}
               seeking={seeking}
@@ -789,7 +874,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
               className={tab === "female" ? "flex" : "hidden lg:flex"}
               label="女生組"
               tone="cyan"
-              rows={board.female}
+              rows={femaleView}
               risingId={arrival?.id}
               arcade={arcade}
               seeking={seeking}
@@ -804,7 +889,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
               className={tab === "male" ? "flex" : "hidden lg:flex"}
               label="男生組"
               tone="gold"
-              rows={board.male}
+              rows={maleView}
               risingId={arrival?.id}
               arcade={arcade}
               seeking={seeking}
@@ -816,7 +901,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
               className={tab === "female" ? "flex" : "hidden lg:flex"}
               label="女生組"
               tone="cyan"
-              rows={board.female}
+              rows={femaleView}
               risingId={arrival?.id}
               arcade={arcade}
               seeking={seeking}
@@ -843,7 +928,72 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
         onClose={() => setDiploma(null)}
       />
     ) : null}
+    {infoShot ? (
+      <InfoShot
+        fusion={fusionPixel.className}
+        src={withBasePath(
+          infoShot === "poster"
+            ? "/images/activities/whoscall-openflat-poster-2.jpg"
+            : "/images/activities/whoscall-openflat-safety.jpg",
+        )}
+        alt={infoShot === "poster" ? "活動資訊" : "拳擊機使用須知"}
+        onClose={() => setInfoShot(null)}
+      />
+    ) : null}
     </>
+  );
+}
+
+function InfoShot({
+  src,
+  alt,
+  fusion,
+  onClose,
+}: {
+  src: string;
+  alt: string;
+  fusion: string;
+  onClose: () => void;
+}) {
+  useEffect(() => {
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = previous;
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [onClose]);
+
+  return (
+    <div
+      className={cn(
+        fusion,
+        "fixed inset-0 z-200 flex items-center justify-center bg-black/92 p-3",
+      )}
+      role="dialog"
+      aria-modal="true"
+      aria-label={alt}
+      onClick={onClose}
+    >
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="關閉"
+        className="absolute right-3 top-3 z-10 flex h-11 w-11 cursor-pointer items-center justify-center border-4 border-white/50 bg-black text-[32px] leading-none text-white"
+      >
+        ×
+      </button>
+      <img
+        src={src}
+        alt={alt}
+        className="max-h-[min(96dvh,920px)] w-auto max-w-[min(96vw,720px)]"
+        onClick={(event) => event.stopPropagation()}
+      />
+    </div>
   );
 }
 
@@ -880,7 +1030,7 @@ function ScoreDiploma({
     <div
       className={cn(
         fusion,
-        "fixed inset-0 z-[200] flex items-center justify-center bg-black/92 p-1",
+        "fixed inset-0 z-200 flex items-center justify-center bg-black/92 p-1",
       )}
       role="dialog"
       aria-modal="true"
@@ -946,7 +1096,7 @@ function ScoreDiploma({
               left="32%"
               right="10%"
             >
-              <span className="max-w-full break-words">{entry.name}</span>
+              <span className="max-w-full wrap-break-word">{entry.name}</span>
             </DiplomaField>
             <DiplomaField
               className="px-1 text-center text-[13px] leading-none sm:text-[15px]"
@@ -1001,45 +1151,4 @@ function DiplomaField({
   );
 }
 
-function ArrivalBurst({
-  entry,
-  arcade,
-  onDone,
-}: {
-  entry: RankedPunchEntry;
-  arcade: string;
-  onDone: () => void;
-}) {
-  useEffect(() => {
-    const timer = window.setTimeout(onDone, 15000);
-    return () => window.clearTimeout(timer);
-  }, [entry.id, entry.score, onDone]);
-  return (
-    <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/80 p-4">
-      <div className="w-full max-w-xl border-4 border-[#ffd54a] bg-[#07133f] px-6 py-8 text-center shadow-[8px_8px_0_#8a6a00]">
-        <p className={cn(arcade, "text-[11px] leading-relaxed text-[#ffd54a]")}>
-          PHOTO
-        </p>
-        <p className="mt-5 text-[22px] leading-tight text-[#9ff6f2] sm:text-[28px]">
-          ID {entry.id}
-        </p>
-        <p className="mt-4 break-words text-[28px] leading-tight sm:text-[36px]">
-          {entry.name}
-        </p>
-        <p className={cn(arcade, "mt-5 text-[22px] leading-none text-[#ffd54a] sm:text-[28px]")}>
-          {formatScore(entry.score)}
-          <span className="ml-2 text-[16px]">分</span>
-        </p>
-        <p className="mt-3 text-[14px] text-white/70">{rankLabel(entry.rank)}</p>
-        <button
-          type="button"
-          onClick={onDone}
-          className="mt-6 cursor-pointer border-4 border-white/50 bg-black px-5 py-2 text-[16px] text-white"
-        >
-          繼續
-        </button>
-      </div>
-    </div>
-  );
-}
 

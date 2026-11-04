@@ -497,9 +497,9 @@ export const activities: Activity[] = [
     index: 12,
     title: "詐騙來電，Whoscall 開扁",
     subtitle: "Whoscall 合作｜11/17 現場拳擊機",
-    tagline: "一拳開扁詐騙來電",
+    tagline: "誰最痛恨詐騙集團？打一拳就知道！",
     description:
-      "11 月 17 日現場拳擊機活動，活動名稱「詐騙來電，Whoscall 開扁」。須先填報名表，現場憑 ID 登錄成績。成績出現在官網排行榜，分男生組／女生組；可選本名或暱稱上榜。",
+      "11 月 17 日現場拳擊機活動，活動名稱「詐騙來電，Whoscall 開扁」。出示 Whoscall App 與清大或交大學生證即可參加；上午、下午各打 1 拳取最高分。男女分開排名，已線上預約者優先上場。兩校各取男女組前 3 名分數加總，比拼反擊詐騙集團。頒獎 11/17 16:40 攤位現場。",
     heroImage: "/images/activities/whoscall-openflat.png",
     cardImage: "/images/activities/whoscall-openflat.png",
     startAt: "2026-11-17T00:00:00+08:00",
@@ -512,19 +512,41 @@ export const activities: Activity[] = [
     registrationUrl: siteConfig.punchFormUrl,
     rules: [
       {
-        title: "報名",
-        content: "全報名。先填 Google 表單，現場會發 ID。沒有 ID 不能登錄成績。",
+        title: "怎麼玩",
+        content:
+          "出示 Whoscall App 與清大或交大學生證。上午、下午各打 1 拳，取最高分。男女分開排名，已線上預約者優先上場。",
       },
       {
-        title: "成績",
-        content: "以現場拳擊機顯示分數為準，由工作人員輸入 ID 登錄。可選本名或暱稱上榜。男生組與女生組分開排名。",
+        title: "清交大對決",
+        content: "兩校各取男女組前 3 名分數加總，比拼一起反擊詐騙集團。",
       },
       {
-        title: "即時榜",
-        content: "公開排名頁可查詢 ID、顯示名、分數、學校、系所。上榜畫面會停一會兒方便拍照，也可手動繼續。",
+        title: "獎品（男女組各一份）",
+        content:
+          "第 1 名 Segway E2 Pro 電動滑板車；第 2 名 Sony WH-CH730N 降噪耳機；第 3 名樂維根 1 公斤高蛋白 2 包。",
+      },
+      {
+        title: "頒獎與參加禮",
+        content:
+          "頒獎 11/17 16:40 攤位現場。發限動標註 Whoscall、竹梅 IG，送樂維根 40 g 高蛋白 1 包與 Whoscall 進階版 2 個月。",
+      },
+      {
+        title: "成績與即時榜",
+        content:
+          "以現場拳擊機顯示分數為準，由工作人員輸入 ID 登錄。可選本名或暱稱上榜。公開排名頁可查詢 ID、顯示名、分數、學校、系所。",
       },
     ],
-    audienceNotes: ["須報名", "即時榜：官網 /punchboard"],
+    safetyNotes: [
+      "懷孕、高血壓、心臟病、酒醉或身體不適者，禁止遊玩",
+      "手部、手腕或肩膀曾受過傷，請勿遊玩",
+      "出拳前請脫下眼鏡、手部飾品及高跟鞋",
+      "請配戴現場提供的拳擊手套後再出拳",
+      "雙腳與肩同寬、膝蓋微彎，手腕伸直對準靶面中心",
+      "用腿部與腰部帶動出拳，勿用力過度或亂打",
+      "嚴禁助跑；只能用拳頭打，禁止腳踢、頭撞或持棍棒器械打擊",
+      "確認周圍淨空、靶面復位後再出拳",
+    ],
+    audienceNotes: ["須出示學生證與 Whoscall App", "即時榜：官網 /punchboard"],
     isScored: false,
     organizerIds: ["chumei-committee"],
     partnerIds: ["p-whoscall"],

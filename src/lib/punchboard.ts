@@ -30,6 +30,11 @@ export type PunchRegistrant = {
 
 export type RankedPunchEntry = PunchEntry & { rank: number };
 
+export type PunchCue = {
+  id: string;
+  nonce: string;
+};
+
 export type PunchboardPayload = {
   ready: boolean;
   eventName: string;
@@ -37,11 +42,29 @@ export type PunchboardPayload = {
   updatedAt: string;
   male: RankedPunchEntry[];
   female: RankedPunchEntry[];
+  cue?: PunchCue | null;
 };
 
 export const PUNCHBOARD_DEFAULT_NAME = "詐騙來電，Whoscall 開扁";
 export const PUNCHBOARD_DEFAULT_END_AT = "2026-11-17T23:59:00+08:00";
 export const PUNCHBOARD_START_AT = "2026-11-17T00:00:00+08:00";
+export const PUNCH_SCORE_MAX = 999;
+export const PUNCH_CUE_DELAY_MS = 3000;
+
+export function clipPunchScore(value: unknown) {
+  const n = Math.round(Number(value));
+  if (!Number.isFinite(n) || n < 0) return 0;
+  return Math.min(PUNCH_SCORE_MAX, n);
+}
+
+export function parsePunchCue(raw: unknown): PunchCue | null {
+  if (!raw || typeof raw !== "object") return null;
+  const item = raw as Partial<PunchCue>;
+  const id = normalizePlayerId(String(item.id ?? ""));
+  const nonce = String(item.nonce ?? "").trim().slice(0, 80);
+  if (!id || !nonce) return null;
+  return { id, nonce };
+}
 
 export const PUNCH_SCHOOL_LABEL: Record<PunchSchool, string> = {
   NTHU: "清大",
@@ -86,6 +109,7 @@ export function emptyPunchboard(): PunchboardPayload {
     updatedAt: "",
     male: [],
     female: [],
+    cue: null,
   };
 }
 
@@ -141,6 +165,7 @@ export function uniqueByPerson<T extends PunchEntry>(entries: T[]): T[] {
 
 export function rankEntries(entries: PunchEntry[]): RankedPunchEntry[] {
   return uniqueByPerson(entries)
+    .filter((entry) => entry.score > 0)
     .sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
       return a.updatedAt.localeCompare(b.updatedAt);

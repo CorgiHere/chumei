@@ -63,6 +63,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
     .map((id) => partners.find((p) => p.id === id))
     .filter((p): p is (typeof partners)[number] => Boolean(p));
   const isOnline = activity.categories.includes("線上活動");
+  const isPunchboard = activity.slug === "punchboard";
 
   return (
     <div className="bg-ink text-chalk">
@@ -116,7 +117,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
                 {primaryCtaLabel}
               </a>
             )}
-            {activity.slug === "punchboard" && (
+            {isPunchboard && (
               <Link href={appPath("/punchboard")} className="btn-primary">
                 看即時榜
               </Link>
@@ -140,10 +141,18 @@ export default async function ActivityDetailPage({ params }: PageProps) {
       <div className="container-main pb-14 lg:pb-20">
         <div className="grid gap-10 lg:grid-cols-3">
           <div className="lg:col-span-2 space-y-10">
-            <section>
-              <SectionHeader title="活動介紹" dark />
-              <p className="text-lg">{activity.description}</p>
-            </section>
+            {isPunchboard ? (
+              <section>
+                <p className="max-w-[40em] text-lg">
+                  先填報名表，ID 會寄到信箱。現場憑學生證與 Whoscall App 上場，成績即時出現在官網排行榜。
+                </p>
+              </section>
+            ) : (
+              <section>
+                <SectionHeader title="活動介紹" dark />
+                <p className="text-lg">{activity.description}</p>
+              </section>
+            )}
 
             {activityPartners.length > 0 && (
               <section className="card p-6">
@@ -166,7 +175,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
                       )}
                       <div>
                         <p className="font-black">{p.name}</p>
-                        {p.note && (
+                        {p.note && !isPunchboard && (
                           <p className="text-sm text-muted">{p.note}</p>
                         )}
                       </div>
@@ -176,7 +185,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
               </section>
             )}
 
-            {(isRegistrationOpen || activity.registrationEndAt) && (
+            {!isPunchboard && (isRegistrationOpen || activity.registrationEndAt) && (
               <section className="card p-6">
                 <SectionHeader title="報名資訊" dark />
                 <dl className="grid gap-3 text-sm">
@@ -222,17 +231,19 @@ export default async function ActivityDetailPage({ params }: PageProps) {
               </section>
             )}
 
-            <section>
-              <SectionHeader title="比賽規則" dark />
-              <div className="space-y-4">
-                {activity.rules.map((rule) => (
-                  <div key={rule.title} className="card p-5">
-                    <h3 className="font-black">{rule.title}</h3>
-                    <p className="mt-2 text-sm">{rule.content}</p>
-                  </div>
-                ))}
-              </div>
-            </section>
+            {!isPunchboard && (
+              <section>
+                <SectionHeader title="比賽規則" dark />
+                <div className="space-y-4">
+                  {activity.rules.map((rule) => (
+                    <div key={rule.title} className="card p-5">
+                      <h3 className="font-black">{rule.title}</h3>
+                      <p className="mt-2 text-sm">{rule.content}</p>
+                    </div>
+                  ))}
+                </div>
+              </section>
+            )}
 
             {activity.result?.status === "official" && (
               <section id="results">
@@ -299,7 +310,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
                 )}
             </section>
 
-            {activity.safetyNotes && (
+            {activity.safetyNotes && !isPunchboard && (
               <section className="card p-5">
                 <h2 className="font-black">注意事項</h2>
                 <ul className="mt-2 list-disc space-y-1 pl-5 text-sm">
@@ -311,6 +322,24 @@ export default async function ActivityDetailPage({ params }: PageProps) {
             )}
           </aside>
         </div>
+
+        {isPunchboard && (
+          <section
+            className="mx-auto mt-12 max-w-3xl space-y-6"
+            aria-label="活動海報與使用須知"
+          >
+            <img
+              src={withBasePath("/images/activities/whoscall-openflat-poster-2.jpg")}
+              alt="詐騙來電，Whoscall 開扁活動海報：獎品、怎麼玩、頒獎與參加禮"
+              className="w-full"
+            />
+            <img
+              src={withBasePath("/images/activities/whoscall-openflat-safety.jpg")}
+              alt="拳擊機使用須知"
+              className="w-full"
+            />
+          </section>
+        )}
 
         <div className="mt-10">
           <Link href="/activities" className="btn-dark-outline text-sm">

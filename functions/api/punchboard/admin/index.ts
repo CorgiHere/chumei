@@ -11,6 +11,7 @@ import {
   BOARD_KEY,
   DEFAULT_END_AT,
   DEFAULT_NAME,
+  PUNCH_SCORE_MAX,
   findRegistrant,
   json,
   normalizePlayerId,
@@ -100,7 +101,7 @@ function entryFromRegistrant(
   score: number,
   nameMode: PunchNameMode,
 ): PunchEntry | null {
-  if (!Number.isFinite(score) || score < 0 || score > 999999) return null;
+  if (!Number.isFinite(score) || score < 1 || score > PUNCH_SCORE_MAX) return null;
   const mode = nameMode === "nick" && registrant.nickname.trim() ? "nick" : "legal";
   return {
     id: registrant.id,
@@ -258,6 +259,20 @@ export async function onRequestPost(context: PagesContext) {
     roster = [...byId.values()];
     await writeRoster(env, roster);
     return authedJson(request, { ok: true, ready: true, ...snapshot() });
+  }
+
+  if (action === "cue") {
+    const id = normalizePlayerId(clip(payload.id, 20));
+    const entry = board.entries.find((row) => normalizePlayerId(row.id) === id);
+    if (!id || !entry) {
+      return authedJson(request, { error: "unknown_player", ...snapshot() }, 400);
+    }
+    board.cue = { id, nonce: `${Date.now()}-${id}`, at: now };
+    board.updatedAt = now;
+    board.version += 1;
+    await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(board));
+    await purgePublicBoardCache();
+    return authedJson(request, { ok: true, ready: true, cued: true, ...snapshot() });
   }
 
   if (action === "saveMeta") {

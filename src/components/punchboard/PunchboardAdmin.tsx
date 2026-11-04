@@ -1,12 +1,15 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { Press_Start_2P } from "next/font/google";
 import localFont from "next/font/local";
 import {
+  clipPunchScore,
   getPunchboardAdminEndpoint,
   normalizePlayerId,
+  PUNCH_CUE_DELAY_MS,
   PUNCH_GENDER_LABEL,
+  PUNCH_SCORE_MAX,
   punchSchoolDisplay,
   PUNCH_SCHOOL_LABEL,
   PUNCHBOARD_DEFAULT_END_AT,
@@ -89,6 +92,7 @@ export function PunchboardAdmin() {
   const [query, setQuery] = useState("");
   const [mailTo, setMailTo] = useState("chu.mei.committee+punchboard@gmail.com");
   const [mailing, setMailing] = useState(false);
+  const cueTimerRef = useRef(0);
   const [firstCampus, secondCampus] = useSchoolSides(
     { value: "NTHU" as PunchSchool, label: "清大" },
     { value: "NYCU" as PunchSchool, label: "交大" },
@@ -198,6 +202,17 @@ export function PunchboardAdmin() {
     setForm(blankForm);
   }
 
+  async function cueRank(row: PunchEntry, rank: number) {
+    window.clearTimeout(cueTimerRef.current);
+    setError("");
+    setNotice(`第${rank}名 ${row.name}，3 秒後即時榜上場`);
+    cueTimerRef.current = window.setTimeout(() => {
+      void postAction({ action: "cue", id: row.id }).then((ok) => {
+        if (ok) setNotice(`第${rank}名 ${row.name} 已通知即時榜`);
+      });
+    }, PUNCH_CUE_DELAY_MS);
+  }
+
   async function postAction(body: unknown) {
     setError("");
     setNotice("");
@@ -211,8 +226,12 @@ export function PunchboardAdmin() {
     if (!res.ok) {
       if (data.error === "not_registered") {
         setError("這個 ID 還沒在報名名單裡，請先登錄報名資料。");
+      } else if (data.error === "invalid_entry") {
+        setError("分數要在 1 到 999。沒填分數不會上榜。");
       } else if (data.error === "invalid_registrant") {
         setError("報名資料不完整。ID、本名、學校、性別都要填。");
+      } else if (data.error === "unknown_player") {
+        setError("榜上沒有這位，無法播上場動畫。");
       } else {
         setError("儲存失敗，請再試一次。");
       }
@@ -327,7 +346,7 @@ export function PunchboardAdmin() {
         </button>
       </div>
       <p className="text-[12px] text-white/55">
-        男生組或女生組前 10 名有變動時，會寄到 chu.mei.committee+punchboard@gmail.com。沒變就不會重寄。成績一定會先存，寄信失敗不影響榜單。
+        先填選手 ID，報名資料會自動帶出。沒有分數的人不會出現在公開榜。點名次，3 秒後即時榜會播上場動畫。分數 1–999。男生組或女生組前 10 名有變動時，會寄到 chu.mei.committee+punchboard@gmail.com。
       </p>
 
       <form className={panelClass} onSubmit={sendBoardMail}>
@@ -399,7 +418,7 @@ export function PunchboardAdmin() {
             action: "upsert",
             entry: {
               id: form.id,
-              score: Number(form.score),
+              score: clipPunchScore(form.score),
               nameMode: form.nameMode,
             },
           }).then((ok) => {
@@ -409,7 +428,7 @@ export function PunchboardAdmin() {
       >
         <h2 className={cn(pressStart.className, "text-[12px] text-[#ffd54a]")}>SCORE</h2>
         <p className="text-[12px] text-white/70">
-          先輸入現場發的 ID。對上報名名單後才能登錄分數。榜上顯示本名或暱稱由選手選。
+          先輸入現場發的 ID，報名資料會自動帶出。對上名單後再填分數才會上榜。榜上顯示本名或暱稱由選手選。
         </p>
         <div className="grid gap-4 md:grid-cols-2">
           <Field label="選手 ID" htmlFor="p-id">
@@ -422,13 +441,19 @@ export function PunchboardAdmin() {
               placeholder="例如 A017"
             />
           </Field>
-          <Field label="分數" htmlFor="p-score">
+          <Field label={`分數（0–${PUNCH_SCORE_MAX}）`} htmlFor="p-score">
             <input
               id="p-score"
               required
               inputMode="numeric"
+              maxLength={3}
               value={form.score}
-              onChange={(e) => setForm((f) => ({ ...f, score: e.target.value }))}
+              onChange={(e) =>
+                setForm((f) => ({
+                  ...f,
+                  score: e.target.value.replace(/\D/g, "").slice(0, 3),
+                }))
+              }
               className={fieldClass}
             />
           </Field>
@@ -655,6 +680,7 @@ export function PunchboardAdmin() {
             roster={board.roster}
             contactId={contactId}
             onToggleContact={setContactId}
+            onCue={cueRank}
             onEdit={(row) =>
               setForm({
                 id: row.id,
@@ -673,6 +699,7 @@ export function PunchboardAdmin() {
             rows={filteredByGender.female}
             roster={board.roster}
             contactId={contactId}
+            onCue={cueRank}
             onToggleContact={setContactId}
             onEdit={(row) =>
               setForm({
@@ -730,6 +757,7 @@ function EntryTable({
   roster,
   contactId,
   onToggleContact,
+  onCue,
   onEdit,
   onDelete,
 }: {
@@ -738,6 +766,7 @@ function EntryTable({
   roster: PunchRegistrant[];
   contactId: string;
   onToggleContact: (id: string) => void;
+  onCue: (row: PunchEntry, rank: number) => void;
   onEdit: (row: PunchEntry) => void;
   onDelete: (row: PunchEntry) => void;
 }) {
@@ -773,7 +802,15 @@ function EntryTable({
                 const showContact = contactId === row.id;
                 return (
                   <tr key={row.id} className="border-t-2 border-white/10 hover:bg-[#2ee0d6]/15">
-                    <td className="px-3 py-3">{rank}</td>
+                    <td className="px-3 py-3">
+                      <button
+                        type="button"
+                        className="cursor-pointer underline decoration-[#ffd54a] underline-offset-4"
+                        onClick={() => onCue(row, rank)}
+                      >
+                        {rank}
+                      </button>
+                    </td>
                     <td className="px-3 py-3">{row.id}</td>
                     <td className={cn(pressStart.className, "px-3 py-3 text-[12px]")}>
                       {row.score}

@@ -28,6 +28,12 @@ export type PunchRegistrant = {
   contact: string;
 };
 
+export type PunchCue = {
+  id: string;
+  nonce: string;
+  at?: string;
+};
+
 export type PunchBoard = {
   eventName: string;
   endAt: string;
@@ -35,6 +41,7 @@ export type PunchBoard = {
   version: number;
   epoch?: number;
   entries: PunchEntry[];
+  cue?: PunchCue | null;
 };
 
 export type PunchEnv = {
@@ -69,9 +76,10 @@ export const ROSTER_KEY = "punchboard-v1-roster";
 export const BOARD_HISTORY_KEY = "punchboard-v1-history";
 export const BOARD_HISTORY_LIMIT = 20;
 /** Bump to wipe leftover practice scores once on the next deploy. */
-export const LIVE_EPOCH = 2;
+export const LIVE_EPOCH = 3;
 export const DEFAULT_NAME = "詐騙來電，Whoscall 開扁";
 export const DEFAULT_END_AT = "2026-11-17T23:59:00+08:00";
+export const PUNCH_SCORE_MAX = 999;
 
 export function corsOrigin(request: Request) {
   const origin = request.headers.get("Origin");
@@ -146,6 +154,7 @@ function coerceBoard(raw: string): PunchBoard {
       version: Number(parsed.version) || 0,
       epoch: Number(parsed.epoch) || 0,
       entries: uniqueByPerson(entries),
+      cue: parseCue(parsed.cue),
     };
   } catch {
     return emptyBoard();
@@ -304,12 +313,21 @@ export function uniqueByPerson<T extends PunchEntry>(entries: T[]): T[] {
 
 export function rank(entries: PunchEntry[], gender: Gender) {
   return uniqueByPerson(entries)
-    .filter((e) => e.gender === gender)
+    .filter((e) => e.gender === gender && e.score > 0)
     .sort((a, b) => {
       if (b.score !== a.score) return b.score - a.score;
       return a.updatedAt.localeCompare(b.updatedAt);
     })
     .map((entry, index) => ({ ...entry, rank: index + 1 }));
+}
+
+function parseCue(raw: unknown): PunchCue | null {
+  if (!raw || typeof raw !== "object") return null;
+  const item = raw as Partial<PunchCue>;
+  const id = normalizePlayerId(String(item.id ?? ""));
+  const nonce = String(item.nonce ?? "").trim().slice(0, 80);
+  if (!id || !nonce) return null;
+  return { id, nonce, at: typeof item.at === "string" ? item.at.slice(0, 40) : "" };
 }
 
 export function publicPayload(board: PunchBoard, ready: boolean) {
@@ -321,5 +339,6 @@ export function publicPayload(board: PunchBoard, ready: boolean) {
     updatedAt: board.updatedAt,
     male: rank(entries, "male").slice(0, 10),
     female: rank(entries, "female").slice(0, 10),
+    cue: board.cue ?? null,
   };
 }
