@@ -241,9 +241,22 @@ export async function onRequestPost(context: PagesContext) {
 
   if (action === "deleteRegistrant") {
     const id = normalizePlayerId(clip(payload.id, 20));
+    if (!id) return authedJson(request, { error: "invalid_id", ...snapshot() }, 400);
     roster = roster.filter((row) => row.id !== id);
+    board.entries = board.entries.filter((row) => normalizePlayerId(row.id) !== id);
     await writeRoster(env, roster);
-    return authedJson(request, { ok: true, ready: true, ...snapshot() });
+    board.updatedAt = now;
+    board.version += 1;
+    await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(board));
+    await pushBoardHistory(env, board);
+    await purgePublicBoardCache();
+    let mailed: MailResult = "skipped";
+    try {
+      mailed = await notifyTop10IfChanged(env, board);
+    } catch {
+      mailed = "failed";
+    }
+    return authedJson(request, { ok: true, ready: true, mailed, ...snapshot() });
   }
 
   if (action === "replaceRoster") {

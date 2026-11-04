@@ -122,6 +122,20 @@ function formatScore(n: number) {
   return n.toLocaleString("en-US");
 }
 
+function formatHitTime(iso: string) {
+  const at = new Date(iso);
+  if (!Number.isFinite(at.getTime()) || !iso) return "";
+  const parts = new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Asia/Taipei",
+    hour: "2-digit",
+    minute: "2-digit",
+    hourCycle: "h23",
+  }).formatToParts(at);
+  const hour = parts.find((part) => part.type === "hour")?.value ?? "";
+  const minute = parts.find((part) => part.type === "minute")?.value ?? "";
+  return hour && minute ? `${hour}:${minute}` : "";
+}
+
 function formatRemain(ms: number) {
   const total = Math.max(0, Math.floor(ms / 1000));
   const days = Math.floor(total / 86400);
@@ -209,9 +223,8 @@ function climbView(
   ];
 }
 
-function climbStartRank(rows: RankedPunchEntry[], arrival: RankedPunchEntry) {
-  const packed = uniqueByPerson(rows.filter((row) => row.id !== arrival.id)).length;
-  return Math.min(BOARD_SLOTS + 1, Math.max(arrival.rank + 1, packed + 2));
+function climbStartRank(_rows: RankedPunchEntry[], arrival: RankedPunchEntry) {
+  return Math.max(arrival.rank, BOARD_SLOTS);
 }
 
 function punchArt(file: string) {
@@ -295,7 +308,7 @@ function AwardPodium({
           place={place}
           entry={entry}
           arcade={arcade}
-          rising={entry?.id === risingId}
+          rising={Boolean(risingId && entry && entry.id === risingId)}
           hit={Boolean(entry && seeking && hitIds.has(entry.id))}
           dim={Boolean(entry && seeking && !hitIds.has(entry.id))}
           onSelect={onSelect}
@@ -345,7 +358,7 @@ function PodiumPlace({
       <p className={cn("mb-2 h-5 w-full truncate px-1 text-center leading-tight text-white/55", look.school)}>
         {entry ? punchSub(entry) : "—"}
       </p>
-      <div className={cn("relative mx-auto w-[74%]", place === 1 && "w-[82%] punch-glow-gold")}>
+      <div className={cn("relative mx-auto w-[74%]", place === 1 && "w-[82%]")}>
         <PunchArt file={look.art} className="block h-auto w-full" />
         <span
           className={cn(
@@ -359,7 +372,7 @@ function PodiumPlace({
     </div>
   );
   const wrapClass = cn(
-    "min-w-0 overflow-hidden",
+    "min-w-0 overflow-visible border-0 bg-transparent shadow-none ring-0 outline-none",
     rising && "punch-climb",
     hit && "punch-hit",
     dim && "punch-dim",
@@ -371,7 +384,7 @@ function PodiumPlace({
     <button
       type="button"
       onClick={() => onSelect(entry)}
-      className={cn(wrapClass, "cursor-pointer hover:brightness-110")}
+      className={cn(wrapClass, "cursor-pointer outline-none hover:brightness-110")}
       data-punch-climb={rising ? "" : undefined}
     >
       {body}
@@ -490,7 +503,7 @@ function GenderList({
                   rank={index + 4}
                   tone={tone}
                   arcade={arcade}
-                  rising={row.id === risingId}
+                  rising={Boolean(risingId && row.id === risingId)}
                   hit={seeking && hitIds.has(row.id)}
                   dim={seeking && !hitIds.has(row.id)}
                   onSelect={onSelect}
@@ -1020,12 +1033,11 @@ function ScoreDiploma({
       document.removeEventListener("keydown", onKey);
     };
   }, [onClose]);
-  const ribbon =
-    entry.rank === 1 ? "冠軍" : entry.rank === 2 ? "亞軍" : entry.rank === 3 ? "季軍" : "";
   const male = entry.gender === "male";
   const schoolLine = entry.department.trim()
     ? `${punchSchoolDisplay(entry)} | ${entry.department.trim()}`
     : punchSchoolDisplay(entry);
+  const hitTime = formatHitTime(entry.updatedAt);
   return (
     <div
       className={cn(
@@ -1078,17 +1090,6 @@ function ScoreDiploma({
             >
               #{entry.rank}
             </DiplomaField>
-            {ribbon ? (
-              <DiplomaField
-                className="text-[13px] leading-none text-[#3a2200] sm:text-[15px]"
-                top="59.3%"
-                height="4.6%"
-                left="36%"
-                right="36%"
-              >
-                {ribbon}
-              </DiplomaField>
-            ) : null}
             <DiplomaField
               className="px-1 text-center text-[15px] leading-none sm:text-[17px]"
               top="67.7%"
@@ -1096,7 +1097,9 @@ function ScoreDiploma({
               left="32%"
               right="10%"
             >
-              <span className="max-w-full wrap-break-word">{entry.name}</span>
+              <span className="max-w-full wrap-break-word">
+                {hitTime ? `${entry.name} | ${hitTime}` : entry.name}
+              </span>
             </DiplomaField>
             <DiplomaField
               className="px-1 text-center text-[13px] leading-none sm:text-[15px]"

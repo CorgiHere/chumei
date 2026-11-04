@@ -30,7 +30,7 @@ export function DownloadWhoscall({
         {...downloadHref}
         aria-label="下載 Whoscall"
         className={cn(
-          "fixed right-4 z-[61] flex flex-col items-center gap-1 no-underline lg:hidden",
+          "fixed right-4 z-61 flex flex-col items-center gap-1 no-underline lg:hidden",
           "bottom-[max(5.75rem,calc(env(safe-area-inset-bottom)+4.75rem))]",
           className,
         )}

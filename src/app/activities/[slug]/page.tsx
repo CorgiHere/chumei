@@ -168,7 +168,7 @@ export default async function ActivityDetailPage({ params }: PageProps) {
                           height={p.logoWide ? 32 : 48}
                           className={
                             p.logoWide
-                              ? "h-8 w-auto max-w-[160px] shrink-0 object-contain"
+                              ? "h-8 w-auto max-w-40 shrink-0 object-contain"
                               : "h-12 w-12 shrink-0 rounded-full bg-white object-contain"
                           }
                         />

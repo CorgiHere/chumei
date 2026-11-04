@@ -10,6 +10,7 @@ import {
   PUNCH_CUE_DELAY_MS,
   PUNCH_GENDER_LABEL,
   PUNCH_SCORE_MAX,
+  punchDisplayName,
   punchSchoolDisplay,
   PUNCH_SCHOOL_LABEL,
   PUNCHBOARD_DEFAULT_END_AT,
@@ -42,6 +43,8 @@ type AdminState = {
   entries: PunchEntry[];
   roster: PunchRegistrant[];
 };
+
+type AdminListRow = PunchEntry & { hasScore: boolean; boardRank: number | null };
 
 const blankForm = {
   id: "",
@@ -158,12 +161,57 @@ export function PunchboardAdmin() {
         .join(" ")
         .toLowerCase()
         .includes(q);
-    const sortRows = (gender: PunchGender) =>
-      uniqueByPerson(board.entries)
-        .filter((e) => e.gender === gender && match(e))
-        .sort((a, b) => b.score - a.score);
+    const sortRows = (gender: PunchGender) => {
+      const scored = new Map(
+        uniqueByPerson(board.entries)
+          .filter((row) => row.gender === gender)
+          .map((row) => [normalizePlayerId(row.id), row]),
+      );
+      const seen = new Set<string>();
+      const merged: AdminListRow[] = [];
+      for (const person of board.roster.filter((row) => row.gender === gender)) {
+        const id = normalizePlayerId(person.id);
+        seen.add(id);
+        const hit = scored.get(id);
+        merged.push(
+          hit && hit.score > 0
+            ? { ...hit, hasScore: true, boardRank: null }
+            : {
+                id,
+                name: punchDisplayName(person),
+                legalName: person.legalName,
+                nickname: person.nickname,
+                nameMode: person.nameMode,
+                score: 0,
+                school: person.school,
+                schoolOther: person.schoolOther ?? "",
+                department: person.department,
+                gender: person.gender,
+                updatedAt: "",
+                hasScore: false,
+                boardRank: null,
+              },
+        );
+      }
+      for (const hit of scored.values()) {
+        if (seen.has(normalizePlayerId(hit.id)) || hit.score <= 0) continue;
+        merged.push({ ...hit, hasScore: true, boardRank: null });
+      }
+      const visible = merged.filter(match);
+      visible.sort((a, b) => {
+        if (a.hasScore !== b.hasScore) return a.hasScore ? -1 : 1;
+        if (b.score !== a.score) return b.score - a.score;
+        return a.id.localeCompare(b.id);
+      });
+      let rank = 0;
+      return visible.map((row) => {
+        if (!row.hasScore) return row;
+        rank += 1;
+        return { ...row, boardRank: rank };
+      });
+    };
     return { male: sortRows("male"), female: sortRows("female") };
-  }, [board.entries, query]);
+  }, [board.entries, board.roster, query]);
 
   const lookedUp = useMemo(() => {
     const id = normalizePlayerId(form.id);
@@ -664,7 +712,7 @@ export function PunchboardAdmin() {
       <div>
         <div className="mb-6 flex flex-wrap items-end justify-between gap-3">
           <h2 className={cn(pressStart.className, "text-[12px] text-[#ffd54a]")}>
-            {board.entries.length} PLAYERS
+            {board.roster.length} PLAYERS
           </h2>
           <input
             value={query}
@@ -684,13 +732,22 @@ export function PunchboardAdmin() {
             onEdit={(row) =>
               setForm({
                 id: row.id,
-                score: String(row.score),
+                score: row.hasScore ? String(row.score) : "",
                 nameMode: row.nameMode === "nick" ? "nick" : "legal",
               })
             }
-            onDelete={(row) => {
-              if (window.confirm(`刪除 ${row.name} 的成績？`)) {
+            onDeleteScore={(row) => {
+              if (window.confirm(`刪除 ${row.name} 的分數？這個人仍會留在報名名單。`)) {
                 void postAction({ action: "delete", id: row.id });
+              }
+            }}
+            onDeleteRegistrant={(row) => {
+              if (
+                window.confirm(
+                  `刪除 ${row.name} 的報名紀錄？分數也會一併拿掉，之後要用同一個 ID 得重新報名。`,
+                )
+              ) {
+                void postAction({ action: "deleteRegistrant", id: row.id });
               }
             }}
           />
@@ -704,13 +761,22 @@ export function PunchboardAdmin() {
             onEdit={(row) =>
               setForm({
                 id: row.id,
-                score: String(row.score),
+                score: row.hasScore ? String(row.score) : "",
                 nameMode: row.nameMode === "nick" ? "nick" : "legal",
               })
             }
-            onDelete={(row) => {
-              if (window.confirm(`刪除 ${row.name} 的成績？`)) {
+            onDeleteScore={(row) => {
+              if (window.confirm(`刪除 ${row.name} 的分數？這個人仍會留在報名名單。`)) {
                 void postAction({ action: "delete", id: row.id });
+              }
+            }}
+            onDeleteRegistrant={(row) => {
+              if (
+                window.confirm(
+                  `刪除 ${row.name} 的報名紀錄？分數也會一併拿掉，之後要用同一個 ID 得重新報名。`,
+                )
+              ) {
+                void postAction({ action: "deleteRegistrant", id: row.id });
               }
             }}
           />
@@ -724,7 +790,7 @@ export function PunchboardAdmin() {
 function AdminFrame({ children }: { children: React.ReactNode }) {
   return (
     <ArcadeCabinet
-      className="max-w-[1520px]"
+      className="max-w-380"
       innerClassName={cn(fusionPixel.className, "px-5 py-6 lg:px-10")}
     >
       <div className="mb-6">
@@ -759,16 +825,18 @@ function EntryTable({
   onToggleContact,
   onCue,
   onEdit,
-  onDelete,
+  onDeleteScore,
+  onDeleteRegistrant,
 }: {
   title: string;
-  rows: PunchEntry[];
+  rows: AdminListRow[];
   roster: PunchRegistrant[];
   contactId: string;
   onToggleContact: (id: string) => void;
   onCue: (row: PunchEntry, rank: number) => void;
-  onEdit: (row: PunchEntry) => void;
-  onDelete: (row: PunchEntry) => void;
+  onEdit: (row: AdminListRow) => void;
+  onDeleteScore: (row: PunchEntry) => void;
+  onDeleteRegistrant: (row: PunchEntry) => void;
 }) {
   return (
     <section>
@@ -777,7 +845,7 @@ function EntryTable({
         <span className="ml-2 text-[12px] text-white/45">{rows.length} 人</span>
       </h3>
       <div className="overflow-x-auto border-4 border-white/15">
-        <table className="w-full min-w-[560px] text-left text-[12px]">
+        <table className="w-full min-w-140 text-left text-[12px]">
           <thead className="bg-[#06102f] text-[#ffd54a]">
             <tr>
               <th className="px-3 py-3">名次</th>
@@ -792,48 +860,53 @@ function EntryTable({
             {rows.length === 0 ? (
               <tr>
                 <td colSpan={6} className="px-3 py-6 text-white/45">
-                  目前沒有成績。
+                  目前沒有報名。
                 </td>
               </tr>
             ) : (
-              rows.map((row, index) => {
-                const rank = index + 1;
+              rows.map((row) => {
+                const rank = row.boardRank;
                 const registrant = roster.find((item) => item.id === normalizePlayerId(row.id));
                 const showContact = contactId === row.id;
+                const topThree = rank !== null && rank <= 3;
                 return (
                   <tr key={row.id} className="border-t-2 border-white/10 hover:bg-[#2ee0d6]/15">
                     <td className="px-3 py-3">
-                      <button
-                        type="button"
-                        className="cursor-pointer underline decoration-[#ffd54a] underline-offset-4"
-                        onClick={() => onCue(row, rank)}
-                      >
-                        {rank}
-                      </button>
+                      {rank ? (
+                        <button
+                          type="button"
+                          className="cursor-pointer underline decoration-[#ffd54a] underline-offset-4"
+                          onClick={() => onCue(row, rank)}
+                        >
+                          {rank}
+                        </button>
+                      ) : (
+                        <span className="text-white/35">—</span>
+                      )}
                     </td>
                     <td className="px-3 py-3">{row.id}</td>
                     <td className={cn(pressStart.className, "px-3 py-3 text-[12px]")}>
-                      {row.score}
+                      {row.hasScore ? row.score : <span className="text-white/35">—</span>}
                     </td>
                     <td className="px-3 py-3">
                       <button
                         type="button"
                         className={cn(
                           "text-left",
-                          rank <= 3 && "underline decoration-[#ffd54a] underline-offset-4",
+                          topThree && "underline decoration-[#ffd54a] underline-offset-4",
                         )}
                         onClick={() => {
-                          if (rank > 3) return;
+                          if (!topThree) return;
                           onToggleContact(showContact ? "" : row.id);
                         }}
                       >
                         {row.name}
                       </button>
-                      {rank <= 3 && showContact ? (
+                      {topThree && showContact ? (
                         <p className="mt-1 text-[12px] text-[#ffd54a]">
                           {registrant?.contact?.trim() || "這位沒填聯絡方式"}
                         </p>
-                      ) : rank <= 3 ? (
+                      ) : topThree ? (
                         <p className="mt-1 text-[11px] text-white/45">點名字看聯絡方式</p>
                       ) : null}
                     </td>
@@ -860,14 +933,23 @@ function EntryTable({
                           className={`${actionBtn} border-2 border-[#ffd54a] text-[#ffd54a] hover:bg-[#ffd54a] hover:text-[#1a1400]`}
                           onClick={() => onEdit(row)}
                         >
-                          改分數
+                          {row.hasScore ? "改分數" : "登錄分數"}
                         </button>
+                        {row.hasScore ? (
+                          <button
+                            type="button"
+                            className={`${actionBtn} border-2 border-white/35 text-white hover:bg-white hover:text-[#07133f]`}
+                            onClick={() => onDeleteScore(row)}
+                          >
+                            刪除分數
+                          </button>
+                        ) : null}
                         <button
                           type="button"
-                          className={`${actionBtn} border-2 border-white/35 text-white hover:bg-white hover:text-[#07133f]`}
-                          onClick={() => onDelete(row)}
+                          className={`${actionBtn} border-2 border-[#ff6b6b]/70 text-[#ff8a8a] hover:bg-[#ff6b6b] hover:text-[#1a1400]`}
+                          onClick={() => onDeleteRegistrant(row)}
                         >
-                          刪除
+                          刪除報名
                         </button>
                       </div>
                     </td>

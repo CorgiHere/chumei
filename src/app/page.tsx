@@ -58,14 +58,14 @@ export default function HomePage() {
 
       <section
         id="path-vote"
-        className="scroll-mt-24 bg-ink pt-[var(--space-section-mobile)] text-chalk lg:pt-[var(--space-section-desktop)]"
+        className="scroll-mt-24 bg-ink pt-(--space-section-mobile) text-chalk lg:pt-(--space-section-desktop)"
       >
         <PathVote />
       </section>
 
       <section
         id="championship"
-        className="scroll-mt-24 bg-ink pb-[var(--space-section-mobile)] pt-10 lg:pb-[var(--space-section-desktop)] lg:pt-12"
+        className="scroll-mt-24 bg-ink pb-(--space-section-mobile) pt-10 lg:pb-(--space-section-desktop) lg:pt-12"
       >
         <div className="container-main">
           <SectionHeader

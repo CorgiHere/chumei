@@ -50,7 +50,7 @@ export function OpenFlatBand() {
       aria-labelledby="openflat-heading"
     >
       <div className="container-main">
-        <article className="openflat-card relative overflow-hidden px-6 pb-8 pt-14 sm:px-9 sm:pb-10 sm:pt-16 lg:px-12 lg:pb-12 lg:pt-[4.5rem]">
+        <article className="openflat-card relative overflow-hidden px-6 pb-8 pt-14 sm:px-9 sm:pb-10 sm:pt-16 lg:px-12 lg:pb-12 lg:pt-18">
           <img
             src={withBasePath("/images/punchboard/openflat-chunk-bg.jpg")}
             alt=""
