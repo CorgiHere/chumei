@@ -650,7 +650,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
           }}
         />
         <div className="relative z-[1]">
-        <div className="relative mb-2 flex items-center justify-center">
+        <div className="relative flex items-center justify-center">
           <PunchBrandLockup />
         </div>
         {arrival ? (
@@ -664,7 +664,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
           />
         ) : null}
 
-        <div className="relative mt-2">
+        <div className="relative mt-1">
           <Heading className="sr-only">詐騙來電，Whoscall 開扁</Heading>
           <img
             src={withBasePath("/images/punchboard/event-title.png")}
@@ -764,7 +764,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
             href={siteConfig.punchFormUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="text-[13px] text-[#15DCE8] underline underline-offset-4"
+            className="mt-1 inline-flex min-h-11 items-center justify-center border-4 border-[#c9a000] bg-[#ffd54a] px-5 text-[16px] leading-none text-[#071028] no-underline hover:bg-[#ffe27a]"
           >
             還沒報名？先填表單
           </a>
