@@ -33,6 +33,7 @@ export type PunchBoard = {
   endAt: string;
   updatedAt: string;
   version: number;
+  epoch?: number;
   entries: PunchEntry[];
 };
 
@@ -53,7 +54,7 @@ export const PUBLIC_CACHE_CONTROL =
   "public, max-age=0, s-maxage=5, stale-while-revalidate=2";
 export const PUBLIC_CDN_CACHE_CONTROL =
   "public, max-age=5, stale-while-revalidate=2";
-export const PUBLIC_CACHE_KEY = "https://chumei.org/api/punchboard/public-v1";
+export const PUBLIC_CACHE_KEY = "https://chumei.org/api/punchboard/public-v2";
 
 export async function purgePublicBoardCache() {
   try {
@@ -67,6 +68,8 @@ export const BOARD_KEY = "punchboard-v1";
 export const ROSTER_KEY = "punchboard-v1-roster";
 export const BOARD_HISTORY_KEY = "punchboard-v1-history";
 export const BOARD_HISTORY_LIMIT = 20;
+/** Bump to wipe leftover practice scores once on the next deploy. */
+export const LIVE_EPOCH = 2;
 export const DEFAULT_NAME = "詐騙來電，Whoscall 開扁";
 export const DEFAULT_END_AT = "2026-11-17T23:59:00+08:00";
 
@@ -117,6 +120,7 @@ export function emptyBoard(): PunchBoard {
     endAt: DEFAULT_END_AT,
     updatedAt: "",
     version: 0,
+    epoch: LIVE_EPOCH,
     entries: [],
   };
 }
@@ -140,6 +144,7 @@ function coerceBoard(raw: string): PunchBoard {
       endAt: String(parsed.endAt || DEFAULT_END_AT).slice(0, 40),
       updatedAt: String(parsed.updatedAt || ""),
       version: Number(parsed.version) || 0,
+      epoch: Number(parsed.epoch) || 0,
       entries: uniqueByPerson(entries),
     };
   } catch {
@@ -187,8 +192,10 @@ export async function readBoard(
   if (!raw) return { board: emptyBoard(), ready: true };
   const board = coerceBoard(raw);
   const live = board.entries.filter((entry) => !isDemoEntry(entry));
-  if (live.length !== board.entries.length) {
-    board.entries = live;
+  const resetScores = (board.epoch ?? 0) < LIVE_EPOCH;
+  if (resetScores || live.length !== board.entries.length) {
+    board.entries = resetScores ? [] : live;
+    board.epoch = LIVE_EPOCH;
     board.updatedAt = new Date().toISOString();
     board.version += 1;
     await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(board));

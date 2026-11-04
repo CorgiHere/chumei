@@ -667,7 +667,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
         <div className="relative mt-2">
           <Heading className="sr-only">詐騙來電，Whoscall 開扁</Heading>
           <img
-            src={withBasePath("/images/punchboard/event-banner.png")}
+            src={withBasePath("/images/punchboard/event-wordmark.png")}
             alt="詐騙來電，Whoscall 開扁"
             className="relative z-1 mx-auto block h-auto w-full max-w-3xl object-contain"
           />
