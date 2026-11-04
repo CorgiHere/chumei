@@ -50,18 +50,13 @@ export function OpenFlatBand() {
       aria-labelledby="openflat-heading"
     >
       <div className="container-main">
-        <article className="openflat-card relative overflow-hidden px-6 pb-8 pt-14 sm:px-9 sm:pb-10 sm:pt-16 lg:px-12 lg:pb-12 lg:pt-18">
-          <img
-            src={withBasePath("/images/punchboard/openflat-chunk-bg.jpg")}
-            alt=""
-            className="openflat-card__bg"
-          />
-          <p className="openflat-card__badge">11/17 × Whoscall 合作活動</p>
-          <div className="relative z-1 grid items-center gap-8 pb-4 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-6">
+        <article className="openflat-card">
+          <div className="openflat-card__inner">
             <div>
+              <p className="openflat-card__badge">11/17 × Whoscall 合作活動</p>
               <h2
                 id="openflat-heading"
-                className="mt-4 text-[clamp(1.55rem,3.4vw,2.45rem)] font-black leading-[1.18]"
+                className="text-[clamp(1.55rem,3.4vw,2.45rem)] font-black leading-[1.18]"
               >
                 詐騙來電，Whoscall{" "}
                 <span className="text-brand-yellow">開扁</span>
@@ -118,14 +113,14 @@ export function OpenFlatBand() {
                 </a>
               </div>
             </div>
-
+          </div>
+          <div className="openflat-card__art" aria-hidden>
             <img
-              src={withBasePath("/images/activities/whoscall-openflat.webp")}
-              alt="詐騙來電，Whoscall 開扁"
-              width={800}
-              height={418}
+              src={withBasePath("/images/punchboard/openflat-wordmark.webp")}
+              alt=""
+              width={960}
+              height={489}
               decoding="async"
-              className="relative z-1 mx-auto h-auto w-full max-w-md drop-shadow-[0_8px_0_#050b18] lg:max-w-none"
             />
           </div>
         </article>

@@ -1061,31 +1061,74 @@
 }
 
 .openflat-card {
+  position: relative;
+  overflow: hidden;
   background: #071018;
+  border: 3px solid var(--hi);
 }
 
-.openflat-card__bg {
+.openflat-card__inner {
+  position: relative;
+  z-index: 1;
+  min-width: 0;
+  padding: 1.75rem 1.5rem 1.85rem;
+}
+
+@media (min-width: 640px) {
+  .openflat-card__inner {
+    padding: 2rem 2.25rem 2.15rem;
+  }
+}
+
+.openflat-card__art {
+  display: none;
   pointer-events: none;
-  position: absolute;
-  inset: 0;
-  height: 100%;
+}
+
+.openflat-card__art img {
+  display: block;
   width: 100%;
-  object-fit: fill;
+  max-width: 100%;
+  height: auto;
+  min-width: 0;
+}
+
+@media (min-width: 880px) {
+  .openflat-card__inner {
+    padding: 2.15rem 42% 2.35rem 2.5rem;
+  }
+
+  .openflat-card__art {
+    display: block;
+    position: absolute;
+    z-index: 1;
+    top: 50%;
+    right: 1.35rem;
+    width: min(38%, 27rem);
+    transform: translateY(-50%);
+  }
+}
+
+@media (min-width: 1180px) {
+  .openflat-card__inner {
+    padding-right: 40%;
+  }
+
+  .openflat-card__art {
+    right: 2rem;
+    width: min(40%, 30rem);
+  }
 }
 
 .openflat-card__badge {
-  position: absolute;
-  z-index: 2;
-  top: 11.4%;
-  left: 7.4%;
-  display: flex;
-  width: 29%;
-  height: 8.8%;
-  min-height: 1.7rem;
+  display: inline-flex;
+  width: fit-content;
+  max-width: 100%;
   align-items: center;
-  justify-content: center;
-  margin: 0;
-  padding: 0 0.6rem;
+  margin: 0 0 0.85rem;
+  padding: 0.32rem 0.7rem;
+  border: 2px solid var(--hi);
+  background: #071018;
   font-family: var(--font-mono);
   font-size: 11px;
   font-weight: 600;
@@ -1094,25 +1137,17 @@
   white-space: nowrap;
 }
 
-@media (max-width: 839px) {
+@media (max-width: 639px) {
   .openflat-card__badge {
-    top: 6.5%;
-    left: 8%;
-    width: auto;
-    max-width: 78%;
-    height: auto;
-    justify-content: flex-start;
-    padding: 0.35rem 0.7rem;
-    background: #071018;
-    border: 2px solid var(--hi);
     font-size: 10px;
+    white-space: normal;
   }
 }
 
 .openflat-float {
   display: block;
   overflow: hidden;
-  width: min(20.5rem, calc(100vw - 1.5rem));
+  width: min(15.25rem, calc(100vw - 1.75rem));
   line-height: 0;
 }
 
@@ -1127,31 +1162,34 @@
   position: absolute;
   top: -70%;
   left: 0;
-  width: 32%;
+  width: 28%;
   height: 250%;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(255, 255, 255, 0.12) 32%,
-    rgba(255, 255, 255, 0.9) 50%,
-    rgba(94, 240, 255, 0.55) 62%,
+    rgba(255, 255, 255, 0.08) 32%,
+    rgba(255, 255, 255, 0.72) 50%,
+    rgba(94, 240, 255, 0.38) 62%,
     transparent 100%
   );
   mix-blend-mode: screen;
   transform: rotate(32deg) translateX(-280%);
-  animation: openflat-shine 5.4s ease-in-out infinite;
   content: "";
+}
+
+.openflat-float.is-shining::after {
+  animation: openflat-shine 2.15s ease-in-out 1;
 }
 
 @media (min-width: 640px) {
   .openflat-float {
-    width: 22.5rem;
+    width: 16.5rem;
   }
 }
 
 @media (min-width: 1024px) {
   .openflat-float {
-    width: 24.5rem;
+    width: 17.75rem;
   }
 }
 
@@ -1162,12 +1200,10 @@
 }
 
 @keyframes openflat-shine {
-  0%,
-  62%,
-  100% {
+  from {
     transform: rotate(32deg) translateX(-280%);
   }
-  78% {
-    transform: rotate(32deg) translateX(420%);
+  to {
+    transform: rotate(32deg) translateX(430%);
   }
 }

@@ -19,17 +19,10 @@ export function emptyCounts(ready = false): PathVoteCounts {
   return { qingjiao: 0, jiaoqing: 0, ready };
 }
 
-const PATH_VOTE_LOCAL_HOSTS = new Set([
-  "chumei.org",
-  "xn--eyqvve1quev2be32g7sbba230jtip1rbz09du88b.xyz",
-  "localhost",
-  "127.0.0.1",
-]);
-
 export function getVoteEndpoint(): string {
-  if (typeof window === "undefined") return "/api/path-vote/";
+  if (typeof window === "undefined") return "https://chumei.org/api/path-vote/";
   const host = window.location.hostname;
-  if (PATH_VOTE_LOCAL_HOSTS.has(host)) {
+  if (host === "chumei.org" || host.endsWith(".pages.dev")) {
     return "/api/path-vote/";
   }
   return "https://chumei.org/api/path-vote/";
