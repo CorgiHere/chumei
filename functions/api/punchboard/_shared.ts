@@ -1,5 +1,6 @@
 type Gender = "male" | "female";
 type School = "NTHU" | "NYCU" | "OTHER";
+export type PunchNameMode = "legal" | "nick";
 
 export type PunchEntry = {
   id: string;
@@ -10,6 +11,21 @@ export type PunchEntry = {
   department: string;
   gender: Gender;
   updatedAt: string;
+  legalName?: string;
+  nickname?: string;
+  nameMode?: PunchNameMode;
+};
+
+export type PunchRegistrant = {
+  id: string;
+  legalName: string;
+  nickname: string;
+  nameMode: PunchNameMode;
+  school: School;
+  schoolOther?: string;
+  department: string;
+  gender: Gender;
+  contact: string;
 };
 
 export type PunchBoard = {
@@ -48,6 +64,7 @@ export async function purgePublicBoardCache() {
 }
 
 export const BOARD_KEY = "punchboard-v1";
+export const ROSTER_KEY = "punchboard-v1-roster";
 export const BOARD_HISTORY_KEY = "punchboard-v1-history";
 export const BOARD_HISTORY_LIMIT = 20;
 export const DEFAULT_NAME = "詐騙來電，Whoscall 開扁";
@@ -104,42 +121,12 @@ export function emptyBoard(): PunchBoard {
   };
 }
 
-const DEMO_ROWS: Array<Omit<PunchEntry, "updatedAt">> = [
-  { id: "demo-m1", name: "測試・林大為", score: 998, school: "NTHU", schoolOther: "", department: "電機系", gender: "male" },
-  { id: "demo-m2", name: "測試・陳冠宇", score: 912, school: "NYCU", schoolOther: "", department: "資工系", gender: "male" },
-  { id: "demo-m3", name: "測試・黃志明", score: 870, school: "NTHU", schoolOther: "", department: "動機系", gender: "male" },
-  { id: "demo-m4", name: "測試・周柏宇", score: 755, school: "NTHU", schoolOther: "", department: "工工系", gender: "male" },
-  { id: "demo-m5", name: "測試・許家豪", score: 731, school: "NYCU", schoolOther: "", department: "電控所", gender: "male" },
-  { id: "demo-m6", name: "測試・鄭偉哲", score: 704, school: "NTHU", schoolOther: "", department: "物理系", gender: "male" },
-  { id: "demo-m7", name: "測試・蔡承恩", score: 662, school: "NYCU", schoolOther: "", department: "土木系", gender: "male" },
-  { id: "demo-m8", name: "測試・簡子軒", score: 628, school: "NTHU", schoolOther: "", department: "計財系", gender: "male" },
-  { id: "demo-m9", name: "測試・呂冠廷", score: 591, school: "NYCU", schoolOther: "", department: "機械系", gender: "male" },
-  { id: "demo-m10", name: "測試・方柏翰", score: 540, school: "OTHER", schoolOther: "台科大", department: "企管系", gender: "male" },
-  { id: "demo-f1", name: "測試・張雅婷", score: 940, school: "NYCU", schoolOther: "", department: "外文系", gender: "female" },
-  { id: "demo-f2", name: "測試・王心怡", score: 888, school: "NTHU", schoolOther: "", department: "人社院", gender: "female" },
-  { id: "demo-f3", name: "測試・李佳蓉", score: 801, school: "NYCU", schoolOther: "", department: "生科系", gender: "female" },
-  { id: "demo-f4", name: "測試・吳欣儀", score: 720, school: "OTHER", schoolOther: "實踐", department: "設計系", gender: "female" },
-  { id: "demo-f5", name: "測試・林予安", score: 693, school: "NTHU", schoolOther: "", department: "化工系", gender: "female" },
-  { id: "demo-f6", name: "測試・陳詩涵", score: 651, school: "NYCU", schoolOther: "", department: "傳科系", gender: "female" },
-  { id: "demo-f7", name: "測試・黃詠晴", score: 617, school: "NTHU", schoolOther: "", department: "醫科系", gender: "female" },
-  { id: "demo-f8", name: "測試・周宜蓁", score: 574, school: "NYCU", schoolOther: "", department: "護理系", gender: "female" },
-  { id: "demo-f9", name: "測試・許若瑄", score: 533, school: "NTHU", schoolOther: "", department: "經濟系", gender: "female" },
-  { id: "demo-f10", name: "測試・高子晴", score: 498, school: "OTHER", schoolOther: "北科大", department: "建築系", gender: "female" },
-];
-
-function demoEntries(now: string): PunchEntry[] {
-  return DEMO_ROWS.map((row) => ({ ...row, updatedAt: now }));
-}
-
-function demoBoard(): PunchBoard {
-  const now = new Date().toISOString();
-  return {
-    eventName: DEFAULT_NAME,
-    endAt: DEFAULT_END_AT,
-    updatedAt: now,
-    version: 1,
-    entries: demoEntries(now),
-  };
+export function isDemoEntry(entry: PunchEntry) {
+  return (
+    entry.id.startsWith("demo-") ||
+    entry.name.includes("測試") ||
+    Boolean(entry.legalName?.includes("測試"))
+  );
 }
 
 function coerceBoard(raw: string): PunchBoard {
@@ -160,25 +147,21 @@ function coerceBoard(raw: string): PunchBoard {
   }
 }
 
-/** Seed demo scores only when the board key is missing. Never revive deleted rows. */
 export async function seedBoardIfEmpty(
   env: PunchEnv,
 ): Promise<{ board: PunchBoard; ready: boolean }> {
-  if (!env.CHUMEI_VOTES) return { board: emptyBoard(), ready: false };
-  const raw = await env.CHUMEI_VOTES.get(BOARD_KEY);
-  if (!raw) {
-    const seeded = demoBoard();
-    await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(seeded));
-    return { board: seeded, ready: true };
-  }
-  return { board: coerceBoard(raw), ready: true };
+  return readBoard(env);
 }
 
 function withSchoolOther(entry: PunchEntry): PunchEntry {
   const custom = typeof entry.schoolOther === "string" ? entry.schoolOther.trim() : "";
+  const nameMode = entry.nameMode === "nick" ? "nick" : entry.nameMode === "legal" ? "legal" : undefined;
   return {
     ...entry,
     schoolOther: entry.school === "OTHER" ? custom.slice(0, 40) : "",
+    legalName: typeof entry.legalName === "string" ? entry.legalName.slice(0, 40) : "",
+    nickname: typeof entry.nickname === "string" ? entry.nickname.slice(0, 40) : "",
+    nameMode,
   };
 }
 
@@ -202,22 +185,101 @@ export async function readBoard(
   if (!env.CHUMEI_VOTES) return { board: emptyBoard(), ready: false };
   const raw = await env.CHUMEI_VOTES.get(BOARD_KEY);
   if (!raw) return { board: emptyBoard(), ready: true };
-  return { ready: true, board: coerceBoard(raw) };
+  const board = coerceBoard(raw);
+  const live = board.entries.filter((entry) => !isDemoEntry(entry));
+  if (live.length !== board.entries.length) {
+    board.entries = live;
+    board.updatedAt = new Date().toISOString();
+    board.version += 1;
+    await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(board));
+    await purgePublicBoardCache();
+  }
+  return { ready: true, board };
 }
 
-export function personKey(name: string, gender: Gender) {
-  const nameKey = name
+function isRegistrant(value: unknown): value is PunchRegistrant {
+  if (!value || typeof value !== "object") return false;
+  const row = value as Partial<PunchRegistrant>;
+  return (
+    typeof row.id === "string" &&
+    typeof row.legalName === "string" &&
+    (row.school === "NTHU" || row.school === "NYCU" || row.school === "OTHER") &&
+    (row.gender === "male" || row.gender === "female")
+  );
+}
+
+export async function readRoster(env: PunchEnv): Promise<PunchRegistrant[]> {
+  if (!env.CHUMEI_VOTES) return [];
+  const raw = await env.CHUMEI_VOTES.get(ROSTER_KEY);
+  if (!raw) return [];
+  try {
+    const parsed = JSON.parse(raw) as unknown;
+    if (!Array.isArray(parsed)) return [];
+    const byId = new Map<string, PunchRegistrant>();
+    for (const item of parsed) {
+      if (!isRegistrant(item)) continue;
+      const id = normalizePlayerId(item.id);
+      if (!id) continue;
+      byId.set(id, {
+        id,
+        legalName: String(item.legalName).trim().slice(0, 40),
+        nickname: String(item.nickname ?? "").trim().slice(0, 40),
+        nameMode: item.nameMode === "nick" ? "nick" : "legal",
+        school: item.school,
+        schoolOther: item.school === "OTHER" ? String(item.schoolOther ?? "").trim().slice(0, 40) : "",
+        department: String(item.department ?? "").trim().slice(0, 40),
+        gender: item.gender,
+        contact: String(item.contact ?? "").trim().slice(0, 80),
+      });
+    }
+    return [...byId.values()];
+  } catch {
+    return [];
+  }
+}
+
+export async function writeRoster(env: PunchEnv, roster: PunchRegistrant[]) {
+  if (!env.CHUMEI_VOTES) return;
+  await env.CHUMEI_VOTES.put(ROSTER_KEY, JSON.stringify(roster));
+}
+
+export function findRegistrant(roster: PunchRegistrant[], id: string) {
+  const key = normalizePlayerId(id);
+  return roster.find((row) => row.id === key) ?? null;
+}
+
+export function normalizePlayerId(id: string) {
+  return id.normalize("NFKC").trim().toUpperCase().replace(/\s+/g, "");
+}
+
+export function punchDisplayName(row: {
+  legalName?: string;
+  nickname?: string;
+  nameMode?: PunchNameMode;
+  name?: string;
+}) {
+  if (row.nameMode === "nick" && (row.nickname ?? "").trim()) {
+    return row.nickname!.trim();
+  }
+  if ((row.legalName ?? "").trim()) return row.legalName!.trim();
+  return (row.name ?? "").trim();
+}
+
+export function personKey(entry: { id?: string; name: string; gender: Gender }) {
+  const id = normalizePlayerId(entry.id ?? "");
+  if (id) return `id:${id}`;
+  const nameKey = entry.name
     .normalize("NFKC")
     .replace(/[・·‧．.．\-—–_]/g, "")
     .replace(/\s+/g, "")
     .toLowerCase();
-  return `${gender}:${nameKey}`;
+  return `${entry.gender}:${nameKey}`;
 }
 
 export function uniqueByPerson<T extends PunchEntry>(entries: T[]): T[] {
   const best = new Map<string, T>();
   for (const entry of entries) {
-    const key = personKey(entry.name, entry.gender);
+    const key = personKey(entry);
     const prev = best.get(key);
     if (!prev) {
       best.set(key, entry);
@@ -244,12 +306,13 @@ export function rank(entries: PunchEntry[], gender: Gender) {
 }
 
 export function publicPayload(board: PunchBoard, ready: boolean) {
+  const entries = board.entries.filter((entry) => !isDemoEntry(entry));
   return {
     ready,
     eventName: board.eventName,
     endAt: board.endAt,
     updatedAt: board.updatedAt,
-    male: rank(board.entries, "male").slice(0, 10),
-    female: rank(board.entries, "female").slice(0, 10),
+    male: rank(entries, "male").slice(0, 10),
+    female: rank(entries, "female").slice(0, 10),
   };
 }

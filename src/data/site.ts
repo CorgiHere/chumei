@@ -16,6 +16,8 @@ export const siteConfig: SiteConfig = {
   merchFormUrl:
     "https://docs.google.com/forms/d/e/1FAIpQLSf5hXvKgJrZQQVri5y8de4U49rJHIWI3qqrmeUYpJzy-O0eBQ/viewform",
   rpsFormUrl: "https://forms.gle/ZGZp3FwFKW4Bjm379",
+  punchFormUrl: "https://forms.gle/NrKRYxVfJBgXkW8CA",
+  whoscallDownloadUrl: "https://whoscalltw.pse.is/9taddq",
   joinFormUrl:
     "https://docs.google.com/forms/d/e/1FAIpQLSd30siFkuSjE4WQnrd5hlP4BfwjjNbFiJAhLXnANYTFw5gQ0Q/viewform",
   contactEmail: "chu.mei.committee@gmail.com",

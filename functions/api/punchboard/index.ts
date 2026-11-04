@@ -4,7 +4,7 @@ import {
   PUBLIC_CDN_CACHE_CONTROL,
   json,
   publicPayload,
-  seedBoardIfEmpty,
+  readBoard,
   type PunchEnv,
 } from "./_shared";
 
@@ -37,7 +37,7 @@ export async function onRequestGet(context: PagesContext) {
     return new Response(cached.body, { status: cached.status, headers });
   }
 
-  const { board, ready } = await seedBoardIfEmpty(context.env);
+  const { board, ready } = await readBoard(context.env);
   const payload = publicPayload(board, ready);
   const etag = `"${board.version}-${board.updatedAt}"`;
   if (context.request.headers.get("If-None-Match") === etag) {

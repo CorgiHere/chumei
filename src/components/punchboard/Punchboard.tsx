@@ -16,8 +16,9 @@ import {
   type PunchSchool,
   type RankedPunchEntry,
 } from "@/lib/punchboard";
+import { siteConfig } from "@/data/site";
 import { cn, withBasePath } from "@/lib/utils";
-import { ArcadeCabinet, PunchBrandLockup } from "./ArcadeCabinet";
+import { ArcadeCabinet, DownloadWhoscall, PunchBrandLockup } from "./ArcadeCabinet";
 import { PunchBattleHud } from "./PunchBattleHud";
 import { useSchoolSides } from "../SchoolOrder";
 
@@ -48,14 +49,15 @@ function asRanked(raw: unknown, gender: PunchGender): RankedPunchEntry[] {
     if (!row || typeof row !== "object") return [];
     const item = row as Partial<RankedPunchEntry>;
     const name = String(item.name ?? "").trim();
-    if (!name) return [];
+    const id = String(item.id ?? `${gender}-${index}`);
+    if (!name || name.includes("測試") || id.startsWith("demo-")) return [];
     const school =
       item.school === "NYCU" || item.school === "OTHER" || item.school === "NTHU"
         ? item.school
         : "OTHER";
     return [
       {
-        id: String(item.id ?? `${gender}-${index}`),
+        id,
         name,
         score: Number(item.score) || 0,
         school,
@@ -96,10 +98,10 @@ function topTen(rows: RankedPunchEntry[]) {
 }
 
 function findArrival(prev: RankedPunchEntry[], next: RankedPunchEntry[]) {
-  const before = new Map(prev.map((row) => [personKey(row.name, row.gender), row]));
+  const before = new Map(prev.map((row) => [personKey(row), row]));
   let best: RankedPunchEntry | null = null;
   for (const row of next) {
-    const old = before.get(personKey(row.name, row.gender));
+    const old = before.get(personKey(row));
     const isNew = !old;
     const climbed = Boolean(old && (row.score > old.score || row.rank < old.rank));
     if (!isNew && !climbed) continue;
@@ -388,6 +390,7 @@ function GenderList({
   seeking,
   hitIds,
   onSelect,
+  stage = "full",
 }: {
   className?: string;
   label: string;
@@ -398,56 +401,65 @@ function GenderList({
   seeking: boolean;
   hitIds: Set<string>;
   onSelect: (entry: RankedPunchEntry) => void;
+  stage?: "full" | "podium" | "list";
 }) {
   const slots = boardSlots(rows);
   const rest = slots.slice(3);
+  const showPodium = stage !== "list";
+  const showList = stage !== "podium";
   return (
     <PixelPanel tone={tone} className={className}>
-      <div className="punch-tag">
-        <PunchArt
-          file={tone === "gold" ? "tag-gold.svg" : "tag-cyan.svg"}
-          className="absolute inset-0 h-full w-full"
-        />
-        <h2 className="relative z-1 flex h-full items-center justify-center text-[18px] leading-none text-[#10203a]">
-          {label}
-        </h2>
-      </div>
-      <div className="punch-stage">
-        <span className="punch-spot punch-spot--left" />
-        <span className="punch-spot punch-spot--right" />
-        <PunchArt
-          file={tone === "gold" ? "spark-yellow.svg" : "spark-cyan.svg"}
-          className="pointer-events-none absolute right-3 top-1 h-6 w-6"
-        />
-        <AwardPodium
-          slots={slots}
-          risingId={risingId}
-          arcade={arcade}
-          seeking={seeking}
-          hitIds={hitIds}
-          onSelect={onSelect}
-        />
-      </div>
-      <ol className="mt-2 flex-1">
-        {rest.map((row, index) => (
-          <li key={row?.id ?? `empty-${index + 3}`}>
-            {row ? (
-              <RankRow
-                entry={row}
-                rank={index + 4}
-                tone={tone}
-                arcade={arcade}
-                rising={row.id === risingId}
-                hit={seeking && hitIds.has(row.id)}
-                dim={seeking && !hitIds.has(row.id)}
-                onSelect={onSelect}
-              />
-            ) : (
-              <EmptyRow rank={index + 4} tone={tone} arcade={arcade} />
-            )}
-          </li>
-        ))}
-      </ol>
+      {showPodium ? (
+        <>
+          <div className="punch-tag">
+            <PunchArt
+              file={tone === "gold" ? "tag-gold.svg" : "tag-cyan.svg"}
+              className="absolute inset-0 h-full w-full"
+            />
+            <h2 className="relative z-1 flex h-full items-center justify-center text-[18px] leading-none text-[#10203a]">
+              {label}
+            </h2>
+          </div>
+          <div className="punch-stage">
+            <span className="punch-spot punch-spot--left" />
+            <span className="punch-spot punch-spot--right" />
+            <PunchArt
+              file={tone === "gold" ? "spark-yellow.svg" : "spark-cyan.svg"}
+              className="pointer-events-none absolute right-3 top-1 h-6 w-6"
+            />
+            <AwardPodium
+              slots={slots}
+              risingId={risingId}
+              arcade={arcade}
+              seeking={seeking}
+              hitIds={hitIds}
+              onSelect={onSelect}
+            />
+          </div>
+        </>
+      ) : null}
+      {showList ? (
+        <ol className="mt-2 flex-1">
+          {rest.map((row, index) => (
+            <li key={row?.id ?? `empty-${index + 3}`}>
+              {row ? (
+                <RankRow
+                  entry={row}
+                  rank={index + 4}
+                  tone={tone}
+                  arcade={arcade}
+                  rising={row.id === risingId}
+                  hit={seeking && hitIds.has(row.id)}
+                  dim={seeking && !hitIds.has(row.id)}
+                  onSelect={onSelect}
+                />
+              ) : (
+                <EmptyRow rank={index + 4} tone={tone} arcade={arcade} />
+              )}
+            </li>
+          ))}
+        </ol>
+      ) : null}
     </PixelPanel>
   );
 }
@@ -546,6 +558,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
   const [arrival, setArrival] = useState<RankedPunchEntry | null>(null);
   const [diploma, setDiploma] = useState<RankedPunchEntry | null>(null);
   const seenRef = useRef(false);
+  const queueRef = useRef<RankedPunchEntry[]>([]);
   const prevRef = useRef<{ male: RankedPunchEntry[]; female: RankedPunchEntry[] }>({
     male: [],
     female: [],
@@ -573,7 +586,14 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
           incoming =
             findArrival(prevRef.current.male, male) ??
             findArrival(prevRef.current.female, female);
-          if (incoming) setArrival(incoming);
+          if (incoming) {
+            const hit = incoming;
+            setArrival((current) => {
+              if (!current) return hit;
+              queueRef.current.push(hit);
+              return current;
+            });
+          }
         }
         seenRef.current = true;
         prevRef.current = { male, female };
@@ -637,7 +657,10 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
           <ArrivalBurst
             entry={arrival}
             arcade={arcade}
-            onDone={() => setArrival(null)}
+            onDone={() => {
+              const next = queueRef.current.shift() ?? null;
+              setArrival(next);
+            }}
           />
         ) : null}
 
@@ -662,7 +685,9 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
             >
               {countdown.phase === "ended" ? "FINAL" : "LIVE"}
             </span>
+            <DownloadWhoscall variant="pill" className="hidden sm:inline-flex" />
           </div>
+          <DownloadWhoscall variant="pill" className="relative z-1 mx-auto mt-3 flex w-full max-w-[280px] sm:hidden" />
         </div>
 
         <div className="relative z-4 mt-5 grid grid-cols-2 gap-3 lg:hidden">
@@ -735,32 +760,72 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
               );
             })}
           </div>
+          <a
+            href={siteConfig.punchFormUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-[13px] text-[#15DCE8] underline underline-offset-4"
+          >
+            還沒報名？先填表單
+          </a>
         </div>
 
-        <div className="relative mt-8 grid items-stretch gap-8 lg:grid-cols-2 lg:gap-4">
-          <GenderList
-            className={tab === "male" ? "flex" : "hidden lg:flex"}
-            label="男生組"
-            tone="gold"
-            rows={board.male}
-            risingId={arrival?.id}
-            arcade={arcade}
-            seeking={seeking}
-            hitIds={hitIds}
-            onSelect={setDiploma}
-          />
-          <GenderList
-            className={tab === "female" ? "flex" : "hidden lg:flex"}
-            label="女生組"
-            tone="cyan"
-            rows={board.female}
-            risingId={arrival?.id}
-            arcade={arcade}
-            seeking={seeking}
-            hitIds={hitIds}
-            onSelect={setDiploma}
-          />
+        <div className="relative mt-8 space-y-3">
+          <div className="grid items-stretch gap-8 lg:grid-cols-2 lg:gap-4">
+            <GenderList
+              className={tab === "male" ? "flex" : "hidden lg:flex"}
+              label="男生組"
+              tone="gold"
+              rows={board.male}
+              risingId={arrival?.id}
+              arcade={arcade}
+              seeking={seeking}
+              hitIds={hitIds}
+              onSelect={setDiploma}
+              stage="podium"
+            />
+            <GenderList
+              className={tab === "female" ? "flex" : "hidden lg:flex"}
+              label="女生組"
+              tone="cyan"
+              rows={board.female}
+              risingId={arrival?.id}
+              arcade={arcade}
+              seeking={seeking}
+              hitIds={hitIds}
+              onSelect={setDiploma}
+              stage="podium"
+            />
+          </div>
+          <DownloadWhoscall variant="banner" />
+          <div className="grid items-stretch gap-8 lg:grid-cols-2 lg:gap-4">
+            <GenderList
+              className={tab === "male" ? "flex" : "hidden lg:flex"}
+              label="男生組"
+              tone="gold"
+              rows={board.male}
+              risingId={arrival?.id}
+              arcade={arcade}
+              seeking={seeking}
+              hitIds={hitIds}
+              onSelect={setDiploma}
+              stage="list"
+            />
+            <GenderList
+              className={tab === "female" ? "flex" : "hidden lg:flex"}
+              label="女生組"
+              tone="cyan"
+              rows={board.female}
+              risingId={arrival?.id}
+              arcade={arcade}
+              seeking={seeking}
+              hitIds={hitIds}
+              onSelect={setDiploma}
+              stage="list"
+            />
+          </div>
         </div>
+        <DownloadWhoscall variant="fab" />
 
         <TeamBattle male={board.male} female={board.female} arcade={arcade} />
 
@@ -823,6 +888,14 @@ function ScoreDiploma({
       aria-label={`${entry.name}的獎狀`}
       onClick={onClose}
     >
+      <button
+        type="button"
+        onClick={onClose}
+        aria-label="關閉"
+        className="absolute right-3 top-3 z-10 flex h-11 w-11 cursor-pointer items-center justify-center border-4 border-white/50 bg-black text-[32px] leading-none text-white"
+      >
+        ×
+      </button>
       <div
         className="relative max-h-[98dvh] w-auto max-w-[min(801px,98vw)]"
         onClick={(event) => event.stopPropagation()}
@@ -897,13 +970,6 @@ function ScoreDiploma({
             </DiplomaField>
           </div>
         </div>
-        <button
-          type="button"
-          onClick={onClose}
-          className="absolute bottom-3 left-1/2 z-1 -translate-x-1/2 cursor-pointer border-4 border-white/40 bg-black px-4 py-2 text-[14px] text-white"
-        >
-          關閉
-        </button>
       </div>
     </div>
   );
@@ -946,45 +1012,33 @@ function ArrivalBurst({
   onDone: () => void;
 }) {
   useEffect(() => {
-    const timer = window.setTimeout(onDone, 2600);
+    const timer = window.setTimeout(onDone, 15000);
     return () => window.clearTimeout(timer);
   }, [entry.id, entry.score, onDone]);
-  const pixels = Array.from({ length: 18 }, (_, i) => i);
   return (
-    <div className="pointer-events-none absolute inset-0 z-20 overflow-hidden">
-      <div className="punch-flash absolute inset-0 bg-[#ffd54a]" />
-      {pixels.map((i) => (
-        <span
-          key={i}
-          className="punch-pixel-up"
-          style={{
-            left: `${5 + ((i * 13) % 90)}%`,
-            animationDelay: `${i * 55}ms`,
-            background: i % 3 === 0 ? "#ff4f9a" : i % 2 === 0 ? "#ffd54a" : "#2ee0d6",
-          }}
-        />
-      ))}
-      <div className="punch-challenger-up absolute inset-x-0 bottom-0 flex justify-center px-4">
-        <div className="border-4 border-[#ffd54a] bg-[#07133f] px-5 py-4 text-center shadow-[8px_8px_0_#8a6a00]">
-          <p className={cn(arcade, "text-[10px] leading-relaxed text-[#ffd54a]")}>
-            ▲ 上榜 ▲
-          </p>
-          <div className="mx-auto mt-3 grid w-8 grid-cols-4 gap-px" aria-hidden>
-            {[
-              0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 0, 1, 1, 0,
-            ].map((on, i) => (
-              <span
-                key={i}
-                className={cn("size-2", on ? "bg-[#ffd54a]" : "bg-transparent")}
-              />
-            ))}
-          </div>
-          <p className="mt-3 text-[18px] leading-tight">{entry.name}</p>
-          <p className="mt-2 text-[14px] text-white">
-            {rankLabel(entry.rank)}　
-            <span className={arcade}>{formatScore(entry.score)}</span>
-          </p>
-        </div>
+    <div className="absolute inset-0 z-30 flex items-center justify-center bg-black/80 p-4">
+      <div className="w-full max-w-xl border-4 border-[#ffd54a] bg-[#07133f] px-6 py-8 text-center shadow-[8px_8px_0_#8a6a00]">
+        <p className={cn(arcade, "text-[11px] leading-relaxed text-[#ffd54a]")}>
+          PHOTO
+        </p>
+        <p className="mt-5 text-[22px] leading-tight text-[#9ff6f2] sm:text-[28px]">
+          ID {entry.id}
+        </p>
+        <p className="mt-4 break-words text-[28px] leading-tight sm:text-[36px]">
+          {entry.name}
+        </p>
+        <p className={cn(arcade, "mt-5 text-[22px] leading-none text-[#ffd54a] sm:text-[28px]")}>
+          {formatScore(entry.score)}
+          <span className="ml-2 text-[16px]">分</span>
+        </p>
+        <p className="mt-3 text-[14px] text-white/70">{rankLabel(entry.rank)}</p>
+        <button
+          type="button"
+          onClick={onDone}
+          className="mt-6 cursor-pointer border-4 border-white/50 bg-black px-5 py-2 text-[16px] text-white"
+        >
+          繼續
+        </button>
       </div>
     </div>
   );

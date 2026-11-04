@@ -5,6 +5,7 @@ import { Press_Start_2P } from "next/font/google";
 import localFont from "next/font/local";
 import {
   getPunchboardAdminEndpoint,
+  normalizePlayerId,
   PUNCH_GENDER_LABEL,
   punchSchoolDisplay,
   PUNCH_SCHOOL_LABEL,
@@ -13,6 +14,8 @@ import {
   uniqueByPerson,
   type PunchEntry,
   type PunchGender,
+  type PunchNameMode,
+  type PunchRegistrant,
   type PunchSchool,
 } from "@/lib/punchboard";
 import { cn, withBasePath } from "@/lib/utils";
@@ -34,16 +37,25 @@ type AdminState = {
   eventName: string;
   endAt: string;
   entries: PunchEntry[];
+  roster: PunchRegistrant[];
 };
 
 const blankForm = {
   id: "",
-  name: "",
   score: "",
+  nameMode: "legal" as PunchNameMode,
+};
+
+const blankRegistrant = {
+  id: "",
+  legalName: "",
+  nickname: "",
+  nameMode: "legal" as PunchNameMode,
   school: "NTHU" as PunchSchool,
   schoolOther: "",
   department: "",
   gender: "male" as PunchGender,
+  contact: "",
 };
 
 async function adminFetch(init?: RequestInit) {
@@ -68,8 +80,12 @@ export function PunchboardAdmin() {
     eventName: PUNCHBOARD_DEFAULT_NAME,
     endAt: PUNCHBOARD_DEFAULT_END_AT,
     entries: [],
+    roster: [],
   });
   const [form, setForm] = useState(blankForm);
+  const [registrantForm, setRegistrantForm] = useState(blankRegistrant);
+  const [rosterText, setRosterText] = useState("");
+  const [contactId, setContactId] = useState("");
   const [query, setQuery] = useState("");
   const [mailTo, setMailTo] = useState("chu.mei.committee+punchboard@gmail.com");
   const [mailing, setMailing] = useState(false);
@@ -103,6 +119,7 @@ export function PunchboardAdmin() {
           eventName: data.eventName,
           endAt: data.endAt,
           entries: data.entries ?? [],
+          roster: data.roster ?? [],
         });
         setAuthed(true);
       } catch {
@@ -124,7 +141,10 @@ export function PunchboardAdmin() {
     const match = (e: PunchEntry) =>
       !q ||
       [
+        e.id,
         e.name,
+        e.legalName,
+        e.nickname,
         e.department,
         e.schoolOther,
         PUNCH_SCHOOL_LABEL[e.school],
@@ -140,6 +160,12 @@ export function PunchboardAdmin() {
         .sort((a, b) => b.score - a.score);
     return { male: sortRows("male"), female: sortRows("female") };
   }, [board.entries, query]);
+
+  const lookedUp = useMemo(() => {
+    const id = normalizePlayerId(form.id);
+    if (!id) return null;
+    return board.roster.find((row) => row.id === id) ?? null;
+  }, [board.roster, form.id]);
 
   async function login(e: FormEvent) {
     e.preventDefault();
@@ -161,6 +187,7 @@ export function PunchboardAdmin() {
         eventName: data.eventName,
         endAt: data.endAt,
         entries: data.entries ?? [],
+        roster: data.roster ?? [],
       });
     }
   }
@@ -180,15 +207,22 @@ export function PunchboardAdmin() {
       setError("登入已過期，請再登入一次。");
       return false;
     }
+    const data = (await res.json()) as AdminState & { mailed?: string; error?: string };
     if (!res.ok) {
-      setError("儲存失敗，請再試一次。");
+      if (data.error === "not_registered") {
+        setError("這個 ID 還沒在報名名單裡，請先登錄報名資料。");
+      } else if (data.error === "invalid_registrant") {
+        setError("報名資料不完整。ID、本名、學校、性別都要填。");
+      } else {
+        setError("儲存失敗，請再試一次。");
+      }
       return false;
     }
-    const data = (await res.json()) as AdminState & { mailed?: string };
     setBoard({
       eventName: data.eventName,
       endAt: data.endAt,
       entries: data.entries ?? [],
+      roster: data.roster ?? [],
     });
     if (data.mailed === "sent") {
       setNotice("已更新，並把前 10 名寄到 chu.mei.committee+punchboard@gmail.com。");
@@ -262,7 +296,7 @@ export function PunchboardAdmin() {
         <form onSubmit={login} className={panelClass}>
           <p className={cn(pressStart.className, "text-[10px] text-[#ffd54a]")}>ADMIN</p>
           <p className="text-[12px] text-white/70">
-            只有籌委會現場登錄成績。請用 Cloudflare 設定的後台密碼登入。
+            只有籌委會現場登錄成績。請先匯入報名名單，再用 ID 對成績。
           </p>
           <label className="block text-[12px]" htmlFor="admin-pass">
             後台密碼
@@ -364,30 +398,28 @@ export function PunchboardAdmin() {
           void postAction({
             action: "upsert",
             entry: {
-              id: form.id || undefined,
-              name: form.name,
+              id: form.id,
               score: Number(form.score),
-              school: form.school,
-              schoolOther: form.schoolOther,
-              department: form.department,
-              gender: form.gender,
+              nameMode: form.nameMode,
             },
           }).then((ok) => {
             if (ok) setForm(blankForm);
           });
         }}
       >
-        <h2 className={cn(pressStart.className, "text-[12px] text-[#ffd54a]")}>
-          {form.id ? "EDIT" : "NEW"}
-        </h2>
+        <h2 className={cn(pressStart.className, "text-[12px] text-[#ffd54a]")}>SCORE</h2>
+        <p className="text-[12px] text-white/70">
+          先輸入現場發的 ID。對上報名名單後才能登錄分數。榜上顯示本名或暱稱由選手選。
+        </p>
         <div className="grid gap-4 md:grid-cols-2">
-          <Field label="姓名" htmlFor="p-name">
+          <Field label="選手 ID" htmlFor="p-id">
             <input
-              id="p-name"
+              id="p-id"
               required
-              value={form.name}
-              onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+              value={form.id}
+              onChange={(e) => setForm((f) => ({ ...f, id: e.target.value }))}
               className={fieldClass}
+              placeholder="例如 A017"
             />
           </Field>
           <Field label="分數" htmlFor="p-score">
@@ -400,13 +432,118 @@ export function PunchboardAdmin() {
               className={fieldClass}
             />
           </Field>
-          <Field label="學校" htmlFor="p-school">
+        </div>
+        {form.id.trim() ? (
+          lookedUp ? (
+            <div className="border-2 border-[#2ee0d6]/50 bg-[#06102f] p-4 text-[13px] text-white">
+              <p className="text-[#ffd54a]">已報名　ID {lookedUp.id}</p>
+              <p className="mt-2">
+                本名 {lookedUp.legalName}
+                {lookedUp.nickname ? `　暱稱 ${lookedUp.nickname}` : ""}
+              </p>
+              <p className="mt-1 text-white/75">
+                {punchSchoolDisplay(lookedUp)}
+                {lookedUp.department ? `　${lookedUp.department}` : ""}
+               　{lookedUp.gender === "male" ? "男生組" : "女生組"}
+              </p>
+            </div>
+          ) : (
+            <p className="text-[13px] text-[#ff6b6b]">這個 ID 還沒報名，不能登錄成績。</p>
+          )
+        ) : null}
+        <fieldset className="space-y-2">
+          <legend className="text-[12px]">榜上顯示</legend>
+          <label className="mr-4 inline-flex items-center gap-2 text-[13px]">
+            <input
+              type="radio"
+              name="name-mode"
+              checked={form.nameMode === "legal"}
+              onChange={() => setForm((f) => ({ ...f, nameMode: "legal" }))}
+            />
+            本名
+            {lookedUp ? `（${lookedUp.legalName}）` : ""}
+          </label>
+          <label className="inline-flex items-center gap-2 text-[13px]">
+            <input
+              type="radio"
+              name="name-mode"
+              checked={form.nameMode === "nick"}
+              onChange={() => setForm((f) => ({ ...f, nameMode: "nick" }))}
+              disabled={!lookedUp?.nickname}
+            />
+            暱稱
+            {lookedUp?.nickname ? `（${lookedUp.nickname}）` : "（這位沒填暱稱）"}
+          </label>
+        </fieldset>
+        <div className="flex flex-wrap gap-3">
+          <button type="submit" className={btnPrimary} disabled={!lookedUp}>
+            登錄成績
+          </button>
+          <button type="button" className={btnGhost} onClick={() => setForm(blankForm)}>
+            清空
+          </button>
+        </div>
+      </form>
+
+      <form
+        className={panelClass}
+        onSubmit={(e) => {
+          e.preventDefault();
+          void postAction({
+            action: "upsertRegistrant",
+            registrant: registrantForm,
+          }).then((ok) => {
+            if (ok) setRegistrantForm(blankRegistrant);
+          });
+        }}
+      >
+        <h2 className={cn(pressStart.className, "text-[12px] text-[#ffd54a]")}>ROSTER</h2>
+        <p className="text-[12px] text-white/70">
+          全報名。表單填完後，在這裡幫每個人編一個 ID。聯絡方式只給籌委會看，前三名點下去才會顯示。
+        </p>
+        <div className="grid gap-4 md:grid-cols-2">
+          <Field label="ID" htmlFor="r-id">
+            <input
+              id="r-id"
+              required
+              value={registrantForm.id}
+              onChange={(e) => setRegistrantForm((f) => ({ ...f, id: e.target.value }))}
+              className={fieldClass}
+            />
+          </Field>
+          <Field label="本名" htmlFor="r-legal">
+            <input
+              id="r-legal"
+              required
+              value={registrantForm.legalName}
+              onChange={(e) => setRegistrantForm((f) => ({ ...f, legalName: e.target.value }))}
+              className={fieldClass}
+            />
+          </Field>
+          <Field label="暱稱（選填）" htmlFor="r-nick">
+            <input
+              id="r-nick"
+              value={registrantForm.nickname}
+              onChange={(e) => setRegistrantForm((f) => ({ ...f, nickname: e.target.value }))}
+              className={fieldClass}
+            />
+          </Field>
+          <Field label="聯絡方式" htmlFor="r-contact">
+            <input
+              id="r-contact"
+              value={registrantForm.contact}
+              onChange={(e) => setRegistrantForm((f) => ({ ...f, contact: e.target.value }))}
+              className={fieldClass}
+              placeholder="電話或信箱"
+            />
+          </Field>
+          <Field label="學校" htmlFor="r-school">
             <select
-              id="p-school"
-              value={form.school}
+              id="r-school"
+              value={registrantForm.school}
               onChange={(e) => {
                 const school = e.target.value as PunchSchool;
-                setForm((f) => ({
+                setRegistrantForm((f) => ({
                   ...f,
                   school,
                   schoolOther: school === "OTHER" ? f.schoolOther : "",
@@ -423,32 +560,33 @@ export function PunchboardAdmin() {
               <option value="OTHER">其他（自行輸入）</option>
             </select>
           </Field>
-          {form.school === "OTHER" ? (
-            <Field label="學校名稱" htmlFor="p-school-other">
+          {registrantForm.school === "OTHER" ? (
+            <Field label="學校名稱" htmlFor="r-school-other">
               <input
-                id="p-school-other"
+                id="r-school-other"
                 required
-                value={form.schoolOther}
-                placeholder="例如：台科大"
-                onChange={(e) => setForm((f) => ({ ...f, schoolOther: e.target.value }))}
+                value={registrantForm.schoolOther}
+                onChange={(e) =>
+                  setRegistrantForm((f) => ({ ...f, schoolOther: e.target.value }))
+                }
                 className={fieldClass}
               />
             </Field>
           ) : null}
-          <Field label="系所" htmlFor="p-dept">
+          <Field label="系所" htmlFor="r-dept">
             <input
-              id="p-dept"
-              value={form.department}
-              onChange={(e) => setForm((f) => ({ ...f, department: e.target.value }))}
+              id="r-dept"
+              value={registrantForm.department}
+              onChange={(e) => setRegistrantForm((f) => ({ ...f, department: e.target.value }))}
               className={fieldClass}
             />
           </Field>
-          <Field label="性別榜" htmlFor="p-gender">
+          <Field label="性別榜" htmlFor="r-gender">
             <select
-              id="p-gender"
-              value={form.gender}
+              id="r-gender"
+              value={registrantForm.gender}
               onChange={(e) =>
-                setForm((f) => ({ ...f, gender: e.target.value as PunchGender }))
+                setRegistrantForm((f) => ({ ...f, gender: e.target.value as PunchGender }))
               }
               className={fieldClass}
             >
@@ -457,16 +595,42 @@ export function PunchboardAdmin() {
             </select>
           </Field>
         </div>
-        <div className="flex flex-wrap gap-3">
-          <button type="submit" className={btnPrimary}>
-            {form.id ? "更新這筆" : "登錄成績"}
-          </button>
-          {form.id ? (
-            <button type="button" className={btnGhost} onClick={() => setForm(blankForm)}>
-              取消編輯
-            </button>
-          ) : null}
-        </div>
+        <button type="submit" className={btnPrimary}>
+          存進報名名單
+        </button>
+        <label className="block text-[12px]" htmlFor="roster-paste">
+          一次貼上（每行：ID 本名 暱稱 學校 性別 系所 聯絡）
+        </label>
+        <textarea
+          id="roster-paste"
+          value={rosterText}
+          onChange={(e) => setRosterText(e.target.value)}
+          className={`${fieldClass} min-h-28 font-mono-ui text-[12px]`}
+          placeholder={"A017\t王小明\t小明\t清大\t女\t工科系\t0912..."}
+        />
+        <button
+          type="button"
+          className={btnGhost}
+          onClick={() => {
+            const parsed = parseRosterPaste(rosterText);
+            if (parsed.length === 0) {
+              setError("貼上的名單讀不到任何一列。");
+              return;
+            }
+            void postAction({
+              action: "replaceRoster",
+              roster: [...board.roster, ...parsed],
+            }).then((ok) => {
+              if (ok) {
+                setRosterText("");
+                setNotice(`已匯入 ${parsed.length} 筆報名。`);
+              }
+            });
+          }}
+        >
+          匯入貼上的名單
+        </button>
+        <p className="text-[12px] text-white/55">目前報名 {board.roster.length} 人。</p>
       </form>
 
       {error ? <p className="text-[12px] text-[#ff6b6b]">{error}</p> : null}
@@ -488,19 +652,18 @@ export function PunchboardAdmin() {
           <EntryTable
             title="男生組"
             rows={filteredByGender.male}
+            roster={board.roster}
+            contactId={contactId}
+            onToggleContact={setContactId}
             onEdit={(row) =>
               setForm({
                 id: row.id,
-                name: row.name,
                 score: String(row.score),
-                school: row.school,
-                schoolOther: row.schoolOther ?? "",
-                department: row.department,
-                gender: row.gender,
+                nameMode: row.nameMode === "nick" ? "nick" : "legal",
               })
             }
             onDelete={(row) => {
-              if (window.confirm(`刪除 ${row.name}？`)) {
+              if (window.confirm(`刪除 ${row.name} 的成績？`)) {
                 void postAction({ action: "delete", id: row.id });
               }
             }}
@@ -508,19 +671,18 @@ export function PunchboardAdmin() {
           <EntryTable
             title="女生組"
             rows={filteredByGender.female}
+            roster={board.roster}
+            contactId={contactId}
+            onToggleContact={setContactId}
             onEdit={(row) =>
               setForm({
                 id: row.id,
-                name: row.name,
                 score: String(row.score),
-                school: row.school,
-                schoolOther: row.schoolOther ?? "",
-                department: row.department,
-                gender: row.gender,
+                nameMode: row.nameMode === "nick" ? "nick" : "legal",
               })
             }
             onDelete={(row) => {
-              if (window.confirm(`刪除 ${row.name}？`)) {
+              if (window.confirm(`刪除 ${row.name} 的成績？`)) {
                 void postAction({ action: "delete", id: row.id });
               }
             }}
@@ -565,11 +727,17 @@ const actionBtn =
 function EntryTable({
   title,
   rows,
+  roster,
+  contactId,
+  onToggleContact,
   onEdit,
   onDelete,
 }: {
   title: string;
   rows: PunchEntry[];
+  roster: PunchRegistrant[];
+  contactId: string;
+  onToggleContact: (id: string) => void;
   onEdit: (row: PunchEntry) => void;
   onDelete: (row: PunchEntry) => void;
 }) {
@@ -580,69 +748,159 @@ function EntryTable({
         <span className="ml-2 text-[12px] text-white/45">{rows.length} 人</span>
       </h3>
       <div className="overflow-x-auto border-4 border-white/15">
-        <table className="w-full min-w-[520px] text-left text-[12px]">
+        <table className="w-full min-w-[560px] text-left text-[12px]">
           <thead className="bg-[#06102f] text-[#ffd54a]">
             <tr>
+              <th className="px-3 py-3">名次</th>
+              <th className="px-3 py-3">ID</th>
               <th className="px-3 py-3">分數</th>
-              <th className="px-3 py-3">姓名</th>
+              <th className="px-3 py-3">顯示名</th>
               <th className="px-3 py-3">校</th>
-              <th className="px-3 py-3">系所</th>
               <th className="px-3 py-3">操作</th>
             </tr>
           </thead>
           <tbody>
             {rows.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-3 py-6 text-white/45">
+                <td colSpan={6} className="px-3 py-6 text-white/45">
                   目前沒有成績。
                 </td>
               </tr>
             ) : (
-              rows.map((row) => (
-                <tr key={row.id} className="border-t-2 border-white/10 hover:bg-[#2ee0d6]/15">
-                  <td className={cn(pressStart.className, "px-3 py-3 text-[12px]")}>{row.score}</td>
-                  <td className="px-3 py-3">{row.name}</td>
-                  <td className="px-3 py-3">
-                    {row.school === "OTHER" ? (
-                      <span className="text-white/85">{(row.schoolOther ?? "").trim() || "其他"}</span>
-                    ) : (
-                      <span
+              rows.map((row, index) => {
+                const rank = index + 1;
+                const registrant = roster.find((item) => item.id === normalizePlayerId(row.id));
+                const showContact = contactId === row.id;
+                return (
+                  <tr key={row.id} className="border-t-2 border-white/10 hover:bg-[#2ee0d6]/15">
+                    <td className="px-3 py-3">{rank}</td>
+                    <td className="px-3 py-3">{row.id}</td>
+                    <td className={cn(pressStart.className, "px-3 py-3 text-[12px]")}>
+                      {row.score}
+                    </td>
+                    <td className="px-3 py-3">
+                      <button
+                        type="button"
                         className={cn(
-                          "inline-flex size-7 items-center justify-center text-white",
-                          row.school === "NTHU" ? "bg-nthu" : "bg-nycu",
+                          "text-left",
+                          rank <= 3 && "underline decoration-[#ffd54a] underline-offset-4",
                         )}
+                        onClick={() => {
+                          if (rank > 3) return;
+                          onToggleContact(showContact ? "" : row.id);
+                        }}
                       >
-                        {row.school === "NTHU" ? "清" : "交"}
-                      </span>
-                    )}
-                  </td>
-                  <td className="px-3 py-3">{row.department}</td>
-                  <td className="px-3 py-3">
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        type="button"
-                        className={`${actionBtn} border-2 border-[#ffd54a] text-[#ffd54a] hover:bg-[#ffd54a] hover:text-[#1a1400]`}
-                        onClick={() => onEdit(row)}
-                      >
-                        修改
+                        {row.name}
                       </button>
-                      <button
-                        type="button"
-                        className={`${actionBtn} border-2 border-white/35 text-white hover:bg-white hover:text-[#07133f]`}
-                        onClick={() => onDelete(row)}
-                      >
-                        刪除
-                      </button>
-                    </div>
-                  </td>
-                </tr>
-              ))
+                      {rank <= 3 && showContact ? (
+                        <p className="mt-1 text-[12px] text-[#ffd54a]">
+                          {registrant?.contact?.trim() || "這位沒填聯絡方式"}
+                        </p>
+                      ) : rank <= 3 ? (
+                        <p className="mt-1 text-[11px] text-white/45">點名字看聯絡方式</p>
+                      ) : null}
+                    </td>
+                    <td className="px-3 py-3">
+                      {row.school === "OTHER" ? (
+                        <span className="text-white/85">
+                          {(row.schoolOther ?? "").trim() || "其他"}
+                        </span>
+                      ) : (
+                        <span
+                          className={cn(
+                            "inline-flex size-7 items-center justify-center text-white",
+                            row.school === "NTHU" ? "bg-nthu" : "bg-nycu",
+                          )}
+                        >
+                          {row.school === "NTHU" ? "清" : "交"}
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-3 py-3">
+                      <div className="flex flex-wrap gap-2">
+                        <button
+                          type="button"
+                          className={`${actionBtn} border-2 border-[#ffd54a] text-[#ffd54a] hover:bg-[#ffd54a] hover:text-[#1a1400]`}
+                          onClick={() => onEdit(row)}
+                        >
+                          改分數
+                        </button>
+                        <button
+                          type="button"
+                          className={`${actionBtn} border-2 border-white/35 text-white hover:bg-white hover:text-[#07133f]`}
+                          onClick={() => onDelete(row)}
+                        >
+                          刪除
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })
             )}
           </tbody>
         </table>
       </div>
     </section>
   );
+}
+
+function parseRosterPaste(text: string): PunchRegistrant[] {
+  const rows: PunchRegistrant[] = [];
+  for (const line of text.split(/\r?\n/)) {
+    const parts = line.split(/[\t,]/).map((part) => part.trim());
+    if (parts.filter(Boolean).length < 4) continue;
+    const id = parts[0] ?? "";
+    const legalName = parts[1] ?? "";
+    let nickname = "";
+    let schoolRaw = "";
+    let genderRaw = "";
+    let department = "";
+    let contact = "";
+    if (parseSchoolToken(parts[2] ?? "") && parseGenderToken(parts[3] ?? "")) {
+      schoolRaw = parts[2] ?? "";
+      genderRaw = parts[3] ?? "";
+      department = parts[4] ?? "";
+      contact = parts[5] ?? "";
+    } else {
+      nickname = parts[2] ?? "";
+      schoolRaw = parts[3] ?? "";
+      genderRaw = parts[4] ?? "";
+      department = parts[5] ?? "";
+      contact = parts[6] ?? "";
+    }
+    const school = parseSchoolToken(schoolRaw);
+    const gender = parseGenderToken(genderRaw);
+    if (!id || !legalName || !school || !gender) continue;
+    rows.push({
+      id,
+      legalName,
+      nickname,
+      nameMode: "legal",
+      school: school.value,
+      schoolOther: school.other,
+      department,
+      gender,
+      contact,
+    });
+  }
+  return rows;
+}
+
+function parseSchoolToken(value: string): { value: PunchSchool; other: string } | null {
+  const token = value.trim();
+  if (!token) return null;
+  if (/清|NTHU/i.test(token)) return { value: "NTHU", other: "" };
+  if (/交|NYCU|NCTU/i.test(token)) return { value: "NYCU", other: "" };
+  if (/其他|OTHER/i.test(token)) return { value: "OTHER", other: "" };
+  return { value: "OTHER", other: token.slice(0, 40) };
+}
+
+function parseGenderToken(value: string): PunchGender | null {
+  const token = value.trim();
+  if (/^女|female/i.test(token)) return "female";
+  if (/^男|male/i.test(token)) return "male";
+  return null;
 }
 
 function Field({

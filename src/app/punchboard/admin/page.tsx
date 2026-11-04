@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { PunchboardAdmin } from "@/components/punchboard";
+import { PunchboardAdmin } from "@/components/punchboard/PunchboardAdmin";
 
 export const metadata: Metadata = {
   title: "開扁後台",

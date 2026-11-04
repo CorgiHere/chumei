@@ -1,13 +1,79 @@
+import { siteConfig } from "@/data/site";
 import { cn, withBasePath } from "@/lib/utils";
+
+export function WhoscallMark({ className }: { className?: string }) {
+  return (
+    <img
+      src={withBasePath("/images/partners/whoscall-logo-green.png")}
+      alt=""
+      className={className}
+    />
+  );
+}
+
+export function DownloadWhoscall({
+  variant,
+  className,
+}: {
+  variant: "logo" | "pill" | "banner" | "fab";
+  className?: string;
+}) {
+  const href = siteConfig.whoscallDownloadUrl;
+  if (variant === "logo") {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={cn("inline-flex shrink-0", className)}
+        aria-label="下載 Whoscall"
+      >
+        <WhoscallMark className="h-11 w-auto sm:h-14" />
+      </a>
+    );
+  }
+  if (variant === "fab") {
+    return (
+      <a
+        href={href}
+        target="_blank"
+        rel="noopener noreferrer"
+        className={cn(
+          "fixed right-4 z-[61] flex size-[4.5rem] flex-col items-center justify-center rounded-full bg-[#12b24a] text-center text-[11px] leading-tight text-white no-underline shadow-[0_4px_0_#0a7a32] lg:hidden",
+          "bottom-[max(5.75rem,calc(env(safe-area-inset-bottom)+4.75rem))]",
+          className,
+        )}
+      >
+        <WhoscallMark className="mb-0.5 h-7 w-auto" />
+        下載
+        <br />
+        Whoscall
+      </a>
+    );
+  }
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className={cn(
+        "inline-flex items-center justify-center gap-2 bg-[#12b24a] font-semibold text-white no-underline hover:bg-[#15c652]",
+        variant === "banner"
+          ? "w-full min-h-11 px-4 py-2 text-[16px]"
+          : "min-h-10 px-3 py-1.5 text-[14px]",
+        className,
+      )}
+    >
+      <WhoscallMark className="h-6 w-auto" />
+      下載 Whoscall
+    </a>
+  );
+}
 
 export function PunchBrandLockup() {
   return (
     <div className="flex items-center justify-center gap-3 sm:gap-4">
-      <img
-        src={withBasePath("/images/partners/whoscall-logo-green.png")}
-        alt="Whoscall"
-        className="h-11 w-auto sm:h-14"
-      />
+      <DownloadWhoscall variant="logo" />
       <span className="text-xl text-white/70 sm:text-3xl">×</span>
       <img
         src={withBasePath("/images/brand/chumei-logo.png")}

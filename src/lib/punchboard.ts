@@ -1,5 +1,6 @@
 export type PunchGender = "male" | "female";
 export type PunchSchool = "NTHU" | "NYCU" | "OTHER";
+export type PunchNameMode = "legal" | "nick";
 
 export type PunchEntry = {
   id: string;
@@ -10,6 +11,21 @@ export type PunchEntry = {
   department: string;
   gender: PunchGender;
   updatedAt: string;
+  legalName?: string;
+  nickname?: string;
+  nameMode?: PunchNameMode;
+};
+
+export type PunchRegistrant = {
+  id: string;
+  legalName: string;
+  nickname: string;
+  nameMode: PunchNameMode;
+  school: PunchSchool;
+  schoolOther?: string;
+  department: string;
+  gender: PunchGender;
+  contact: string;
 };
 
 export type RankedPunchEntry = PunchEntry & { rank: number };
@@ -81,14 +97,33 @@ export function normalizePersonName(name: string) {
     .toLowerCase();
 }
 
-export function personKey(name: string, gender: PunchGender) {
-  return `${gender}:${normalizePersonName(name)}`;
+export function normalizePlayerId(id: string) {
+  return id.normalize("NFKC").trim().toUpperCase().replace(/\s+/g, "");
+}
+
+export function personKey(entry: { id?: string; name: string; gender: PunchGender }) {
+  const id = normalizePlayerId(entry.id ?? "");
+  if (id) return `id:${id}`;
+  return `${entry.gender}:${normalizePersonName(entry.name)}`;
+}
+
+export function punchDisplayName(row: {
+  legalName?: string;
+  nickname?: string;
+  nameMode?: PunchNameMode;
+  name?: string;
+}) {
+  if (row.nameMode === "nick" && (row.nickname ?? "").trim()) {
+    return row.nickname!.trim();
+  }
+  if ((row.legalName ?? "").trim()) return row.legalName!.trim();
+  return (row.name ?? "").trim();
 }
 
 export function uniqueByPerson<T extends PunchEntry>(entries: T[]): T[] {
   const best = new Map<string, T>();
   for (const entry of entries) {
-    const key = personKey(entry.name, entry.gender);
+    const key = personKey(entry);
     const prev = best.get(key);
     if (!prev) {
       best.set(key, entry);
@@ -118,7 +153,10 @@ export function matchesQuery(entry: PunchEntry, query: string): boolean {
   const q = query.trim().toLowerCase();
   if (!q) return true;
   return [
+    entry.id,
     entry.name,
+    entry.legalName,
+    entry.nickname,
     entry.department,
     entry.school,
     entry.schoolOther,

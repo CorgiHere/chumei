@@ -166,6 +166,8 @@ export type SiteConfig = {
   galagaUrl: string;
   merchFormUrl: string;
   rpsFormUrl: string;
+  punchFormUrl: string;
+  whoscallDownloadUrl: string;
   joinFormUrl: string;
   contactEmail: string;
   logoUrl: string;

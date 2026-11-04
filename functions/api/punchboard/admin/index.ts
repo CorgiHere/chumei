@@ -11,14 +11,21 @@ import {
   BOARD_KEY,
   DEFAULT_END_AT,
   DEFAULT_NAME,
+  findRegistrant,
   json,
+  normalizePlayerId,
   personKey,
+  punchDisplayName,
   purgePublicBoardCache,
   readBoard,
+  readRoster,
   uniqueByPerson,
+  writeRoster,
   type PunchBoard,
   type PunchEntry,
   type PunchEnv,
+  type PunchNameMode,
+  type PunchRegistrant,
 } from "../_shared";
 import {
   notifyTop10IfChanged,
@@ -63,24 +70,49 @@ function clip(value: unknown, max: number) {
   return String(value ?? "").trim().slice(0, max);
 }
 
-function parseEntry(raw: Partial<PunchEntry>, fallbackId?: string): PunchEntry | null {
-  const name = clip(raw.name, 40);
-  const department = clip(raw.department, 40);
-  const score = Number(raw.score);
+function parseNameMode(value: unknown): PunchNameMode {
+  return value === "nick" ? "nick" : "legal";
+}
+
+function parseRegistrant(raw: Partial<PunchRegistrant>): PunchRegistrant | null {
+  const id = normalizePlayerId(clip(raw.id, 20));
+  const legalName = clip(raw.legalName, 40);
+  if (!id || !legalName) return null;
   const school = raw.school;
   const gender = raw.gender;
-  if (!name || !Number.isFinite(score) || score < 0 || score > 999999) return null;
   if (school !== "NTHU" && school !== "NYCU" && school !== "OTHER") return null;
   if (gender !== "male" && gender !== "female") return null;
-  const schoolOther = school === "OTHER" ? clip(raw.schoolOther, 40) : "";
   return {
-    id: clip(raw.id || fallbackId || crypto.randomUUID(), 80) || crypto.randomUUID(),
-    name,
-    score: Math.round(score),
+    id,
+    legalName,
+    nickname: clip(raw.nickname, 40),
+    nameMode: parseNameMode(raw.nameMode),
     school,
-    schoolOther,
-    department,
+    schoolOther: school === "OTHER" ? clip(raw.schoolOther, 40) : "",
+    department: clip(raw.department, 40),
     gender,
+    contact: clip(raw.contact, 80),
+  };
+}
+
+function entryFromRegistrant(
+  registrant: PunchRegistrant,
+  score: number,
+  nameMode: PunchNameMode,
+): PunchEntry | null {
+  if (!Number.isFinite(score) || score < 0 || score > 999999) return null;
+  const mode = nameMode === "nick" && registrant.nickname.trim() ? "nick" : "legal";
+  return {
+    id: registrant.id,
+    legalName: registrant.legalName,
+    nickname: registrant.nickname,
+    nameMode: mode,
+    name: punchDisplayName({ ...registrant, nameMode: mode }),
+    score: Math.round(score),
+    school: registrant.school,
+    schoolOther: registrant.schoolOther ?? "",
+    department: registrant.department,
+    gender: registrant.gender,
     updatedAt: new Date().toISOString(),
   };
 }
@@ -105,6 +137,7 @@ export async function onRequestGet(context: PagesContext) {
     return authedJson(context.request, { error: "unauthorized", ok: false }, 401);
   }
   const { board, ready } = await readBoard(context.env);
+  const roster = await readRoster(context.env);
   return authedJson(context.request, {
     ok: true,
     ready,
@@ -112,6 +145,7 @@ export async function onRequestGet(context: PagesContext) {
     endAt: board.endAt,
     updatedAt: board.updatedAt,
     entries: board.entries,
+    roster,
   });
 }
 
@@ -128,8 +162,10 @@ export async function onRequestPost(context: PagesContext) {
     eventName?: string;
     endAt?: string;
     id?: string;
-    entry?: Partial<PunchEntry>;
+    entry?: Partial<PunchEntry> & { nameMode?: PunchNameMode };
     entries?: Partial<PunchEntry>[];
+    registrant?: Partial<PunchRegistrant>;
+    roster?: Partial<PunchRegistrant>[];
     to?: string;
   } = {};
   try {
@@ -166,7 +202,18 @@ export async function onRequestPost(context: PagesContext) {
   }
 
   const { board } = await readBoard(env);
+  let roster = await readRoster(env);
   const now = new Date().toISOString();
+
+  function snapshot() {
+    return {
+      eventName: board.eventName,
+      endAt: board.endAt,
+      updatedAt: board.updatedAt,
+      entries: board.entries,
+      roster,
+    };
+  }
 
   if (action === "mail") {
     const to = parseMailTo(payload.to);
@@ -177,26 +224,57 @@ export async function onRequestPost(context: PagesContext) {
       mailed: attempt.mailed,
       mailError: attempt.mailError,
       mailedTo: to,
-      eventName: board.eventName,
-      endAt: board.endAt,
-      updatedAt: board.updatedAt,
-      entries: board.entries,
+      ...snapshot(),
     });
+  }
+
+  if (action === "upsertRegistrant") {
+    const next = parseRegistrant(payload.registrant ?? {});
+    if (!next) return authedJson(request, { error: "invalid_registrant" }, 400);
+    const idx = roster.findIndex((row) => row.id === next.id);
+    if (idx >= 0) roster[idx] = next;
+    else roster.push(next);
+    await writeRoster(env, roster);
+    return authedJson(request, { ok: true, ready: true, ...snapshot() });
+  }
+
+  if (action === "deleteRegistrant") {
+    const id = normalizePlayerId(clip(payload.id, 20));
+    roster = roster.filter((row) => row.id !== id);
+    await writeRoster(env, roster);
+    return authedJson(request, { ok: true, ready: true, ...snapshot() });
+  }
+
+  if (action === "replaceRoster") {
+    if (!Array.isArray(payload.roster)) {
+      return authedJson(request, { error: "invalid_roster" }, 400);
+    }
+    const nextRoster: PunchRegistrant[] = [];
+    for (const raw of payload.roster) {
+      const parsed = parseRegistrant(raw);
+      if (parsed) nextRoster.push(parsed);
+    }
+    const byId = new Map(nextRoster.map((row) => [row.id, row]));
+    roster = [...byId.values()];
+    await writeRoster(env, roster);
+    return authedJson(request, { ok: true, ready: true, ...snapshot() });
   }
 
   if (action === "saveMeta") {
     board.eventName = clip(payload.eventName, 80) || DEFAULT_NAME;
     board.endAt = clip(payload.endAt, 40) || DEFAULT_END_AT;
   } else if (action === "upsert") {
-    const next = parseEntry(payload.entry ?? {});
-    if (!next) return authedJson(request, { error: "invalid_entry" }, 400);
-    const key = personKey(next.name, next.gender);
-    const byId = board.entries.findIndex((e) => e.id === next.id);
-    const byPerson = board.entries.findIndex((e) => personKey(e.name, e.gender) === key);
-    const idx = byId >= 0 ? byId : byPerson;
+    const raw = payload.entry ?? {};
+    const id = normalizePlayerId(clip(raw.id, 20));
+    const registrant = findRegistrant(roster, id);
+    if (!registrant) {
+      return authedJson(request, { error: "not_registered", ...snapshot() }, 400);
+    }
+    const next = entryFromRegistrant(registrant, Number(raw.score), parseNameMode(raw.nameMode));
+    if (!next) return authedJson(request, { error: "invalid_entry", ...snapshot() }, 400);
+    const idx = board.entries.findIndex((e) => personKey(e) === personKey(next));
     if (idx >= 0) {
       const prev = board.entries[idx];
-      next.id = prev.id;
       next.updatedAt = prev.score === next.score ? prev.updatedAt : now;
       board.entries[idx] = next;
     } else {
@@ -207,15 +285,21 @@ export async function onRequestPost(context: PagesContext) {
       board.entries.push(next);
     }
   } else if (action === "delete") {
-    const id = clip(payload.id, 80);
-    board.entries = board.entries.filter((e) => e.id !== id);
+    const id = normalizePlayerId(clip(payload.id, 80));
+    board.entries = board.entries.filter((e) => normalizePlayerId(e.id) !== id);
   } else if (action === "replace") {
     if (!Array.isArray(payload.entries)) {
       return authedJson(request, { error: "invalid_entries" }, 400);
     }
     const nextEntries: PunchEntry[] = [];
     for (const raw of payload.entries) {
-      const parsed = parseEntry(raw);
+      const registrant = findRegistrant(roster, String(raw.id ?? ""));
+      if (!registrant) continue;
+      const parsed = entryFromRegistrant(
+        registrant,
+        Number(raw.score),
+        parseNameMode(raw.nameMode),
+      );
       if (parsed) {
         if (typeof raw.updatedAt === "string" && raw.updatedAt) {
           parsed.updatedAt = raw.updatedAt.slice(0, 40);
@@ -259,5 +343,6 @@ export async function onRequestPost(context: PagesContext) {
     endAt: board.endAt,
     updatedAt: board.updatedAt,
     entries: board.entries,
+    roster,
   });
 }

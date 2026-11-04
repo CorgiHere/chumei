@@ -82,6 +82,21 @@ export function Footer() {
             <a href={siteConfig.linktreeUrl} target="_blank" rel="noopener noreferrer" className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">
               Linktree
             </a>
+            <a
+              href={siteConfig.whoscallDownloadUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="mt-2 inline-flex items-center gap-2 bg-[#12b24a] px-3 py-1.5 font-mono-ui text-[13px] text-white no-underline hover:bg-[#15c652]"
+            >
+              <Image
+                src={withBasePath("/images/partners/whoscall-logo-green.png")}
+                alt=""
+                width={72}
+                height={20}
+                className="h-5 w-auto"
+              />
+              下載 Whoscall
+            </a>
           </div>
         </div>
         <p className="border-t border-white/15 pt-5 text-[13px] leading-relaxed text-muted">
