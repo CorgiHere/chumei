@@ -671,22 +671,24 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
             alt="詐騙來電，Whoscall 開扁"
             className="relative z-1 mx-auto block h-auto w-full max-w-3xl object-contain"
           />
-          <div className="relative z-1 mt-2 flex flex-wrap items-center justify-center gap-2 text-[14px] text-white/75">
-            <span className={cn(arcade, "text-[8px] leading-none text-[#ffd54a] sm:text-[10px]")}>
-              HIGH SCORE
-            </span>
-            <span>11/17</span>
-            <span>{countdown.clock}</span>
-            <span
-              className={cn(
-                arcade,
-                "inline-flex items-center border-2 border-[#19e36a] bg-[#07331a] px-2 py-0.5 text-[8px] text-[#19e36a]",
-              )}
-            >
-              {countdown.phase === "ended" ? "FINAL" : "LIVE"}
-            </span>
+          <div className="relative z-1 mt-2 flex flex-col items-center gap-3">
+            <div className="flex flex-wrap items-center justify-center gap-2 text-[14px] text-white/75">
+              <span className={cn(arcade, "text-[8px] leading-none text-[#ffd54a] sm:text-[10px]")}>
+                HIGH SCORE
+              </span>
+              <span>11/17</span>
+              <span>{countdown.clock}</span>
+              <span
+                className={cn(
+                  arcade,
+                  "inline-flex items-center border-2 border-[#19e36a] bg-[#07331a] px-2 py-0.5 text-[8px] text-[#19e36a]",
+                )}
+              >
+                {countdown.phase === "ended" ? "FINAL" : "LIVE"}
+              </span>
+            </div>
+            <DownloadWhoscall variant="pill" />
           </div>
-          <DownloadWhoscall variant="pill" className="relative z-1 mx-auto mt-3" />
         </div>
 
         <div className="relative z-4 mt-5 grid grid-cols-2 gap-3 lg:hidden">

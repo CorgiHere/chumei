@@ -897,7 +897,7 @@
 
 .punch-dl-cta {
   position: relative;
-  display: inline-flex;
+  display: flex;
   min-height: 3.4rem;
   align-items: center;
   gap: 0.7rem;
