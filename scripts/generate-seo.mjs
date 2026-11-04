@@ -12,20 +12,14 @@ const root = join(__dirname, "..");
 const require = createRequire(import.meta.url);
 
 function resolveSiteUrl() {
-  const fromEnv =
-    process.env.NEXT_PUBLIC_SITE_URL || process.env.SITE_URL || "";
-  if (fromEnv) return fromEnv.replace(/\/$/, "");
-
-  const deployTarget = process.env.DEPLOY_TARGET ?? "";
-  const isGithubPages =
-    deployTarget === "github" || process.env.GITHUB_PAGES === "true";
-  if (isGithubPages) {
-    const [owner = "CorgiHere", repoName = "chumei"] = (
-      process.env.GITHUB_REPOSITORY ?? "CorgiHere/chumei"
-    ).split("/");
-    return `https://${owner.toLowerCase()}.github.io/${repoName}`;
+  const fromEnv = (
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    process.env.SITE_URL ||
+    ""
+  ).replace(/\/$/, "");
+  if (fromEnv.includes("localhost") || fromEnv.includes("127.0.0.1")) {
+    return fromEnv;
   }
-
   return "https://chumei.org";
 }
 
@@ -122,11 +116,15 @@ const robots = `User-agent: *
 Allow: /
 Disallow: /punchboard/admin/
 Disallow: /manage/
+Disallow: /punchboard/admin
+Disallow: /manage
 
 User-agent: Googlebot
 Allow: /
 Disallow: /punchboard/admin/
 Disallow: /manage/
+Disallow: /punchboard/admin
+Disallow: /manage
 
 Sitemap: ${siteUrl}/sitemap.xml
 Sitemap: ${siteUrl}/sitemap.txt

@@ -797,7 +797,9 @@ function AdminFrame({ children }: { children: React.ReactNode }) {
         <PunchBrandLockup />
       </div>
       <img
-        src={withBasePath("/images/punchboard/event-title.png")}
+        src={withBasePath("/images/punchboard/event-title.webp")}
+        width={960}
+        height={385}
         alt="詐騙來電，Whoscall 開扁"
         className="mx-auto mb-6 w-full max-w-lg object-contain"
         style={{ imageRendering: "pixelated" }}

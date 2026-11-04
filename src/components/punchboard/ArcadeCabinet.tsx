@@ -4,8 +4,11 @@ import { cn, withBasePath } from "@/lib/utils";
 export function WhoscallMark({ className }: { className?: string }) {
   return (
     <img
-      src={withBasePath("/images/partners/whoscall-app-icon.png")}
+      src={withBasePath("/images/partners/whoscall-app-icon.webp")}
       alt=""
+      width={128}
+      height={128}
+      decoding="async"
       className={cn("rounded-[18%]", className)}
     />
   );
@@ -48,8 +51,12 @@ export function DownloadWhoscall({
         aria-label="下載 Whoscall"
       >
         <img
-          src={withBasePath("/images/punchboard/download-sky.png")}
+          src={withBasePath("/images/punchboard/download-sky.webp")}
           alt=""
+          width={1018}
+          height={113}
+          decoding="async"
+          loading="lazy"
           className="punch-dl-banner__sky"
         />
         <span className="punch-dl-banner__mark">
@@ -96,14 +103,20 @@ export function PunchBrandLockup() {
   return (
     <div className="flex items-center justify-center gap-3 sm:gap-4">
       <img
-        src={withBasePath("/images/partners/whoscall-logo-green.png")}
+        src={withBasePath("/images/partners/whoscall-logo-green.webp")}
         alt="Whoscall"
+        width={243}
+        height={56}
+        decoding="async"
         className="h-11 w-auto sm:h-14"
       />
       <span className="text-xl text-white/70 sm:text-3xl">×</span>
       <img
-        src={withBasePath("/images/brand/chumei-logo.png")}
+        src={withBasePath("/images/brand/chumei-logo.webp")}
         alt="Chu Mei"
+        width={64}
+        height={64}
+        decoding="async"
         className="h-14 w-auto sm:h-16"
       />
     </div>

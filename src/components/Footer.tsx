@@ -43,6 +43,12 @@ export function Footer() {
             <Link href={appPath("/scoreboard")} className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">
               總錦標
             </Link>
+            <Link href={appPath("/news")} className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">
+              最新消息
+            </Link>
+            <Link href={appPath("/gallery")} className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">
+              現場圖庫
+            </Link>
             <Link href={appPath("/history")} className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">
               歷屆
             </Link>

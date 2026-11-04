@@ -1,5 +1,11 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { appPath } from "@/lib/utils";
+
+export const metadata: Metadata = {
+  title: "頁面不存在",
+  robots: { index: false, follow: true },
+};
 
 export default function NotFound() {
   return (

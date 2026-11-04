@@ -7,7 +7,8 @@ import { activities } from "@/data/activities";
 import { historyYears } from "@/data/history";
 import { siteConfig } from "@/data/site";
 import { formatDateOnly } from "@/lib/utils";
-import { buildPageMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/JsonLd";
+import { breadcrumbJsonLd, buildPageMetadata } from "@/lib/seo";
 import { SchoolPair } from "@/components/SchoolOrder";
 
 export const metadata: Metadata = buildPageMetadata({
@@ -29,6 +30,12 @@ export default function ScoreboardPage() {
 
   return (
     <div>
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "首頁", path: "/" },
+          { name: "總錦標", path: "/scoreboard" },
+        ])}
+      />
       <section className="bg-ink text-chalk">
         <div className="hazard-stripe-animated h-2" aria-hidden />
         <div className="container-main section-space">

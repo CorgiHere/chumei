@@ -2,11 +2,15 @@ User-agent: *
 Allow: /
 Disallow: /punchboard/admin/
 Disallow: /manage/
+Disallow: /punchboard/admin
+Disallow: /manage
 
 User-agent: Googlebot
 Allow: /
 Disallow: /punchboard/admin/
 Disallow: /manage/
+Disallow: /punchboard/admin
+Disallow: /manage
 
 Sitemap: https://chumei.org/sitemap.xml
 Sitemap: https://chumei.org/sitemap.txt

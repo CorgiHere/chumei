@@ -228,15 +228,22 @@ function punchArt(file: string) {
 function PunchArt({
   file,
   className,
+  width,
+  height,
 }: {
   file: string;
   className?: string;
+  width?: number;
+  height?: number;
 }) {
   return (
     <img
       src={punchArt(file)}
       alt=""
       aria-hidden
+      width={width}
+      height={height}
+      decoding="async"
       className={className}
       style={{ imageRendering: "pixelated" }}
     />
@@ -353,7 +360,12 @@ function PodiumPlace({
         {entry ? punchSub(entry) : "—"}
       </p>
       <div className={cn("relative mx-auto w-[74%]", place === 1 && "w-[82%]")}>
-        <PunchArt file={look.art} className="block h-auto w-full" />
+        <PunchArt
+          file={look.art}
+          width={175}
+          height={place === 1 ? 185 : 145}
+          className="block h-auto w-full"
+        />
         <span
           className={cn(
             "absolute inset-x-0 bottom-[14%] text-center font-semibold leading-none text-[#10203a]",
@@ -727,15 +739,6 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
       className="max-w-97.5 sm:max-w-105 md:max-w-184 lg:max-w-310"
       innerClassName={cn(fusionPixel.className, "px-4 pb-8 pt-4 lg:px-8")}
     >
-        <div
-          className="pointer-events-none absolute inset-3 z-0"
-          style={{
-            backgroundImage: `url(${punchArt("background-grid.svg")})`,
-            backgroundSize: "cover",
-            imageRendering: "pixelated",
-            opacity: 0.35,
-          }}
-        />
         <div className="relative z-1">
         <div className="relative flex items-center justify-center">
           <PunchBrandLockup />
@@ -743,8 +746,12 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
         <div className="relative mt-1">
           <Heading className="sr-only">詐騙來電，Whoscall 開扁</Heading>
           <img
-            src={withBasePath("/images/punchboard/event-title.png")}
+            src={withBasePath("/images/punchboard/event-title.webp")}
             alt="詐騙來電，Whoscall 開扁"
+            width={960}
+            height={385}
+            fetchPriority="high"
+            decoding="async"
             className="relative z-1 mx-auto block h-auto w-full max-w-3xl object-contain"
           />
           <div className="relative z-1 mt-2 flex flex-col items-center gap-3">

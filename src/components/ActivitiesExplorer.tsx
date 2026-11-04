@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import type { Activity } from "@/types";
 import { ActivityCard } from "@/components/ActivityCard";
 import { FilterChips } from "@/components/FilterChips";
@@ -34,6 +34,11 @@ type ActivitiesExplorerProps = {
 export function ActivitiesExplorer({ activities }: ActivitiesExplorerProps) {
   const [filter, setFilter] = useState<ActivityFilterId>("all");
   const [query, setQuery] = useState("");
+
+  useEffect(() => {
+    const q = new URLSearchParams(window.location.search).get("q");
+    if (q) setQuery(q);
+  }, []);
 
   const filtered = useMemo(() => {
     const byFilter = activities.filter((a) => matchesActivityFilter(a, filter));

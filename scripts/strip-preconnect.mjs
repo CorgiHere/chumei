@@ -5,7 +5,11 @@ const root = path.join(process.cwd(), "out");
 const needles = [
   '<link rel="preconnect" href="/" crossorigin=""/>',
   '<link rel="preconnect" href="/" crossOrigin=""/>',
+  '<link rel="preconnect" crossorigin="" href="/">',
+  '<link rel="preconnect" crossOrigin="" href="/">',
+  '<link rel="preconnect" href="/">',
 ];
+const preconnectHome = /<link\s+rel="preconnect"[^>]*href="\/"[^>]*>/gi;
 
 async function walk(dir) {
   let changed = 0;
@@ -17,7 +21,7 @@ async function walk(dir) {
     }
     if (!entry.name.endsWith(".html")) continue;
     const html = await readFile(next, "utf8");
-    let updated = html;
+    let updated = html.replace(preconnectHome, "");
     for (const needle of needles) {
       updated = updated.replaceAll(needle, "");
     }

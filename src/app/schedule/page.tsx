@@ -3,7 +3,8 @@ import { PageIntro } from "@/components/PageIntro";
 import { ScheduleExplorer } from "@/components/ScheduleExplorer";
 import { activities } from "@/data/activities";
 import { siteConfig } from "@/data/site";
-import { buildPageMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/JsonLd";
+import { breadcrumbJsonLd, buildPageMetadata } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "賽程｜清大交大竹梅賽日期地點時間表",
@@ -15,6 +16,12 @@ export const metadata: Metadata = buildPageMetadata({
 export default function SchedulePage() {
   return (
     <div className="bg-ink section-space text-chalk">
+      <JsonLd
+        data={breadcrumbJsonLd([
+          { name: "首頁", path: "/" },
+          { name: "賽程", path: "/schedule" },
+        ])}
+      />
       <div className="container-main">
         <PageIntro
           eyebrow={siteConfig.yearName}

@@ -80,6 +80,8 @@ export default async function ActivityDetailPage({ params }: PageProps) {
             locationAddress: activity.venue.address,
             isOnline,
             status: activity.status,
+            registrationUrl: activity.registrationUrl,
+            sameAs: isPunchboard ? ["/punchboard"] : undefined,
           }),
           breadcrumbJsonLd([
             { name: "首頁", path: "/" },

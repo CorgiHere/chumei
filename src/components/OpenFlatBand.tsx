@@ -120,9 +120,12 @@ export function OpenFlatBand() {
             </div>
 
             <img
-              src={withBasePath("/images/activities/whoscall-openflat.png")}
+              src={withBasePath("/images/activities/whoscall-openflat.webp")}
               alt="詐騙來電，Whoscall 開扁"
-              className="relative z-1 mx-auto w-full max-w-md drop-shadow-[0_8px_0_#050b18] lg:max-w-none"
+              width={800}
+              height={418}
+              decoding="async"
+              className="relative z-1 mx-auto h-auto w-full max-w-md drop-shadow-[0_8px_0_#050b18] lg:max-w-none"
             />
           </div>
         </article>

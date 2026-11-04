@@ -5,7 +5,8 @@ import { PageIntro } from "@/components/PageIntro";
 import { activities } from "@/data/activities";
 import { siteConfig } from "@/data/site";
 import { appPath } from "@/lib/utils";
-import { buildPageMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/JsonLd";
+import { buildPageMetadata, collectionPageJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "活動總覽｜清大交大清交竹梅賽全部賽事",
@@ -17,6 +18,16 @@ export const metadata: Metadata = buildPageMetadata({
 export default function ActivitiesPage() {
   return (
     <div className="bg-ink section-space text-chalk">
+      <JsonLd
+        data={collectionPageJsonLd(
+          "活動總覽",
+          "/activities",
+          activities.map((activity) => ({
+            name: activity.title,
+            path: `/activities/${activity.slug}`,
+          })),
+        )}
+      />
       <div className="container-main">
         <PageIntro
           eyebrow={`${siteConfig.yearName}`}

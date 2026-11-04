@@ -3,7 +3,8 @@ import { PageIntro } from "@/components/PageIntro";
 import { NewsExplorer } from "@/components/NewsExplorer";
 import { newsPosts } from "@/data/news";
 import { siteConfig } from "@/data/site";
-import { buildPageMetadata } from "@/lib/seo";
+import { JsonLd } from "@/components/JsonLd";
+import { buildPageMetadata, collectionPageJsonLd } from "@/lib/seo";
 
 export const metadata: Metadata = buildPageMetadata({
   title: "最新消息｜清交竹梅賽公告賽果與報名",
@@ -15,6 +16,21 @@ export const metadata: Metadata = buildPageMetadata({
 export default function NewsPage() {
   return (
     <div className="bg-ink section-space text-chalk">
+      <JsonLd
+        data={collectionPageJsonLd(
+          "最新消息",
+          "/news",
+          [...newsPosts]
+            .sort(
+              (a, b) =>
+                new Date(b.publishedAt).getTime() - new Date(a.publishedAt).getTime(),
+            )
+            .map((post) => ({
+              name: post.title,
+              path: `/news/${post.slug}`,
+            })),
+        )}
+      />
       <div className="container-main">
         <PageIntro
           eyebrow={siteConfig.yearName}

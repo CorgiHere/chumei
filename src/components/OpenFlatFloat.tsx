@@ -28,8 +28,11 @@ export function OpenFlatFloat() {
       )}
     >
       <img
-        src={withBasePath("/images/punchboard/openflat-float.png")}
+        src={withBasePath("/images/punchboard/openflat-float.webp")}
         alt=""
+        width={768}
+        height={384}
+        decoding="async"
       />
     </Link>
   );

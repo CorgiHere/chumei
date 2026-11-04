@@ -156,12 +156,19 @@ export const SEO_KEYWORDS = [
   String(siteConfig.year),
 ];
 
-/** Production site origin including path prefix (no trailing slash). */
+/**
+ * Canonical origin for metadata, sitemap and JSON-LD.
+ * GitHub Pages is a mirror — always point crawlers at chumei.org.
+ */
 export function getSiteUrl(): string {
-  return (
-    process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ||
-    siteConfig.siteUrl.replace(/\/$/, "")
-  );
+  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, "") ?? "";
+  if (
+    fromEnv &&
+    (fromEnv.includes("localhost") || fromEnv.includes("127.0.0.1"))
+  ) {
+    return fromEnv;
+  }
+  return siteConfig.siteUrl.replace(/\/$/, "");
 }
 
 export function absoluteUrl(path = "/"): string {
@@ -227,6 +234,10 @@ export function buildPageMetadata({
     category: "sports",
     alternates: {
       canonical: url,
+      languages: {
+        "zh-Hant-TW": url,
+        "x-default": url,
+      },
     },
     openGraph: {
       title: displayTitle,
@@ -364,6 +375,11 @@ export function websiteJsonLd() {
     ],
     inLanguage: "zh-TW",
     publisher: { "@id": `${home}#organization` },
+    potentialAction: {
+      "@type": "SearchAction",
+      target: `${absoluteUrl("/activities/")}?q={search_term_string}`,
+      "query-input": "required name=search_term_string",
+    },
   };
 }
 
@@ -472,6 +488,13 @@ export function breadcrumbJsonLd(
   };
 }
 
+function eventStatusIri(status: string) {
+  if (status === "cancelled") return "https://schema.org/EventCancelled";
+  if (status === "postponed") return "https://schema.org/EventPostponed";
+  if (status === "finished") return "https://schema.org/EventCompleted";
+  return "https://schema.org/EventScheduled";
+}
+
 export function eventJsonLd(input: {
   name: string;
   description: string;
@@ -483,28 +506,43 @@ export function eventJsonLd(input: {
   locationAddress?: string;
   isOnline?: boolean;
   status: string;
+  registrationUrl?: string;
+  sameAs?: string[];
 }) {
+  const name = input.name.includes(siteConfig.yearName)
+    ? input.name
+    : `${input.name}｜${siteConfig.yearName}`;
   return {
     "@context": "https://schema.org",
     "@type": "SportsEvent",
-    name: `${siteConfig.yearName}${input.name}`,
+    name,
     description: input.description,
     startDate: input.startDate,
     ...(input.endDate ? { endDate: input.endDate } : {}),
-    eventStatus:
-      input.status === "cancelled"
-        ? "https://schema.org/EventCancelled"
-        : "https://schema.org/EventScheduled",
+    eventStatus: eventStatusIri(input.status),
     eventAttendanceMode: input.isOnline
       ? "https://schema.org/OnlineEventAttendanceMode"
       : "https://schema.org/OfflineEventAttendanceMode",
     image: [absoluteAssetUrl(input.image ?? siteConfig.logoUrl)],
     url: absoluteUrl(input.path),
+    ...(input.sameAs?.length ? { sameAs: input.sameAs.map((path) => absoluteUrl(path)) } : {}),
     organizer: {
       "@type": "Organization",
+      "@id": `${absoluteUrl("/")}#organization`,
       name: "竹梅籌備委員會",
       url: absoluteUrl("/about/"),
     },
+    ...(input.registrationUrl
+      ? {
+          offers: {
+            "@type": "Offer",
+            url: input.registrationUrl,
+            price: 0,
+            priceCurrency: "TWD",
+            availability: "https://schema.org/InStock",
+          },
+        }
+      : {}),
     location: input.isOnline
       ? {
           "@type": "VirtualLocation",
@@ -523,6 +561,34 @@ export function eventJsonLd(input: {
               }
             : {}),
         },
+  };
+}
+
+export function collectionPageJsonLd(
+  name: string,
+  path: string,
+  items: { name: string; path: string }[],
+) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name,
+    url: absoluteUrl(path),
+    isPartOf: { "@id": `${absoluteUrl("/")}#website` },
+    breadcrumb: breadcrumbJsonLd([
+      { name: "首頁", path: "/" },
+      { name, path },
+    ]),
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: items.length,
+      itemListElement: items.map((item, index) => ({
+        "@type": "ListItem",
+        position: index + 1,
+        name: item.name,
+        url: absoluteUrl(item.path),
+      })),
+    },
   };
 }
 

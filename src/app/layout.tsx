@@ -45,9 +45,6 @@ export const metadata: Metadata = {
   creator: "竹梅籌備委員會",
   publisher: "竹梅籌備委員會",
   keywords: SEO_KEYWORDS,
-  alternates: {
-    canonical: absoluteUrl("/"),
-  },
   openGraph: {
     title: "竹梅賽 Chu Mei｜2026 清大 NTHU × 交大 NYCU",
     description: siteConfig.description,
