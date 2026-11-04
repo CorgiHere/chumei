@@ -15,23 +15,10 @@ export function DownloadWhoscall({
   variant,
   className,
 }: {
-  variant: "logo" | "pill" | "banner" | "fab";
+  variant: "pill" | "banner" | "fab";
   className?: string;
 }) {
   const href = siteConfig.whoscallDownloadUrl;
-  if (variant === "logo") {
-    return (
-      <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
-        className={cn("inline-flex shrink-0", className)}
-        aria-label="下載 Whoscall"
-      >
-        <WhoscallMark className="h-11 w-11 sm:h-14 sm:w-14" />
-      </a>
-    );
-  }
   if (variant === "fab") {
     return (
       <a
@@ -73,7 +60,11 @@ export function DownloadWhoscall({
 export function PunchBrandLockup() {
   return (
     <div className="flex items-center justify-center gap-3 sm:gap-4">
-      <DownloadWhoscall variant="logo" />
+      <img
+        src={withBasePath("/images/partners/whoscall-logo-green.png")}
+        alt="Whoscall"
+        className="h-11 w-auto sm:h-14"
+      />
       <span className="text-xl text-white/70 sm:text-3xl">×</span>
       <img
         src={withBasePath("/images/brand/chumei-logo.png")}
