@@ -64,15 +64,21 @@ export function DownloadWhoscall({
     );
   }
   return (
-    <a
-      {...downloadHref}
-      className={cn(
-        "inline-flex items-center justify-center gap-1.5 border-2 border-[#12b24a] bg-[#07331a] px-2.5 py-1 text-[13px] leading-none text-[#7dff9a] no-underline hover:bg-[#0a4a24] hover:text-white",
-        className,
-      )}
-    >
-      <WhoscallMark className="h-4 w-4" />
-      下載 Whoscall
+    <a {...downloadHref} className={cn("punch-dl-cta", className)}>
+      <span className="punch-dl-cta__mark">
+        <WhoscallMark className="h-9 w-9" />
+      </span>
+      <span className="punch-dl-cta__label">
+        下載 <span>Whoscall</span>
+      </span>
+      <span className="punch-dl-cta__arrow" aria-hidden>
+        <svg viewBox="0 0 24 24">
+          <path
+            fill="currentColor"
+            d="M11 2h2v11h4l-5 8-5-8h4V2zm-7 19h14v2H4v-2z"
+          />
+        </svg>
+      </span>
     </a>
   );
 }

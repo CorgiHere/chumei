@@ -4,6 +4,7 @@ import { siteConfig } from "@/data/site";
 import { withBasePath, appPath } from "@/lib/utils";
 import { HazardBar } from "./HazardBar";
 import { JoinEntryLink } from "./SiteFlags";
+import { DownloadWhoscall } from "./punchboard/ArcadeCabinet";
 
 export function Footer() {
   return (
@@ -82,21 +83,7 @@ export function Footer() {
             <a href={siteConfig.linktreeUrl} target="_blank" rel="noopener noreferrer" className="block py-0.5 font-mono-ui text-[13px] text-muted no-underline hover:text-brand-yellow">
               Linktree
             </a>
-            <a
-              href={siteConfig.whoscallDownloadUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-2 inline-flex items-center gap-2 border-2 border-[#12b24a] bg-[#07331a] px-3 py-1.5 font-mono-ui text-[13px] text-[#7dff9a] no-underline hover:bg-[#0a4a24] hover:text-white"
-            >
-              <Image
-                src={withBasePath("/images/partners/whoscall-app-icon.png")}
-                alt=""
-                width={40}
-                height={40}
-                className="h-5 w-5 rounded-[18%]"
-              />
-              下載 Whoscall
-            </a>
+            <DownloadWhoscall variant="pill" className="mt-2" />
           </div>
         </div>
         <p className="border-t border-white/15 pt-5 text-[13px] leading-relaxed text-muted">

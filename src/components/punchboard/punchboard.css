@@ -932,6 +932,94 @@
   background: #15c652;
 }
 
+.punch-dl-cta {
+  position: relative;
+  display: inline-flex;
+  min-height: 3.4rem;
+  align-items: center;
+  gap: 0.7rem;
+  overflow: hidden;
+  border: 3px solid #7dff9a;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #0a5a32 0%, #032016 62%);
+  padding: 0.4rem 0.85rem 0.5rem 0.55rem;
+  color: #d8ffe6;
+  text-decoration: none;
+  box-shadow:
+    0 0 0 2px #02140c,
+    0 0 18px rgba(80, 255, 140, 0.4),
+    inset 0 0 0 1px rgba(180, 255, 200, 0.2);
+}
+
+.punch-dl-cta:hover {
+  border-color: #b6ffcf;
+  color: #fff;
+}
+
+.punch-dl-cta::before {
+  position: absolute;
+  inset: auto 0 0;
+  height: 1.05rem;
+  background:
+    radial-gradient(14px 10px at 10% 120%, #0c6a38 70%, transparent 71%),
+    radial-gradient(22px 12px at 32% 130%, #0e7540 70%, transparent 71%),
+    radial-gradient(16px 10px at 58% 125%, #0b6234 70%, transparent 71%),
+    radial-gradient(24px 13px at 82% 135%, #0f7c44 70%, transparent 71%),
+    radial-gradient(12px 8px at 98% 120%, #0c6a38 70%, transparent 71%);
+  content: "";
+  pointer-events: none;
+}
+
+.punch-dl-cta__mark,
+.punch-dl-cta__label,
+.punch-dl-cta__arrow {
+  position: relative;
+  z-index: 1;
+}
+
+.punch-dl-cta__mark {
+  display: flex;
+  align-items: center;
+  padding-right: 0.7rem;
+  box-shadow: 2px 0 0 #7dff9a;
+}
+
+.punch-dl-cta__label {
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.punch-dl-cta__label span {
+  color: #7dff9a;
+}
+
+.punch-dl-cta__arrow {
+  position: relative;
+  margin-left: 0.15rem;
+  color: #7dff9a;
+}
+
+.punch-dl-cta__arrow svg {
+  display: block;
+  width: 1.45rem;
+  height: 1.45rem;
+}
+
+.punch-dl-cta__arrow::after {
+  position: absolute;
+  top: -4px;
+  right: -7px;
+  width: 8px;
+  height: 8px;
+  background:
+    linear-gradient(#c8ff7a, #c8ff7a) 50% 0 / 2px 8px no-repeat,
+    linear-gradient(#c8ff7a, #c8ff7a) 0 50% / 8px 2px no-repeat;
+  content: "";
+}
+
 @media (max-width: 639px) {
   .punch-dl-banner {
     justify-content: center;
