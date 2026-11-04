@@ -89,11 +89,11 @@ export function Footer() {
               className="mt-2 inline-flex items-center gap-2 bg-[#12b24a] px-3 py-1.5 font-mono-ui text-[13px] text-white no-underline hover:bg-[#15c652]"
             >
               <Image
-                src={withBasePath("/images/partners/whoscall-logo-green.png")}
+                src={withBasePath("/images/partners/whoscall-app-icon.png")}
                 alt=""
-                width={72}
-                height={20}
-                className="h-5 w-auto"
+                width={40}
+                height={40}
+                className="h-5 w-5 rounded-[18%]"
               />
               下載 Whoscall
             </a>

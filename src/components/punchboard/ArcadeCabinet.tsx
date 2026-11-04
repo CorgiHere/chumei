@@ -4,9 +4,9 @@ import { cn, withBasePath } from "@/lib/utils";
 export function WhoscallMark({ className }: { className?: string }) {
   return (
     <img
-      src={withBasePath("/images/partners/whoscall-logo-green.png")}
+      src={withBasePath("/images/partners/whoscall-app-icon.png")}
       alt=""
-      className={className}
+      className={cn("rounded-[18%]", className)}
     />
   );
 }
@@ -28,7 +28,7 @@ export function DownloadWhoscall({
         className={cn("inline-flex shrink-0", className)}
         aria-label="下載 Whoscall"
       >
-        <WhoscallMark className="h-11 w-auto sm:h-14" />
+        <WhoscallMark className="h-11 w-11 sm:h-14 sm:w-14" />
       </a>
     );
   }
@@ -44,7 +44,7 @@ export function DownloadWhoscall({
           className,
         )}
       >
-        <WhoscallMark className="mb-0.5 h-7 w-auto" />
+        <WhoscallMark className="mb-0.5 h-7 w-7" />
         下載
         <br />
         Whoscall
@@ -64,7 +64,7 @@ export function DownloadWhoscall({
         className,
       )}
     >
-      <WhoscallMark className="h-6 w-auto" />
+      <WhoscallMark className="h-6 w-6" />
       下載 Whoscall
     </a>
   );

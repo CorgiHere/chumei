@@ -43,8 +43,7 @@ export const partners: Partner[] = [
     name: "Whoscall",
     type: "sponsor",
     note: "11/17 詐騙來電，Whoscall 開扁",
-    logo: "/images/partners/whoscall-logo-green.png",
-    logoWide: true,
+    logo: "/images/partners/whoscall-app-icon.png",
     url: "https://whoscall.com",
   },
 ];

@@ -669,7 +669,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
           <img
             src={withBasePath("/images/punchboard/event-banner.png")}
             alt="詐騙來電，Whoscall 開扁"
-            className="relative z-1 mx-auto block h-auto w-full"
+            className="relative z-1 mx-auto block h-auto w-full max-w-3xl object-contain"
           />
           <div className="relative z-1 mt-2 flex flex-wrap items-center justify-center gap-2 text-[14px] text-white/75">
             <span className={cn(arcade, "text-[8px] leading-none text-[#ffd54a] sm:text-[10px]")}>

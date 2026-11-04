@@ -706,7 +706,7 @@ function AdminFrame({ children }: { children: React.ReactNode }) {
       <img
         src={withBasePath("/images/activities/whoscall-openflat-banner.png")}
         alt="詐騙來電，Whoscall 開扁"
-        className="mx-auto mb-6 max-w-md w-full"
+        className="mx-auto mb-6 w-full max-w-lg object-contain"
         style={{ imageRendering: "pixelated" }}
       />
       {children}
