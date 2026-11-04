@@ -125,15 +125,9 @@ function formatScore(n: number) {
 function formatHitTime(iso: string) {
   const at = new Date(iso);
   if (!Number.isFinite(at.getTime()) || !iso) return "";
-  const parts = new Intl.DateTimeFormat("en-GB", {
-    timeZone: "Asia/Taipei",
-    hour: "2-digit",
-    minute: "2-digit",
-    hourCycle: "h23",
-  }).formatToParts(at);
-  const hour = parts.find((part) => part.type === "hour")?.value ?? "";
-  const minute = parts.find((part) => part.type === "minute")?.value ?? "";
-  return hour && minute ? `${hour}:${minute}` : "";
+  const wall = at.toLocaleString("sv-SE", { timeZone: "Asia/Taipei" });
+  const match = wall.match(/\s(\d{2}):(\d{2})(?::\d{2})?$/);
+  return match ? `${match[1]}:${match[2]}` : "";
 }
 
 function formatRemain(ms: number) {
