@@ -11,6 +11,12 @@ export function WhoscallMark({ className }: { className?: string }) {
   );
 }
 
+const downloadHref = {
+  href: siteConfig.whoscallDownloadUrl,
+  target: "_blank" as const,
+  rel: "noopener noreferrer",
+};
+
 export function DownloadWhoscall({
   variant,
   className,
@@ -18,40 +24,52 @@ export function DownloadWhoscall({
   variant: "pill" | "banner" | "fab";
   className?: string;
 }) {
-  const href = siteConfig.whoscallDownloadUrl;
   if (variant === "fab") {
     return (
       <a
-        href={href}
-        target="_blank"
-        rel="noopener noreferrer"
+        {...downloadHref}
+        aria-label="下載 Whoscall"
         className={cn(
-          "fixed right-4 z-[61] flex size-[4.5rem] flex-col items-center justify-center rounded-full bg-[#12b24a] text-center text-[11px] leading-tight text-white no-underline shadow-[0_4px_0_#0a7a32] lg:hidden",
+          "fixed right-4 z-[61] flex flex-col items-center gap-1 no-underline lg:hidden",
           "bottom-[max(5.75rem,calc(env(safe-area-inset-bottom)+4.75rem))]",
           className,
         )}
       >
-        <WhoscallMark className="mb-0.5 h-7 w-7" />
-        下載
-        <br />
-        Whoscall
+        <WhoscallMark className="h-12 w-12" />
+        <span className="text-[11px] leading-none text-[#7dff9a]">下載</span>
       </a>
+    );
+  }
+  if (variant === "banner") {
+    return (
+      <div
+        className={cn(
+          "flex w-full items-center gap-3 border-2 border-[#15DCE8]/40 bg-[#07132D] px-3 py-2.5",
+          className,
+        )}
+      >
+        <WhoscallMark className="h-9 w-9 shrink-0" />
+        <p className="min-w-0 flex-1 text-[14px] leading-snug text-[#A8BEDD]">
+          開扁詐騙來電前，先把 Whoscall 裝好。
+        </p>
+        <a
+          {...downloadHref}
+          className="shrink-0 border-2 border-[#12b24a] bg-[#07331a] px-3 py-1.5 text-[13px] leading-none text-[#7dff9a] no-underline hover:bg-[#0a4a24] hover:text-white"
+        >
+          下載
+        </a>
+      </div>
     );
   }
   return (
     <a
-      href={href}
-      target="_blank"
-      rel="noopener noreferrer"
+      {...downloadHref}
       className={cn(
-        "inline-flex items-center justify-center gap-2 bg-[#12b24a] font-semibold text-white no-underline hover:bg-[#15c652]",
-        variant === "banner"
-          ? "w-full min-h-11 px-4 py-2 text-[16px]"
-          : "min-h-10 px-3 py-1.5 text-[14px]",
+        "inline-flex items-center justify-center gap-1.5 border-2 border-[#12b24a] bg-[#07331a] px-2.5 py-1 text-[13px] leading-none text-[#7dff9a] no-underline hover:bg-[#0a4a24] hover:text-white",
         className,
       )}
     >
-      <WhoscallMark className="h-6 w-6" />
+      <WhoscallMark className="h-4 w-4" />
       下載 Whoscall
     </a>
   );

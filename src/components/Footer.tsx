@@ -86,7 +86,7 @@ export function Footer() {
               href={siteConfig.whoscallDownloadUrl}
               target="_blank"
               rel="noopener noreferrer"
-              className="mt-2 inline-flex items-center gap-2 bg-[#12b24a] px-3 py-1.5 font-mono-ui text-[13px] text-white no-underline hover:bg-[#15c652]"
+              className="mt-2 inline-flex items-center gap-2 border-2 border-[#12b24a] bg-[#07331a] px-3 py-1.5 font-mono-ui text-[13px] text-[#7dff9a] no-underline hover:bg-[#0a4a24] hover:text-white"
             >
               <Image
                 src={withBasePath("/images/partners/whoscall-app-icon.png")}

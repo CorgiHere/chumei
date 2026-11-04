@@ -687,7 +687,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
             </span>
             <DownloadWhoscall variant="pill" className="hidden sm:inline-flex" />
           </div>
-          <DownloadWhoscall variant="pill" className="relative z-1 mx-auto mt-3 flex w-full max-w-[280px] sm:hidden" />
+          <DownloadWhoscall variant="pill" className="relative z-1 mx-auto mt-3 sm:hidden" />
         </div>
 
         <div className="relative z-4 mt-5 grid grid-cols-2 gap-3 lg:hidden">
