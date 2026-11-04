@@ -7,15 +7,17 @@ import { appPath, cn, withBasePath } from "@/lib/utils";
 
 export function OpenFlatFloat() {
   const pathname = usePathname();
-  const { joinFab } = useSiteFlags();
+  const { ready, joinFab } = useSiteFlags();
   if (pathname.includes("/activities/punchboard")) return null;
+  const lift = !ready || joinFab;
 
   return (
     <Link
       href={appPath("/activities/punchboard")}
+      aria-label="11/17 看活動：詐騙來電，Whoscall 開扁"
       className={cn(
         "fixed right-3 z-[62] flex w-[6.75rem] flex-col items-center no-underline sm:right-4 sm:w-[8.25rem]",
-        joinFab
+        lift
           ? "bottom-[max(6.75rem,calc(env(safe-area-inset-bottom)+5.75rem))]"
           : "bottom-[max(1rem,env(safe-area-inset-bottom))]",
       )}
