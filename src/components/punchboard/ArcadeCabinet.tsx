@@ -42,20 +42,22 @@ export function DownloadWhoscall({
   }
   if (variant === "banner") {
     return (
-      <div
-        className={cn(
-          "flex w-full items-center gap-3 border-2 border-[#15DCE8]/40 bg-[#07132D] px-3 py-2.5",
-          className,
-        )}
-      >
-        <WhoscallMark className="h-9 w-9 shrink-0" />
-        <p className="min-w-0 flex-1 text-[14px] leading-snug text-[#A8BEDD]">
-          開扁詐騙來電前，先把 Whoscall 裝好。
+      <div className={cn("punch-dl-banner", className)}>
+        <div className="punch-dl-banner__mark">
+          <WhoscallMark className="h-10 w-10 sm:h-11 sm:w-11" />
+        </div>
+        <p className="punch-dl-banner__copy">
+          開扁詐騙來電前，先把
+          <span className="punch-dl-banner__name">Whoscall</span>
+          裝好。
         </p>
-        <a
-          {...downloadHref}
-          className="shrink-0 border-2 border-[#12b24a] bg-[#07331a] px-3 py-1.5 text-[13px] leading-none text-[#7dff9a] no-underline hover:bg-[#0a4a24] hover:text-white"
-        >
+        <a {...downloadHref} className="punch-dl-banner__btn">
+          <svg viewBox="0 0 16 16" className="h-4 w-4" aria-hidden>
+            <path
+              fill="currentColor"
+              d="M7 1h2v8h3L8 14 4 9h3V1zm-5 13h12v2H2v-2z"
+            />
+          </svg>
           下載
         </a>
       </div>
