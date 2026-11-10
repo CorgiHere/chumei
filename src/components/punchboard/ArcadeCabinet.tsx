@@ -24,9 +24,20 @@ export function DownloadWhoscall({
   variant,
   className,
 }: {
-  variant: "pill" | "banner" | "fab";
+  variant: "pill" | "banner" | "fab" | "compact";
   className?: string;
 }) {
+  if (variant === "compact") {
+    return (
+      <a
+        {...downloadHref}
+        className={cn("punch-mini-cta punch-mini-cta--dl", className)}
+      >
+        <WhoscallMark className="h-6 w-6 shrink-0" />
+        下載 Whoscall
+      </a>
+    );
+  }
   if (variant === "fab") {
     return (
       <a
@@ -50,34 +61,13 @@ export function DownloadWhoscall({
         className={cn("punch-dl-banner", className)}
         aria-label="下載 Whoscall"
       >
-        <img
-          src={withBasePath("/images/punchboard/download-sky.webp")}
-          alt=""
-          width={1018}
-          height={113}
-          decoding="async"
-          loading="lazy"
-          className="punch-dl-banner__sky"
-        />
-        <span className="punch-dl-banner__mark">
-          <WhoscallMark className="h-10 w-10 sm:h-11 sm:w-11" />
-        </span>
-        <span className="punch-dl-banner__copy">
-          開扁詐騙來電前，先把
-          <span className="punch-dl-banner__keep">
-            <span className="punch-dl-banner__name">Whoscall</span>
-            裝好。
-          </span>
-        </span>
-        <span className="punch-dl-banner__btn">
-          <svg viewBox="0 0 16 16" className="h-4 w-4" aria-hidden>
-            <path
-              fill="currentColor"
-              d="M7 1h2v8h3L8 14 4 9h3V1zm-5 13h12v2H2v-2z"
-            />
-          </svg>
-          下載
-        </span>
+        <svg viewBox="0 0 16 16" className="h-4 w-4" aria-hidden>
+          <path
+            fill="currentColor"
+            d="M7 1h2v8h3L8 14 4 9h3V1zm-5 13h12v2H2v-2z"
+          />
+        </svg>
+        Whoscall
       </a>
     );
   }
@@ -173,7 +163,7 @@ export function ArcadeCabinet({
           background: "linear-gradient(to left, #0a0a0a, rgba(7,19,63,0.35), transparent)",
         }}
       />
-      <div className="relative mx-auto w-full px-3 py-6 lg:px-12 lg:py-10">
+      <div className="relative mx-auto w-full px-0 py-0 lg:px-12 lg:py-10">
         <div
           className={cn(
             "relative mx-auto w-full",

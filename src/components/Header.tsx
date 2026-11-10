@@ -77,7 +77,11 @@ export function Header() {
 
         <div className="flex items-center gap-2">
           <Link
-            href={openFlatHref}
+            href={
+              pathname.replace(/\/$/, "") === openFlatHref.replace(/\/$/, "")
+                ? "#team-battle"
+                : openFlatHref
+            }
             onClick={() => setMenuOpen(false)}
             className={cn(
               "border-2 px-2.5 py-1.5 font-mono-ui text-[12px] tracking-[0.06em] no-underline sm:px-3 sm:text-[13px]",
@@ -86,7 +90,9 @@ export function Header() {
                 : "border-brand-yellow bg-transparent text-brand-yellow hover:bg-brand-yellow hover:text-ink",
             )}
           >
-            拳擊機
+            {pathname.replace(/\/$/, "") === openFlatHref.replace(/\/$/, "")
+              ? "校際對決"
+              : "拳擊機"}
           </Link>
           <SchoolOrderToggle className="hidden sm:inline-flex" />
 

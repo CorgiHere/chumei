@@ -26,11 +26,6 @@ import { PunchBattleHud } from "./PunchBattleHud";
 import { useSchoolSides } from "../SchoolOrder";
 
 const BOARD_SLOTS = 10;
-const SCHOOL_TAGS: Array<{ id: PunchSchool; label: string }> = [
-  { id: "NTHU", label: "清大" },
-  { id: "NYCU", label: "交大" },
-  { id: "OTHER", label: "其他" },
-];
 
 const pressStart = Press_Start_2P({
   weight: "400",
@@ -267,7 +262,7 @@ function PixelPanel({
 }) {
   return (
     <section
-      className={cn("relative flex h-full min-h-0 flex-col px-4 pb-4 pt-8", className)}
+      className={cn("punch-panel relative flex h-full min-h-0 flex-col px-4 pb-4 pt-8", className)}
       style={{
         border: "16px solid transparent",
         borderImageSource: `url(${punchArt(tone === "gold" ? "panel-gold.svg" : "panel-cyan.svg")})`,
@@ -403,7 +398,7 @@ function PrizeMark({ place }: { place: 1 | 2 | 3 }) {
   return (
     <span className="punch-prize mb-1" style={{ animationDelay: delay }}>
       {place === 1 ? (
-        <PunchArt file="trophy.svg" className="h-9 w-auto sm:h-11" />
+        <PunchArt file="trophy.svg" className="h-7 w-auto sm:h-11" />
       ) : (
         <PixelMedal tone={place === 2 ? "silver" : "bronze"} />
       )}
@@ -421,7 +416,7 @@ function PixelMedal({ tone }: { tone: "silver" | "bronze" }) {
   return (
     <svg
       viewBox="0 0 16 16"
-      className="h-8 w-8 sm:h-9 sm:w-9"
+      className="h-7 w-7 sm:h-9 sm:w-9"
       aria-hidden
       shapeRendering="crispEdges"
     >
@@ -478,7 +473,8 @@ function GenderList({
               className="absolute inset-0 h-full w-full"
             />
             <h2 className="relative z-1 flex h-full items-center justify-center text-[18px] leading-none text-[#10203a]">
-              {label}
+              <span className="lg:hidden">排行榜</span>
+              <span className="hidden lg:inline">{label}</span>
             </h2>
           </div>
           <div className="punch-stage">
@@ -500,7 +496,7 @@ function GenderList({
         </>
       ) : null}
       {showList ? (
-        <ol className="mt-2 flex-1 overflow-hidden">
+        <ol className="punch-rest mt-2 flex-1 overflow-hidden">
           {rest.map((row, index) => (
             <li key={`${index + 4}-${row?.id ?? "empty"}`} className="overflow-hidden">
               {row ? (
@@ -538,7 +534,7 @@ function EmptyRow({
     <div className={cn("punch-hud-row text-white/35", tone === "gold" && "punch-hud-row--gold")}>
       <span className={cn(arcade, "text-center text-[10px] leading-none")}>{rank}</span>
       <p className="truncate text-[15px]">尚未有紀錄</p>
-      <span className="truncate text-[13px]">—</span>
+      <span className="punch-hud-row__meta truncate text-[13px]">—</span>
       <span className={cn(arcade, "text-right text-[10px]")}>—</span>
     </div>
   );
@@ -578,7 +574,9 @@ function RankRow({
     >
       <span className={cn(arcade, "text-center text-[10px] leading-none text-[#ffd54a]")}>{rank}</span>
       <p className="whitespace-nowrap text-[16px] leading-tight text-white">{entry.name}</p>
-      <p className="truncate text-[13px] leading-tight text-white/50">{punchSchoolDisplay(entry)}</p>
+      <p className="punch-hud-row__meta truncate text-[13px] leading-tight text-white/50">
+        {punchSchoolDisplay(entry)}
+      </p>
       <span className={cn(arcade, "text-right text-[11px] leading-none text-white")}>
         {formatScore(entry.score)}
       </span>
@@ -597,13 +595,13 @@ function TeamBattle({
 }) {
   const [left, right] = useSchoolSides(
     {
-      label: "清華大學",
+      label: "清大",
       male: schoolTotal(male, "NTHU"),
       female: schoolTotal(female, "NTHU"),
       tone: "nthu" as const,
     },
     {
-      label: "交通大學",
+      label: "交大",
       male: schoolTotal(male, "NYCU"),
       female: schoolTotal(female, "NYCU"),
       tone: "nycu" as const,
@@ -615,6 +613,7 @@ function TeamBattle({
 export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2" }) {
   const [board, setBoard] = useState<PunchboardPayload>(emptyPunchboard);
   const [query, setQuery] = useState("");
+  const [draft, setDraft] = useState("");
   const [school, setSchool] = useState<PunchSchool | null>(null);
   const [tab, setTab] = useState<PunchGender>("male");
   const [arrival, setArrival] = useState<RankedPunchEntry | null>(null);
@@ -736,7 +735,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
     <>
     <ArcadeCabinet
       keepOrder
-      className="max-w-97.5 sm:max-w-105 md:max-w-184 lg:max-w-310"
+      className="max-w-none lg:max-w-310"
       innerClassName={cn(fusionPixel.className, "px-4 pb-8 pt-4 lg:px-8")}
     >
         <div className="relative z-1">
@@ -756,10 +755,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
           />
           <div className="relative z-1 mt-2 flex flex-col items-center gap-3">
             <div className="flex flex-wrap items-center justify-center gap-2 text-[14px] text-white/75">
-              <span className={cn(arcade, "text-[8px] leading-none text-[#ffd54a] sm:text-[10px]")}>
-                HIGH SCORE
-              </span>
-              <span>11/17</span>
+              <span>活動倒數</span>
               <span>{countdown.clock}</span>
               <span
                 className={cn(
@@ -770,162 +766,130 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
                 {countdown.phase === "ended" ? "FINAL" : "LIVE"}
               </span>
             </div>
-            <DownloadWhoscall variant="pill" />
+            <div className="punch-cta-row">
+              <DownloadWhoscall variant="compact" />
+              <a
+                href={siteConfig.punchFormUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="punch-mini-cta punch-mini-cta--signup"
+              >
+                馬上報名
+              </a>
+            </div>
           </div>
         </div>
 
-        <div className="relative z-4 mt-5 grid grid-cols-2 gap-3 lg:hidden">
-          <button
-            type="button"
-            onClick={() => setTab("male")}
-            className={cn(
-              "min-h-12 cursor-pointer border-4 px-2 text-[16px]",
-              tab === "male"
-                ? "border-[#c9a000] bg-[#ffd54a] text-[#071028]"
-                : "border-[#8a7000] bg-[#071028] text-[#ffd54a]",
-            )}
+        <div className="relative z-1 mt-3 flex w-full flex-col gap-2 lg:flex-row lg:items-stretch">
+          <form
+            className="punch-search"
+            onSubmit={(e) => {
+              e.preventDefault();
+              setQuery(draft);
+            }}
           >
-            男生組
-          </button>
-          <button
-            type="button"
-            onClick={() => setTab("female")}
-            className={cn(
-              "min-h-12 cursor-pointer border-4 px-2 text-[16px]",
-              tab === "female"
-                ? "border-[#148f88] bg-[#22e0f0] text-[#071028]"
-                : "border-[#1a6a72] bg-[#071028] text-[#9ad4ff]",
-            )}
-          >
-            女生組
-          </button>
-        </div>
-
-        <div className="relative z-1 mx-auto mt-4 flex w-full max-w-90 flex-col items-center gap-2">
-          <div className="flex w-[min(100%,280px)] items-stretch border-4 border-[#15DCE8] bg-[#07132D] focus-within:border-[#ffd54a]">
-            <span
-              className={cn(
-                arcade,
-                "flex shrink-0 items-center bg-[#15DCE8] px-2 text-[8px] leading-none text-[#071028]",
-              )}
-              aria-hidden
-            >
-              FIND
-            </span>
             <label className="sr-only" htmlFor="punch-search">
-              查詢姓名／學校／系所
+              搜尋姓名／學校／系所
             </label>
             <input
               id="punch-search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="姓名／學校／系所"
-              className="min-w-0 flex-1 bg-transparent px-2 py-2 text-[14px] leading-none text-white outline-none placeholder:text-[#A8BEDD]"
+              value={draft}
+              onChange={(e) => setDraft(e.target.value)}
+              placeholder="搜尋姓名／學校／系所"
             />
-          </div>
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            {SCHOOL_TAGS.map((tag) => {
-              const on = school === tag.id;
-              return (
-                <button
-                  key={tag.id}
-                  type="button"
-                  aria-pressed={on}
-                  onClick={() => setSchool(on ? null : tag.id)}
-                  className={cn(
-                    "min-h-8 cursor-pointer border-4 px-3 text-[14px] leading-none",
-                    on
-                      ? "border-[#c9a000] bg-[#ffd54a] text-[#071028]"
-                      : "border-[#15DCE8] bg-[#07132D] text-[#A8BEDD]",
-                  )}
-                >
-                  {tag.label}
-                </button>
-              );
-            })}
-          </div>
-          <a
-            href={siteConfig.punchFormUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="mt-1 inline-flex min-h-11 items-center justify-center border-4 border-[#c9a000] bg-[#ffd54a] px-5 text-[16px] leading-none text-[#071028] no-underline hover:bg-[#ffe27a]"
-          >
-            還沒報名？先填表單
-          </a>
-          <div className="flex flex-wrap items-center justify-center gap-2">
-            <button
-              type="button"
-              onClick={() => setInfoShot("poster")}
-              className="inline-flex min-h-11 cursor-pointer items-center justify-center border-4 border-[#15DCE8] bg-[#07132D] px-4 text-[16px] leading-none text-[#A8BEDD] hover:border-[#ffd54a] hover:text-[#ffd54a]"
-            >
-              活動資訊
-            </button>
-            <button
-              type="button"
-              onClick={() => setInfoShot("safety")}
-              className="inline-flex min-h-11 cursor-pointer items-center justify-center border-4 border-[#15DCE8] bg-[#07132D] px-4 text-[16px] leading-none text-[#A8BEDD] hover:border-[#ffd54a] hover:text-[#ffd54a]"
-            >
-              使用須知
-            </button>
+            <button type="submit">搜尋</button>
+          </form>
+          <div className="punch-chips">
+            <div className="punch-chips__group punch-chips__group--gender" role="group" aria-label="性別">
+              <button
+                type="button"
+                className="punch-chip"
+                aria-pressed={tab === "male"}
+                onClick={() => setTab("male")}
+              >
+                男生
+              </button>
+              <button
+                type="button"
+                className="punch-chip"
+                aria-pressed={tab === "female"}
+                onClick={() => setTab("female")}
+              >
+                女生
+              </button>
+            </div>
+            <div className="punch-chips__group punch-chips__group--school" role="group" aria-label="學校">
+              <button
+                type="button"
+                className="punch-chip"
+                aria-pressed={school === "NTHU"}
+                onClick={() => setSchool("NTHU")}
+              >
+                清大
+              </button>
+              <button
+                type="button"
+                className="punch-chip"
+                aria-pressed={school === "NYCU"}
+                onClick={() => setSchool("NYCU")}
+              >
+                交大
+              </button>
+              <button
+                type="button"
+                className="punch-chip"
+                aria-pressed={school === null}
+                onClick={() => setSchool(null)}
+              >
+                全部
+              </button>
+            </div>
           </div>
         </div>
 
-        <div className="relative mt-8 space-y-3">
-          <div className="grid items-stretch gap-8 lg:grid-cols-2 lg:gap-4">
-            <GenderList
-              className={tab === "male" ? "flex" : "hidden lg:flex"}
-              label="男生組"
-              tone="gold"
-              rows={maleView}
-              risingId={arrival?.id}
-              arcade={arcade}
-              seeking={seeking}
-              hitIds={hitIds}
-              onSelect={setDiploma}
-              stage="podium"
-            />
-            <GenderList
-              className={tab === "female" ? "flex" : "hidden lg:flex"}
-              label="女生組"
-              tone="cyan"
-              rows={femaleView}
-              risingId={arrival?.id}
-              arcade={arcade}
-              seeking={seeking}
-              hitIds={hitIds}
-              onSelect={setDiploma}
-              stage="podium"
-            />
-          </div>
-          <DownloadWhoscall variant="banner" />
-          <div className="grid items-stretch gap-8 lg:grid-cols-2 lg:gap-4">
-            <GenderList
-              className={tab === "male" ? "flex" : "hidden lg:flex"}
-              label="男生組"
-              tone="gold"
-              rows={maleView}
-              risingId={arrival?.id}
-              arcade={arcade}
-              seeking={seeking}
-              hitIds={hitIds}
-              onSelect={setDiploma}
-              stage="list"
-            />
-            <GenderList
-              className={tab === "female" ? "flex" : "hidden lg:flex"}
-              label="女生組"
-              tone="cyan"
-              rows={femaleView}
-              risingId={arrival?.id}
-              arcade={arcade}
-              seeking={seeking}
-              hitIds={hitIds}
-              onSelect={setDiploma}
-              stage="list"
-            />
-          </div>
+        <div className="relative mt-5 grid items-stretch gap-5 lg:grid-cols-2 lg:gap-4">
+          <GenderList
+            className={tab === "male" ? "flex" : "hidden lg:flex"}
+            label="男生組"
+            tone="gold"
+            rows={maleView}
+            risingId={arrival?.id}
+            arcade={arcade}
+            seeking={seeking}
+            hitIds={hitIds}
+            onSelect={setDiploma}
+          />
+          <GenderList
+            className={tab === "female" ? "flex" : "hidden lg:flex"}
+            label="女生組"
+            tone="cyan"
+            rows={femaleView}
+            risingId={arrival?.id}
+            arcade={arcade}
+            seeking={seeking}
+            hitIds={hitIds}
+            onSelect={setDiploma}
+          />
         </div>
-        <TeamBattle male={board.male} female={board.female} arcade={arcade} />
+        <div id="team-battle" className="scroll-mt-24">
+          <TeamBattle male={board.male} female={board.female} arcade={arcade} />
+        </div>
+        <div className="mt-4 grid grid-cols-2 gap-3">
+          <button
+            type="button"
+            onClick={() => setInfoShot("poster")}
+            className="inline-flex min-h-12 cursor-pointer items-center justify-center border-4 border-[#0a8f96] bg-[#22e0f0] px-3 text-[16px] font-black leading-none text-[#071028] shadow-[0_4px_0_#0a6a70] hover:brightness-110 active:translate-y-0.5 active:shadow-[0_2px_0_#0a6a70]"
+          >
+            活動資訊
+          </button>
+          <button
+            type="button"
+            onClick={() => setInfoShot("safety")}
+            className="inline-flex min-h-12 cursor-pointer items-center justify-center border-4 border-[#c9a000] bg-[#ffd54a] px-3 text-[16px] font-black leading-none text-[#071028] shadow-[0_4px_0_#8a7000] hover:brightness-110 active:translate-y-0.5 active:shadow-[0_2px_0_#8a7000]"
+          >
+            使用須知
+          </button>
+        </div>
 
         {board.ready ? null : (
           <p className="mt-3 text-center font-mono-ui text-[11px] tracking-widest text-[#5ef0ea]">
