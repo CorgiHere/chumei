@@ -64,8 +64,10 @@ export function DownloadWhoscall({
         </span>
         <span className="punch-dl-banner__copy">
           開扁詐騙來電前，先把
-          <span className="punch-dl-banner__name">Whoscall</span>
-          裝好。
+          <span className="punch-dl-banner__keep">
+            <span className="punch-dl-banner__name">Whoscall</span>
+            裝好。
+          </span>
         </span>
         <span className="punch-dl-banner__btn">
           <svg viewBox="0 0 16 16" className="h-4 w-4" aria-hidden>

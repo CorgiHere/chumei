@@ -868,6 +868,10 @@
   image-rendering: pixelated;
 }
 
+.punch-dl-banner__keep {
+  white-space: nowrap;
+}
+
 .punch-dl-banner__mark {
   position: relative;
   z-index: 1;
@@ -1042,21 +1046,52 @@
 
 @media (max-width: 639px) {
   .punch-dl-banner {
-    justify-content: center;
-    text-align: center;
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-rows: auto auto;
+    align-items: center;
+    column-gap: 0.7rem;
+    row-gap: 0.45rem;
+    min-height: 0;
+    padding: 0.7rem 0.8rem 0.75rem;
+    border: 3px solid #15dce8;
+    background: #07132d;
+  }
+
+  .punch-dl-banner__sky {
+    display: none;
   }
 
   .punch-dl-banner__mark {
+    grid-row: 1 / span 2;
     padding-right: 0;
     box-shadow: none;
   }
 
+  .punch-dl-banner__mark img {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
   .punch-dl-banner__copy {
-    flex-basis: 100%;
+    flex: none;
+    min-width: 0;
+    font-size: 13px;
+    line-height: 1.4;
+    text-align: left;
+  }
+
+  .punch-dl-banner__name {
+    margin: 0 0.12em;
+    padding: 0 0.28em 0.02em;
   }
 
   .punch-dl-banner__btn {
+    justify-self: start;
+    min-height: 2.15rem;
     margin-left: 0;
+    padding: 0.35rem 0.9rem;
+    font-size: 14px;
   }
 }
 
