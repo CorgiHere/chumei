@@ -591,7 +591,6 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
   const [shownRank, setShownRank] = useState<number | null>(null);
   const [diploma, setDiploma] = useState<RankedPunchEntry | null>(null);
   const [infoShot, setInfoShot] = useState<"poster" | "safety" | null>(null);
-  const [lookupOpen, setLookupOpen] = useState(false);
   const queueRef = useRef<RankedPunchEntry[]>([]);
   const cueRef = useRef("");
   const hydratedRef = useRef(false);
@@ -828,6 +827,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
             </div>
           </div>
         </div>
+        <ScoreLookup onFound={setDiploma} />
 
         <div className="relative mt-5 grid items-stretch gap-5 lg:grid-cols-2 lg:gap-4">
           <GenderList
@@ -859,13 +859,6 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
         <div className="mt-4 grid grid-cols-2 gap-3">
           <button
             type="button"
-            onClick={() => setLookupOpen(true)}
-            className="col-span-2 inline-flex min-h-12 cursor-pointer items-center justify-center border-4 border-[#3a2bff] bg-[#6d5cff] px-3 text-[16px] font-black leading-none text-white shadow-[0_4px_0_#2418a8] hover:brightness-110 active:translate-y-0.5 active:shadow-[0_2px_0_#2418a8]"
-          >
-            查成績
-          </button>
-          <button
-            type="button"
             onClick={() => setInfoShot("poster")}
             className="inline-flex min-h-12 cursor-pointer items-center justify-center border-4 border-[#0a8f96] bg-[#22e0f0] px-3 text-[16px] font-black leading-none text-[#071028] shadow-[0_4px_0_#0a6a70] hover:brightness-110 active:translate-y-0.5 active:shadow-[0_2px_0_#0a6a70]"
           >
@@ -887,16 +880,6 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
         )}
         </div>
     </ArcadeCabinet>
-    {lookupOpen ? (
-      <ScoreLookup
-        fusion={fusionPixel.className}
-        onClose={() => setLookupOpen(false)}
-        onFound={(entry) => {
-          setLookupOpen(false);
-          setDiploma(entry);
-        }}
-      />
-    ) : null}
     {diploma ? (
       <ScoreDiploma
         entry={diploma}
@@ -921,31 +904,10 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
   );
 }
 
-function ScoreLookup({
-  fusion,
-  onClose,
-  onFound,
-}: {
-  fusion: string;
-  onClose: () => void;
-  onFound: (entry: RankedPunchEntry) => void;
-}) {
+function ScoreLookup({ onFound }: { onFound: (entry: RankedPunchEntry) => void }) {
   const [id, setId] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
-
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = previous;
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [onClose]);
 
   async function lookup(event: FormEvent) {
     event.preventDefault();
@@ -1010,50 +972,25 @@ function ScoreLookup({
   }
 
   return (
-    <div
-      className={cn(fusion, "fixed inset-0 z-200 flex items-center justify-center bg-black/92 p-4")}
-      role="dialog"
-      aria-modal="true"
-      aria-label="查成績"
-      onClick={onClose}
-    >
-      <form
-        className="w-full max-w-md space-y-4 border-4 border-[#22e0f0] bg-[#071028] p-5 text-white"
-        onClick={(event) => event.stopPropagation()}
-        onSubmit={(event) => void lookup(event)}
-      >
-        <p className="text-[18px] font-black leading-none text-[#ffd54a]">查成績</p>
-        <p className="text-[13px] text-white/70">輸入現場發的 ID，查看歷史最高分獎狀。</p>
-        <label className="block text-[12px]" htmlFor="score-lookup-id">
+    <div className="relative z-1 mt-2">
+      <form className="punch-search" onSubmit={(event) => void lookup(event)}>
+        <label className="sr-only" htmlFor="score-lookup-id">
           選手 ID
         </label>
         <input
           id="score-lookup-id"
           value={id}
-          autoFocus
           autoCapitalize="characters"
           onChange={(event) => setId(event.target.value)}
-          className="w-full border-4 border-[#22e0f0] bg-[#06102f] px-3 py-3 text-[16px] text-white outline-none"
-          placeholder="例如 T01JJ18"
+          placeholder="輸入 ID 查成績"
         />
-        {error ? <p className="text-[13px] text-[#ff6b6b]">{error}</p> : null}
-        <div className="flex flex-wrap gap-3">
-          <button
-            type="submit"
-            disabled={busy}
-            className="inline-flex min-h-12 flex-1 cursor-pointer items-center justify-center border-4 border-[#c9a000] bg-[#ffd54a] px-3 text-[16px] font-black text-[#071028]"
-          >
-            {busy ? "查詢中…" : "查詢"}
-          </button>
-          <button
-            type="button"
-            onClick={onClose}
-            className="inline-flex min-h-12 cursor-pointer items-center justify-center border-4 border-white/40 px-4 text-[16px] text-white"
-          >
-            關閉
-          </button>
-        </div>
+        <button type="submit" disabled={busy}>
+          {busy ? "查詢中…" : "查成績"}
+        </button>
       </form>
+      {error ? (
+        <p className="mt-2 text-center text-[13px] text-[#ff6b6b]">{error}</p>
+      ) : null}
     </div>
   );
 }

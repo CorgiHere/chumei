@@ -9,6 +9,7 @@ import {
   getSiteUrl,
   organizationJsonLd,
   SEO_KEYWORDS,
+  HOME_SEO_TITLE,
   SITE_BRAND_NAME,
   websiteJsonLd,
 } from "@/lib/seo";
@@ -33,20 +34,20 @@ const oswald = Oswald({
 export const metadata: Metadata = {
   metadataBase: new URL(getSiteUrl()),
     title: {
-      default: "竹梅賽 Chu Mei｜2026 清大 × 交大",
+      default: HOME_SEO_TITLE,
     template: `%s｜${siteConfig.yearName}`,
   },
   description: siteConfig.description,
-  applicationName: SITE_BRAND_NAME,
+  applicationName: "竹梅賽",
   appleWebApp: {
-    title: SITE_BRAND_NAME,
+    title: "竹梅賽",
   },
   authors: [{ name: "竹梅籌備委員會" }],
   creator: "竹梅籌備委員會",
   publisher: "竹梅籌備委員會",
   keywords: SEO_KEYWORDS,
   openGraph: {
-    title: "竹梅賽 Chu Mei｜2026 清大 NTHU × 交大 NYCU",
+    title: HOME_SEO_TITLE,
     description: siteConfig.description,
     url: absoluteUrl("/"),
     siteName: SITE_BRAND_NAME,
@@ -63,7 +64,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "竹梅賽 Chu Mei｜2026 清大交大官方網站",
+    title: HOME_SEO_TITLE,
     description: siteConfig.description,
     images: [absoluteAssetUrl(siteConfig.logoUrl)],
   },

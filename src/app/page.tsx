@@ -15,12 +15,12 @@ import { newsPosts } from "@/data/news";
 import { galleryItems } from "@/data/history";
 import { siteConfig } from "@/data/site";
 import { formatDateOnly, getNewsCategoryLabel, withBasePath, appPath } from "@/lib/utils";
-import { buildPageMetadata, faqJsonLd, gamesEventJsonLd } from "@/lib/seo";
+import { buildPageMetadata, faqJsonLd, gamesEventJsonLd, HOME_SEO_TITLE } from "@/lib/seo";
 import { PathVote } from "@/components/PathVote";
 import { preload } from "react-dom";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "竹梅賽 Chu Mei｜2026 清大 × 交大官方網站",
+  title: HOME_SEO_TITLE,
   description:
     "竹梅賽（Chu Mei）清大 × 交大官方網站。11/17「詐騙來電，Whoscall 開扁」拳擊機即時榜開放報名；不是梅竹賽。",
   path: "/",

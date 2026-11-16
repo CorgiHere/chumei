@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
 import { siteConfig } from "@/data/site";
 
-/** Preferred Google Search site name (not the GitHub Pages default). */
-export const SITE_BRAND_NAME = "竹梅賽";
+/** Homepage / Google Search title. */
+export const HOME_SEO_TITLE = "竹梅賽Chu Mei｜2026 清大× 交大官方網站";
+
+/** PWA / short brand. Search uses HOME_SEO_TITLE. */
+export const SITE_BRAND_NAME = HOME_SEO_TITLE;
 
 /** Shared keyword set for meta keywords (meta keywords have limited impact; keep generous for completeness). */
 export const SEO_KEYWORDS = [
@@ -335,8 +338,9 @@ export function websiteJsonLd() {
     "@context": "https://schema.org",
     "@type": "WebSite",
     "@id": `${home}#website`,
-    name: SITE_BRAND_NAME,
+    name: HOME_SEO_TITLE,
     alternateName: [
+      "竹梅賽",
       siteConfig.yearName,
       "竹梅",
       "竹梅賽官方網站",
@@ -530,7 +534,7 @@ export function eventJsonLd(input: {
       "@type": "Organization",
       "@id": `${absoluteUrl("/")}#organization`,
       name: "竹梅籌備委員會",
-      url: absoluteUrl("/about/"),
+      url: absoluteUrl("/"),
     },
     ...(input.registrationUrl
       ? {

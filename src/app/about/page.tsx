@@ -15,7 +15,7 @@ import {
 import { JoinEntryLink } from "@/components/SiteFlags";
 
 export const metadata: Metadata = buildPageMetadata({
-  title: "關於竹梅賽｜清交學生自辦，不是梅竹賽",
+  title: "籌備委員會｜學生自辦，不是梅竹賽",
   description:
     "竹梅賽（Chu Mei）是清大與交大學生自辦的清交荒謬競技，與梅竹賽沒有任何關係。恐龍賽跑、大草坪大尖叫、酒精微積分、辦公椅競速、刷條碼到猜拳送機票。",
   path: "/about",
