@@ -157,6 +157,32 @@ export async function notifyTop10IfChanged(
   }
 }
 
+export const ADMIN_OTP_TO = "chu.mei.committee@gmail.com";
+
+export async function sendAdminOtp(env: PunchEnv, code: string): Promise<MailAttempt> {
+  try {
+    if (!env.RESEND_API_KEY && !env.PUNCHBOARD_MAIL_WEBHOOK) {
+      return { mailed: "skipped" };
+    }
+    const sent = await deliver(
+      env,
+      ADMIN_OTP_TO,
+      "[後台] 拳擊機登入驗證碼",
+      [
+        "拳擊機後台這次登入的驗證碼：",
+        code,
+        "",
+        "10 分鐘內有效，用過即失效。每次進入後台都會寄新的驗證碼。",
+        "若不是你在登入，請忽略這封信，並盡快更換 PUNCHBOARD_ADMIN_SECRET。",
+      ].join("\n"),
+    );
+    if (sent.ok) return { mailed: "sent" };
+    return { mailed: "failed", mailError: sent.error };
+  } catch {
+    return { mailed: "failed", mailError: "network" };
+  }
+}
+
 export async function sendCurrentBoard(
   env: PunchEnv,
   board: PunchBoard,

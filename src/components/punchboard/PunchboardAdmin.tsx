@@ -76,10 +76,30 @@ async function adminFetch(init?: RequestInit) {
   });
 }
 
+function authErrorMessage(error: string | undefined, status: number) {
+  if (status === 503 || error === "admin_unconfigured") {
+    return "後台密碼尚未在 Cloudflare 設定 PUNCHBOARD_ADMIN_SECRET。";
+  }
+  if (error === "kv_missing") return "後台資料庫尚未接上，請稍後再試。";
+  if (error === "mail_unconfigured") {
+    return "驗證碼寄不出來。請在 Cloudflare 設定 RESEND_API_KEY。";
+  }
+  if (error === "mail_failed") {
+    return "驗證碼寄送失敗。請看垃圾郵件，或確認 Resend 網域與 PUNCHBOARD_MAIL_FROM。";
+  }
+  if (error === "rate_limited") return "嘗試太多次，請 15 分鐘後再試。";
+  if (error === "bad_code") return "驗證碼不對或已過期，請重新寄送。";
+  if (error === "bad_password") return "密碼不對。";
+  if (error === "forbidden") return "請從 https://chumei.org/punchboard/admin/ 開啟此頁。";
+  return "無法連到後台 API。請在 chumei.org 開啟此頁。";
+}
+
 export function PunchboardAdmin() {
   const [password, setPassword] = useState("");
+  const [code, setCode] = useState("");
+  const [codeSent, setCodeSent] = useState(false);
+  const [sendingCode, setSendingCode] = useState(false);
   const [authed, setAuthed] = useState(false);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [board, setBoard] = useState<AdminState>({
@@ -102,45 +122,10 @@ export function PunchboardAdmin() {
   );
 
   useEffect(() => {
-    let cancelled = false;
-    const controller = new AbortController();
-    const timeout = window.setTimeout(() => controller.abort(), 8000);
-    (async () => {
-      try {
-        const res = await adminFetch({ signal: controller.signal });
-        if (cancelled) return;
-        if (res.status === 401) {
-          setAuthed(false);
-          return;
-        }
-        if (res.status === 503) {
-          setError("後台密碼尚未在 Cloudflare 設定 PUNCHBOARD_ADMIN_SECRET。");
-          return;
-        }
-        if (!res.ok) {
-          setError("無法連到後台 API。請在 chumei.org 開啟此頁。");
-          return;
-        }
-        const data = (await res.json()) as AdminState & { ok?: boolean };
-        setBoard({
-          eventName: data.eventName,
-          endAt: data.endAt,
-          entries: data.entries ?? [],
-          roster: data.roster ?? [],
-        });
-        setAuthed(true);
-      } catch {
-        setError("無法連到後台 API。請在 chumei.org 開啟此頁。");
-      } finally {
-        window.clearTimeout(timeout);
-        if (!cancelled) setLoading(false);
-      }
-    })();
-    return () => {
-      cancelled = true;
-      controller.abort();
-      window.clearTimeout(timeout);
-    };
+    void adminFetch({
+      method: "POST",
+      body: JSON.stringify({ action: "logout" }),
+    });
   }, []);
 
   const filteredByGender = useMemo(() => {
@@ -219,27 +204,62 @@ export function PunchboardAdmin() {
     return board.roster.find((row) => row.id === id) ?? null;
   }, [board.roster, form.id]);
 
+  async function sendCode() {
+    setError("");
+    setNotice("");
+    if (!password) {
+      setError("請先輸入後台密碼。");
+      return;
+    }
+    setSendingCode(true);
+    try {
+      const res = await adminFetch({
+        method: "POST",
+        body: JSON.stringify({ action: "challenge", password }),
+      });
+      const data = (await res.json().catch(() => ({}))) as { error?: string };
+      if (!res.ok) {
+        setError(authErrorMessage(data.error, res.status));
+        return;
+      }
+      setCodeSent(true);
+      setCode("");
+      setNotice("驗證碼已寄到 chu.mei.committee@gmail.com，請在 10 分鐘內輸入。");
+    } catch {
+      setError("無法連到後台 API。請在 chumei.org 開啟此頁。");
+    } finally {
+      setSendingCode(false);
+    }
+  }
+
   async function login(e: FormEvent) {
     e.preventDefault();
     setError("");
+    if (!codeSent) {
+      await sendCode();
+      return;
+    }
     const res = await adminFetch({
       method: "POST",
-      body: JSON.stringify({ action: "login", password }),
+      body: JSON.stringify({ action: "login", password, code }),
     });
+    const data = (await res.json().catch(() => ({}))) as { error?: string };
     if (!res.ok) {
-      setError(res.status === 503 ? "後台尚未設定密碼。" : "密碼不對。");
+      setError(authErrorMessage(data.error, res.status));
       return;
     }
     setPassword("");
+    setCode("");
+    setCodeSent(false);
     setAuthed(true);
     const next = await adminFetch();
     if (next.ok) {
-      const data = (await next.json()) as AdminState;
+      const boardData = (await next.json()) as AdminState;
       setBoard({
-        eventName: data.eventName,
-        endAt: data.endAt,
-        entries: data.entries ?? [],
-        roster: data.roster ?? [],
+        eventName: boardData.eventName,
+        endAt: boardData.endAt,
+        entries: boardData.entries ?? [],
+        roster: boardData.roster ?? [],
       });
     }
   }
@@ -247,6 +267,9 @@ export function PunchboardAdmin() {
   async function logout() {
     await adminFetch({ method: "POST", body: JSON.stringify({ action: "logout" }) });
     setAuthed(false);
+    setPassword("");
+    setCode("");
+    setCodeSent(false);
     setForm(blankForm);
   }
 
@@ -349,21 +372,13 @@ export function PunchboardAdmin() {
     }
   }
 
-  if (loading) {
-    return (
-      <AdminFrame>
-        <p className="text-[#ffd54a]">檢查登入狀態…</p>
-      </AdminFrame>
-    );
-  }
-
   if (!authed) {
     return (
       <AdminFrame>
         <form onSubmit={login} className={panelClass}>
           <p className={cn(pressStart.className, "text-[10px] text-[#ffd54a]")}>ADMIN</p>
           <p className="text-[12px] text-white/70">
-            只有籌委會現場登錄成績。請先匯入報名名單，再用 ID 對成績。
+            每次進入都要密碼與驗證碼。驗證碼會寄到 chu.mei.committee@gmail.com。
           </p>
           <label className="block text-[12px]" htmlFor="admin-pass">
             後台密碼
@@ -376,10 +391,33 @@ export function PunchboardAdmin() {
             onChange={(e) => setPassword(e.target.value)}
             className={fieldClass}
           />
+          <label className="block text-[12px]" htmlFor="admin-code">
+            驗證碼
+          </label>
+          <input
+            id="admin-code"
+            inputMode="numeric"
+            autoComplete="one-time-code"
+            value={code}
+            onChange={(e) => setCode(e.target.value.replace(/\D/g, "").slice(0, 6))}
+            placeholder={codeSent ? "6 位數" : "先寄送驗證碼"}
+            className={fieldClass}
+          />
+          {notice ? <p className="text-[12px] text-[#7dff9a]">{notice}</p> : null}
           {error ? <p className="text-[12px] text-[#ff6b6b]">{error}</p> : null}
-          <button type="submit" className={btnPrimary}>
-            進入後台
-          </button>
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              className={btnGhost}
+              disabled={sendingCode}
+              onClick={() => void sendCode()}
+            >
+              {sendingCode ? "寄送中…" : codeSent ? "重新寄送驗證碼" : "寄送驗證碼"}
+            </button>
+            <button type="submit" className={btnPrimary} disabled={!codeSent || code.length !== 6}>
+              進入後台
+            </button>
+          </div>
         </form>
       </AdminFrame>
     );

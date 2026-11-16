@@ -32,11 +32,34 @@ export function timingSafeEqual(a: string, b: string) {
   return out === 0;
 }
 
-function readCookie(request: Request) {
+export function readNamedCookie(request: Request, name: string) {
   const raw = request.headers.get("Cookie") ?? "";
-  const prefix = `${ADMIN_COOKIE}=`;
+  const prefix = `${name}=`;
   const hit = raw.split(";").map((p) => p.trim()).find((p) => p.startsWith(prefix));
-  return hit ? hit.slice(prefix.length) : "";
+  return hit ? decodeURIComponent(hit.slice(prefix.length)) : "";
+}
+
+function readCookie(request: Request) {
+  return readNamedCookie(request, ADMIN_COOKIE);
+}
+
+export function namedCookieHeader(
+  request: Request,
+  name: string,
+  value: string,
+  maxAge: number,
+  path = "/",
+  sameSite: "Strict" | "Lax" = "Lax",
+) {
+  const parts = [
+    `${name}=${encodeURIComponent(value)}`,
+    `Path=${path}`,
+    `Max-Age=${maxAge}`,
+    "HttpOnly",
+    `SameSite=${sameSite}`,
+  ];
+  if (new URL(request.url).protocol === "https:") parts.push("Secure");
+  return parts.join("; ");
 }
 
 export async function isAuthed(request: Request, secret: string) {

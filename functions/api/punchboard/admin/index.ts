@@ -1,11 +1,4 @@
 import {
-  ADMIN_TOKEN_MSG,
-  cookieHeader,
-  hmacHex,
-  isAuthed,
-  timingSafeEqual,
-} from "../../_admin-auth";
-import {
   BOARD_HISTORY_KEY,
   BOARD_HISTORY_LIMIT,
   BOARD_KEY,
@@ -28,6 +21,13 @@ import {
   type PunchNameMode,
   type PunchRegistrant,
 } from "../_shared";
+import {
+  completeOtpLogin,
+  destroySession,
+  isPunchAuthed,
+  originAllowed,
+  startOtpChallenge,
+} from "../_admin-session";
 import {
   notifyTop10IfChanged,
   parseMailTo,
@@ -121,8 +121,18 @@ function entryFromRegistrant(
 function authedJson(request: Request, body: unknown, status = 200) {
   const res = json(request, body, status, {
     "Access-Control-Allow-Credentials": "true",
+    "X-Content-Type-Options": "nosniff",
+    "Referrer-Policy": "no-referrer",
+    "Cache-Control": "no-store",
   });
   return res;
+}
+
+function withCookies(request: Request, body: unknown, cookies: string[], status = 200) {
+  const res = authedJson(request, body, status);
+  const headers = new Headers(res.headers);
+  for (const line of cookies) headers.append("Set-Cookie", line);
+  return new Response(res.body, { status, headers });
 }
 
 export async function onRequestOptions(context: PagesContext) {
@@ -134,7 +144,7 @@ export async function onRequestGet(context: PagesContext) {
   if (!secret) {
     return authedJson(context.request, { error: "admin_unconfigured", ready: false }, 503);
   }
-  if (!(await isAuthed(context.request, secret))) {
+  if (!(await isPunchAuthed(context.request, context.env, secret))) {
     return authedJson(context.request, { error: "unauthorized", ok: false }, 401);
   }
   const { board, ready } = await readBoard(context.env);
@@ -160,6 +170,7 @@ export async function onRequestPost(context: PagesContext) {
   let payload: {
     action?: string;
     password?: string;
+    code?: string;
     eventName?: string;
     endAt?: string;
     id?: string;
@@ -176,26 +187,44 @@ export async function onRequestPost(context: PagesContext) {
   }
 
   const action = payload.action;
-  if (action === "login") {
-    const password = String(payload.password ?? "");
-    if (password.length !== secret.length || !timingSafeEqual(password, secret)) {
-      return authedJson(request, { error: "bad_password" }, 401);
-    }
-    const token = await hmacHex(secret, ADMIN_TOKEN_MSG);
-    const res = authedJson(request, { ok: true });
-    const headers = new Headers(res.headers);
-    headers.append("Set-Cookie", cookieHeader(request, token, 60 * 60 * 24 * 14));
-    return new Response(res.body, { status: 200, headers });
-  }
-
   if (action === "logout") {
-    const res = authedJson(request, { ok: true });
-    const headers = new Headers(res.headers);
-    headers.append("Set-Cookie", cookieHeader(request, "", 0));
-    return new Response(res.body, { status: 200, headers });
+    const done = await destroySession(request, env);
+    return withCookies(request, { ok: true }, done.cookies);
   }
 
-  if (!(await isAuthed(request, secret))) {
+  if (action === "challenge" || action === "login") {
+    if (!originAllowed(request)) {
+      return authedJson(request, { error: "forbidden" }, 403);
+    }
+    if (action === "challenge") {
+      const started = await startOtpChallenge(
+        request,
+        env,
+        secret,
+        String(payload.password ?? ""),
+      );
+      if (!started.ok) {
+        return authedJson(request, { error: started.error }, started.status);
+      }
+      return withCookies(request, { ok: true, sent: true }, started.cookies);
+    }
+    const finished = await completeOtpLogin(
+      request,
+      env,
+      secret,
+      String(payload.password ?? ""),
+      String(payload.code ?? ""),
+    );
+    if (!finished.ok) {
+      return authedJson(request, { error: finished.error }, finished.status);
+    }
+    return withCookies(request, { ok: true }, finished.cookies);
+  }
+
+  if (!originAllowed(request)) {
+    return authedJson(request, { error: "forbidden" }, 403);
+  }
+  if (!(await isPunchAuthed(request, env, secret))) {
     return authedJson(request, { error: "unauthorized" }, 401);
   }
   if (!env.CHUMEI_VOTES) {
