@@ -216,6 +216,23 @@ export async function readBoard(
   return { ready: true, board };
 }
 
+export function splitLegalAndNick(legalName: string, nickname: string) {
+  let legal = legalName.trim();
+  let nick = nickname.trim();
+  if (!nick || nick === "0" || nick === "-" || nick === "無") nick = "";
+  const parts = legal.split(/[\s　]*暱稱[\s　]+/);
+  if (parts.length >= 2) {
+    legal = parts[0].trim() || legal;
+    if (!nick) nick = parts[1].trim();
+  }
+  return { legalName: legal.slice(0, 40), nickname: nick.slice(0, 40) };
+}
+
+function rawNickname(item: object) {
+  const row = item as Record<string, unknown>;
+  return String(row.nickname ?? row.nickName ?? row["暱稱"] ?? "");
+}
+
 function isRegistrant(value: unknown): value is PunchRegistrant {
   if (!value || typeof value !== "object") return false;
   const row = value as Partial<PunchRegistrant>;
@@ -239,10 +256,11 @@ export async function readRoster(env: PunchEnv): Promise<PunchRegistrant[]> {
       if (!isRegistrant(item)) continue;
       const id = normalizePlayerId(item.id);
       if (!id) continue;
+      const names = splitLegalAndNick(String(item.legalName), rawNickname(item));
       byId.set(id, {
         id,
-        legalName: String(item.legalName).trim().slice(0, 40),
-        nickname: String(item.nickname ?? "").trim().slice(0, 40),
+        legalName: names.legalName,
+        nickname: names.nickname,
         nameMode: item.nameMode === "nick" ? "nick" : "legal",
         school: item.school,
         schoolOther: item.school === "OTHER" ? String(item.schoolOther ?? "").trim().slice(0, 40) : "",

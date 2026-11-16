@@ -131,16 +131,43 @@ export function personKey(entry: { id?: string; name: string; gender: PunchGende
   return `${entry.gender}:${normalizePersonName(entry.name)}`;
 }
 
+export function punchNickname(row?: {
+  nickname?: string | null;
+  legalName?: string | null;
+  name?: string | null;
+} | null) {
+  if (!row) return "";
+  const extra = row as Record<string, unknown>;
+  const direct = [row.nickname, extra.nickName, extra["暱稱"]]
+    .map((value) => String(value ?? "").trim())
+    .find((value) => value && value !== "0" && value !== "-" && value !== "無");
+  if (direct) return direct.slice(0, 40);
+  const legal = String(row.legalName ?? "").trim();
+  const parts = legal.split(/[\s　]*暱稱[\s　]+/);
+  if (parts.length >= 2 && parts[1].trim()) return parts[1].trim().slice(0, 40);
+  const name = String(row.name ?? "").trim();
+  const legalCore = (parts[0] ?? legal).trim();
+  if (name && legalCore && name !== legalCore) return name.slice(0, 40);
+  return "";
+}
+
+export function punchLegalName(row?: { legalName?: string | null; name?: string | null } | null) {
+  const legal = String(row?.legalName ?? "").trim();
+  const parts = legal.split(/[\s　]*暱稱[\s　]+/);
+  if (parts.length >= 2 && parts[0].trim()) return parts[0].trim().slice(0, 40);
+  return legal || String(row?.name ?? "").trim();
+}
+
 export function punchDisplayName(row: {
   legalName?: string;
   nickname?: string;
   nameMode?: PunchNameMode;
   name?: string;
 }) {
-  if (row.nameMode === "nick" && (row.nickname ?? "").trim()) {
-    return row.nickname!.trim();
-  }
-  if ((row.legalName ?? "").trim()) return row.legalName!.trim();
+  const nick = punchNickname(row);
+  if (row.nameMode === "nick" && nick) return nick;
+  const legal = punchLegalName(row);
+  if (legal) return legal;
   return (row.name ?? "").trim();
 }
 

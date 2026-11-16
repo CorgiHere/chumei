@@ -14,6 +14,7 @@ import {
   readBoard,
   readRoster,
   uniqueByPerson,
+  splitLegalAndNick,
   writeRoster,
   type PunchBoard,
   type PunchEntry,
@@ -78,16 +79,21 @@ function parseNameMode(value: unknown): PunchNameMode {
 
 function parseRegistrant(raw: Partial<PunchRegistrant>): PunchRegistrant | null {
   const id = normalizePlayerId(clip(raw.id, 20));
-  const legalName = clip(raw.legalName, 40);
-  if (!id || !legalName) return null;
+  const legalNameRaw = clip(raw.legalName, 80);
+  if (!id || !legalNameRaw) return null;
   const school = raw.school;
   const gender = raw.gender;
   if (school !== "NTHU" && school !== "NYCU" && school !== "OTHER") return null;
   if (gender !== "male" && gender !== "female") return null;
+  const nickRaw = clip(
+    raw.nickname ?? (raw as { nickName?: string; 暱稱?: string }).nickName ?? (raw as { 暱稱?: string }).暱稱,
+    40,
+  );
+  const names = splitLegalAndNick(legalNameRaw, nickRaw);
   return {
     id,
-    legalName,
-    nickname: clip(raw.nickname, 40),
+    legalName: names.legalName,
+    nickname: names.nickname,
     nameMode: parseNameMode(raw.nameMode),
     school,
     schoolOther: school === "OTHER" ? clip(raw.schoolOther, 40) : "",

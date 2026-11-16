@@ -11,6 +11,8 @@ import {
   PUNCH_GENDER_LABEL,
   PUNCH_SCORE_MAX,
   punchDisplayName,
+  punchLegalName,
+  punchNickname,
   punchSchoolDisplay,
   PUNCH_SCHOOL_LABEL,
   PUNCHBOARD_DEFAULT_END_AT,
@@ -219,8 +221,16 @@ export function PunchboardAdmin() {
   const lookedUp = useMemo(() => {
     const id = normalizePlayerId(form.id);
     if (!id) return null;
-    return board.roster.find((row) => row.id === id) ?? null;
-  }, [board.roster, form.id]);
+    const person = board.roster.find((row) => normalizePlayerId(row.id) === id);
+    if (!person) return null;
+    const scored = board.entries.find((row) => normalizePlayerId(row.id) === id);
+    const nickname = punchNickname(person) || punchNickname(scored);
+    return {
+      ...person,
+      legalName: punchLegalName(person) || person.legalName,
+      nickname,
+    };
+  }, [board.entries, board.roster, form.id]);
 
   async function sendCode() {
     setError("");
@@ -723,7 +733,7 @@ export function PunchboardAdmin() {
               <p className="text-[#ffd54a]">已報名　ID {lookedUp.id}</p>
               <p className="mt-2">
                 本名 {lookedUp.legalName}
-                {lookedUp.nickname ? `　暱稱 ${lookedUp.nickname}` : ""}
+                {lookedUp.nickname.trim() ? `　暱稱 ${lookedUp.nickname}` : ""}
               </p>
               <p className="mt-1 text-white/75">
                 {punchSchoolDisplay(lookedUp)}
@@ -753,10 +763,12 @@ export function PunchboardAdmin() {
               name="name-mode"
               checked={form.nameMode === "nick"}
               onChange={() => setForm((f) => ({ ...f, nameMode: "nick" }))}
-              disabled={!lookedUp?.nickname}
+              disabled={!(lookedUp?.nickname ?? "").trim()}
             />
             暱稱
-            {lookedUp?.nickname ? `（${lookedUp.nickname}）` : "（這位沒填暱稱）"}
+            {(lookedUp?.nickname ?? "").trim()
+              ? `（${lookedUp?.nickname}）`
+              : "（這位沒填暱稱）"}
           </label>
         </fieldset>
         <div className="flex flex-wrap gap-3">
