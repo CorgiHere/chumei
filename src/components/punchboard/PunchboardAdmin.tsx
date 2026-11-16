@@ -526,106 +526,6 @@ export function PunchboardAdmin() {
         onSubmit={(e) => {
           e.preventDefault();
           void postAction({
-            action: "upsert",
-            entry: {
-              id: form.id,
-              score: clipPunchScore(form.score),
-              nameMode: form.nameMode,
-            },
-          }).then((ok) => {
-            if (ok) setForm(blankForm);
-          });
-        }}
-      >
-        <h2 className={cn(pressStart.className, "text-[12px] text-[#ffd54a]")}>SCORE</h2>
-        <p className="text-[12px] text-white/70">
-          先輸入現場發的 ID，報名資料會自動帶出。對上名單後再填分數才會上榜。榜上顯示本名或暱稱由選手選。
-        </p>
-        <div className="grid gap-4 md:grid-cols-2">
-          <Field label="選手 ID" htmlFor="p-id">
-            <input
-              id="p-id"
-              required
-              value={form.id}
-              onChange={(e) => setForm((f) => ({ ...f, id: e.target.value }))}
-              className={fieldClass}
-              placeholder="例如 A017"
-            />
-          </Field>
-          <Field label={`分數（0–${PUNCH_SCORE_MAX}）`} htmlFor="p-score">
-            <input
-              id="p-score"
-              required
-              inputMode="numeric"
-              maxLength={3}
-              value={form.score}
-              onChange={(e) =>
-                setForm((f) => ({
-                  ...f,
-                  score: e.target.value.replace(/\D/g, "").slice(0, 3),
-                }))
-              }
-              className={fieldClass}
-            />
-          </Field>
-        </div>
-        {form.id.trim() ? (
-          lookedUp ? (
-            <div className="border-2 border-[#2ee0d6]/50 bg-[#06102f] p-4 text-[13px] text-white">
-              <p className="text-[#ffd54a]">已報名　ID {lookedUp.id}</p>
-              <p className="mt-2">
-                本名 {lookedUp.legalName}
-                {lookedUp.nickname ? `　暱稱 ${lookedUp.nickname}` : ""}
-              </p>
-              <p className="mt-1 text-white/75">
-                {punchSchoolDisplay(lookedUp)}
-                {lookedUp.department ? `　${lookedUp.department}` : ""}
-               　{lookedUp.gender === "male" ? "男生組" : "女生組"}
-              </p>
-            </div>
-          ) : (
-            <p className="text-[13px] text-[#ff6b6b]">這個 ID 還沒報名，不能登錄成績。</p>
-          )
-        ) : null}
-        <fieldset className="space-y-2">
-          <legend className="text-[12px]">榜上顯示</legend>
-          <label className="mr-4 inline-flex items-center gap-2 text-[13px]">
-            <input
-              type="radio"
-              name="name-mode"
-              checked={form.nameMode === "legal"}
-              onChange={() => setForm((f) => ({ ...f, nameMode: "legal" }))}
-            />
-            本名
-            {lookedUp ? `（${lookedUp.legalName}）` : ""}
-          </label>
-          <label className="inline-flex items-center gap-2 text-[13px]">
-            <input
-              type="radio"
-              name="name-mode"
-              checked={form.nameMode === "nick"}
-              onChange={() => setForm((f) => ({ ...f, nameMode: "nick" }))}
-              disabled={!lookedUp?.nickname}
-            />
-            暱稱
-            {lookedUp?.nickname ? `（${lookedUp.nickname}）` : "（這位沒填暱稱）"}
-          </label>
-        </fieldset>
-        <div className="flex flex-wrap gap-3">
-          <button type="submit" className={btnPrimary} disabled={!lookedUp}>
-            登錄成績
-          </button>
-          <button type="button" className={btnGhost} onClick={() => setForm(blankForm)}>
-            清空
-          </button>
-        </div>
-      </form>
-
-      <form
-        className={panelClass}
-        onSubmit={(e) => {
-          e.preventDefault();
-          void postAction({
             action: "upsertRegistrant",
             registrant: registrantForm,
           }).then((ok) => {
@@ -767,6 +667,106 @@ export function PunchboardAdmin() {
           匯入貼上的名單
         </button>
         <p className="text-[12px] text-white/55">目前報名 {board.roster.length} 人。</p>
+      </form>
+
+      <form
+        className={panelClass}
+        onSubmit={(e) => {
+          e.preventDefault();
+          void postAction({
+            action: "upsert",
+            entry: {
+              id: form.id,
+              score: clipPunchScore(form.score),
+              nameMode: form.nameMode,
+            },
+          }).then((ok) => {
+            if (ok) setForm(blankForm);
+          });
+        }}
+      >
+        <h2 className={cn(pressStart.className, "text-[12px] text-[#ffd54a]")}>SCORE</h2>
+        <p className="text-[12px] text-white/70">
+          先輸入現場發的 ID，報名資料會自動帶出。對上名單後再填分數才會上榜。榜上顯示本名或暱稱由選手選。
+        </p>
+        <div className="grid gap-4 md:grid-cols-2">
+          <Field label="選手 ID" htmlFor="p-id">
+            <input
+              id="p-id"
+              required
+              value={form.id}
+              onChange={(e) => setForm((f) => ({ ...f, id: e.target.value }))}
+              className={fieldClass}
+              placeholder="例如 A017"
+            />
+          </Field>
+          <Field label={`分數（0–${PUNCH_SCORE_MAX}）`} htmlFor="p-score">
+            <input
+              id="p-score"
+              required
+              inputMode="numeric"
+              maxLength={3}
+              value={form.score}
+              onChange={(e) =>
+                setForm((f) => ({
+                  ...f,
+                  score: e.target.value.replace(/\D/g, "").slice(0, 3),
+                }))
+              }
+              className={fieldClass}
+            />
+          </Field>
+        </div>
+        {form.id.trim() ? (
+          lookedUp ? (
+            <div className="border-2 border-[#2ee0d6]/50 bg-[#06102f] p-4 text-[13px] text-white">
+              <p className="text-[#ffd54a]">已報名　ID {lookedUp.id}</p>
+              <p className="mt-2">
+                本名 {lookedUp.legalName}
+                {lookedUp.nickname ? `　暱稱 ${lookedUp.nickname}` : ""}
+              </p>
+              <p className="mt-1 text-white/75">
+                {punchSchoolDisplay(lookedUp)}
+                {lookedUp.department ? `　${lookedUp.department}` : ""}
+               　{lookedUp.gender === "male" ? "男生組" : "女生組"}
+              </p>
+            </div>
+          ) : (
+            <p className="text-[13px] text-[#ff6b6b]">這個 ID 還沒報名，不能登錄成績。</p>
+          )
+        ) : null}
+        <fieldset className="space-y-2">
+          <legend className="text-[12px]">榜上顯示</legend>
+          <label className="mr-4 inline-flex items-center gap-2 text-[13px]">
+            <input
+              type="radio"
+              name="name-mode"
+              checked={form.nameMode === "legal"}
+              onChange={() => setForm((f) => ({ ...f, nameMode: "legal" }))}
+            />
+            本名
+            {lookedUp ? `（${lookedUp.legalName}）` : ""}
+          </label>
+          <label className="inline-flex items-center gap-2 text-[13px]">
+            <input
+              type="radio"
+              name="name-mode"
+              checked={form.nameMode === "nick"}
+              onChange={() => setForm((f) => ({ ...f, nameMode: "nick" }))}
+              disabled={!lookedUp?.nickname}
+            />
+            暱稱
+            {lookedUp?.nickname ? `（${lookedUp.nickname}）` : "（這位沒填暱稱）"}
+          </label>
+        </fieldset>
+        <div className="flex flex-wrap gap-3">
+          <button type="submit" className={btnPrimary} disabled={!lookedUp}>
+            登錄成績
+          </button>
+          <button type="button" className={btnGhost} onClick={() => setForm(blankForm)}>
+            清空
+          </button>
+        </div>
       </form>
 
       {error ? <p className="text-[12px] text-[#ff6b6b]">{error}</p> : null}
