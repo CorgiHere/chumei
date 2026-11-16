@@ -77,7 +77,7 @@ export const ROSTER_KEY = "punchboard-v1-roster";
 export const BOARD_HISTORY_KEY = "punchboard-v1-history";
 export const BOARD_HISTORY_LIMIT = 20;
 /** Bump to wipe leftover practice scores once on the next deploy. */
-export const LIVE_EPOCH = 3;
+export const LIVE_EPOCH = 4;
 export const DEFAULT_NAME = "詐騙來電，Whoscall 開扁";
 export const DEFAULT_END_AT = "2026-11-17T23:59:00+08:00";
 export const PUNCH_SCORE_MAX = 999;
@@ -205,10 +205,12 @@ export async function readBoard(
   const resetScores = (board.epoch ?? 0) < LIVE_EPOCH;
   if (resetScores || live.length !== board.entries.length) {
     board.entries = resetScores ? [] : live;
+    board.cue = resetScores ? null : board.cue;
     board.epoch = LIVE_EPOCH;
     board.updatedAt = new Date().toISOString();
     board.version += 1;
     await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(board));
+    if (resetScores) await writeRoster(env, []);
     await purgePublicBoardCache();
   }
   return { ready: true, board };

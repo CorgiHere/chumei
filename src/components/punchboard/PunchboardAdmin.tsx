@@ -717,24 +717,24 @@ export function PunchboardAdmin() {
           value={rosterText}
           onChange={(e) => setRosterText(e.target.value)}
           className={`${fieldClass} min-h-28 font-mono-ui text-[12px]`}
-          placeholder={"ID\t姓名\t暱稱\t就讀學校\t參賽組別\t聯絡電話\t電子郵件地址\nT969\t李玲萱\t0\t清\t女\t0965805969\tname@gmail.com"}
+          placeholder={"ID\t姓名\t暱稱\t就讀學校\t參賽組別\t聯絡電話\t電子郵件地址\nT00FAKE\t測試員\t假資料\t清\t女\t0900000000\tdemo@example.com"}
         />
         <button
           type="button"
           className={btnGhost}
           onClick={() => {
             const parsed = parseRosterPaste(rosterText);
-            if (parsed.length === 0) {
-              setError("貼上的名單讀不到任何一列。");
-              return;
-            }
             void postAction({
               action: "replaceRoster",
               roster: parsed,
             }).then((ok) => {
               if (ok) {
                 setRosterText("");
-                setNotice(`已取代成 ${parsed.length} 筆報名，舊名單與分數已清空。`);
+                setNotice(
+                  parsed.length === 0
+                    ? "已清空報名名單與分數。"
+                    : `已取代成 ${parsed.length} 筆報名，舊名單與分數已清空。`,
+                );
               }
             });
           }}
