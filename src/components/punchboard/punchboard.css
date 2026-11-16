@@ -487,14 +487,26 @@
   .punch-rest {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    column-gap: 10px;
+    column-gap: 12px;
+    row-gap: 10px;
+  }
+
+  .punch-rest > li {
+    min-width: 0;
+    overflow: hidden;
+    border: 2px solid rgba(34, 224, 240, 0.28);
+  }
+
+  .punch-panel--gold .punch-rest > li {
+    border-color: rgba(255, 213, 74, 0.3);
   }
 
   .punch-hud-row {
-    grid-template-columns: 1.4rem minmax(0, 1fr) 2.75rem;
-    gap: 4px;
-    min-height: 32px;
-    padding: 0 2px;
+    grid-template-columns: 1.5rem minmax(0, 1fr) 2.85rem;
+    gap: 6px;
+    min-height: 44px;
+    padding: 4px 6px;
+    border-bottom: 0;
   }
 
   .punch-hud-row__meta {

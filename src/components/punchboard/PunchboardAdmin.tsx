@@ -710,14 +710,14 @@ export function PunchboardAdmin() {
           存進報名名單
         </button>
         <label className="block text-[12px]" htmlFor="roster-paste">
-          一次貼上（每行：ID 本名 暱稱 學校 性別 系所 聯絡）
+          一次貼上（可含表頭：ID 姓名 暱稱 就讀學校 參賽組別 聯絡電話 電子郵件地址）
         </label>
         <textarea
           id="roster-paste"
           value={rosterText}
           onChange={(e) => setRosterText(e.target.value)}
           className={`${fieldClass} min-h-28 font-mono-ui text-[12px]`}
-          placeholder={"A017\t王小明\t小明\t清大\t女\t工科系\t0912..."}
+          placeholder={"ID\t姓名\t暱稱\t就讀學校\t參賽組別\t聯絡電話\t電子郵件地址\nT969\t李玲萱\t0\t清\t女\t0965805969\tname@gmail.com"}
         />
         <button
           type="button"
@@ -1005,60 +1005,152 @@ function EntryTable({
 }
 
 function parseRosterPaste(text: string): PunchRegistrant[] {
+  const lines = text
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter(Boolean);
+  if (lines.length === 0) return [];
+  const split = (line: string) => line.split(/[\t,]/).map((part) => part.trim());
+  const header = detectRosterHeader(split(lines[0]));
+  const body = header ? lines.slice(1) : lines;
   const rows: PunchRegistrant[] = [];
-  for (const line of text.split(/\r?\n/)) {
-    const parts = line.split(/[\t,]/).map((part) => part.trim());
+  for (const line of body) {
+    const parts = split(line);
     if (parts.filter(Boolean).length < 4) continue;
-    const id = parts[0] ?? "";
-    const legalName = parts[1] ?? "";
-    let nickname = "";
-    let schoolRaw = "";
-    let genderRaw = "";
-    let department = "";
-    let contact = "";
-    if (parseSchoolToken(parts[2] ?? "") && parseGenderToken(parts[3] ?? "")) {
-      schoolRaw = parts[2] ?? "";
-      genderRaw = parts[3] ?? "";
-      department = parts[4] ?? "";
-      contact = parts[5] ?? "";
-    } else {
-      nickname = parts[2] ?? "";
-      schoolRaw = parts[3] ?? "";
-      genderRaw = parts[4] ?? "";
-      department = parts[5] ?? "";
-      contact = parts[6] ?? "";
-    }
-    const school = parseSchoolToken(schoolRaw);
-    const gender = parseGenderToken(genderRaw);
-    if (!id || !legalName || !school || !gender) continue;
+    const picked = header ? pickHeaderCols(parts, header) : pickPositionalCols(parts);
+    if (!picked) continue;
+    const school = parseSchoolToken(picked.schoolRaw);
+    const gender = parseGenderToken(picked.genderRaw);
+    if (!picked.id || !picked.legalName || !school || !gender) continue;
     rows.push({
-      id,
-      legalName,
-      nickname,
+      id: picked.id,
+      legalName: picked.legalName,
+      nickname: cleanNickname(picked.nickname),
       nameMode: "legal",
       school: school.value,
       schoolOther: school.other,
-      department,
+      department: picked.department,
       gender,
-      contact,
+      contact: picked.contact.slice(0, 80),
     });
   }
   return rows;
 }
 
+function detectRosterHeader(parts: string[]) {
+  const labels = parts.map((part) => part.replace(/\s+/g, "").toLowerCase());
+  const find = (...keys: string[]) =>
+    labels.findIndex((part) => keys.some((key) => part.includes(key.toLowerCase())));
+  const id = find("id", "編號");
+  const legalName = find("姓名", "本名");
+  if (id < 0 || legalName < 0) return null;
+  return {
+    id,
+    legalName,
+    nickname: find("暱稱", "昵稱"),
+    school: find("就讀學校", "學校"),
+    gender: find("參賽組別", "組別", "性別"),
+    phone: find("聯絡電話", "電話", "手機"),
+    email: find("電子郵件", "郵件", "email", "e-mail"),
+    department: find("系所", "科系"),
+    contact: find("聯絡方式"),
+  };
+}
+
+function col(parts: string[], index: number) {
+  if (index < 0) return "";
+  return parts[index] ?? "";
+}
+
+function joinContact(phone: string, email: string, extra = "") {
+  return [phone, email, extra].map((part) => part.trim()).filter(Boolean).join(" ");
+}
+
+function pickHeaderCols(
+  parts: string[],
+  header: NonNullable<ReturnType<typeof detectRosterHeader>>,
+) {
+  return {
+    id: col(parts, header.id),
+    legalName: col(parts, header.legalName),
+    nickname: col(parts, header.nickname),
+    schoolRaw: col(parts, header.school),
+    genderRaw: col(parts, header.gender),
+    department: col(parts, header.department),
+    contact: joinContact(col(parts, header.phone), col(parts, header.email), col(parts, header.contact)),
+  };
+}
+
+function pickPositionalCols(parts: string[]) {
+  const id = parts[0] ?? "";
+  const legalName = parts[1] ?? "";
+  if (parseSchoolToken(parts[2] ?? "") && parseGenderToken(parts[3] ?? "")) {
+    return {
+      id,
+      legalName,
+      nickname: "",
+      schoolRaw: parts[2] ?? "",
+      genderRaw: parts[3] ?? "",
+      department: looksLikeContact(parts[4] ?? "") ? "" : (parts[4] ?? ""),
+      contact: joinContact(
+        looksLikePhone(parts[4] ?? "") ? parts[4] ?? "" : "",
+        looksLikeEmail(parts[5] ?? "") ? parts[5] ?? "" : "",
+        !looksLikePhone(parts[4] ?? "") && !looksLikeEmail(parts[5] ?? "")
+          ? [parts[4], parts[5]].filter(Boolean).join(" ")
+          : parts[6] ?? "",
+      ),
+    };
+  }
+  const schoolRaw = parts[3] ?? "";
+  const genderRaw = parts[4] ?? "";
+  const fifth = parts[5] ?? "";
+  const sixth = parts[6] ?? "";
+  const phoneFirst = looksLikePhone(fifth) || looksLikeEmail(sixth);
+  return {
+    id,
+    legalName,
+    nickname: parts[2] ?? "",
+    schoolRaw,
+    genderRaw,
+    department: phoneFirst ? "" : fifth,
+    contact: phoneFirst ? joinContact(fifth, sixth) : joinContact("", "", sixth),
+  };
+}
+
+function cleanNickname(value: string) {
+  const token = value.trim();
+  if (!token || token === "0" || token === "-" || token === "無" || /^n\/?a$/i.test(token)) {
+    return "";
+  }
+  return token.slice(0, 40);
+}
+
+function looksLikePhone(value: string) {
+  return /^0\d{8,12}$/.test(value.replace(/[-\s]/g, ""));
+}
+
+function looksLikeEmail(value: string) {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+}
+
+function looksLikeContact(value: string) {
+  return looksLikePhone(value) || looksLikeEmail(value);
+}
+
 function parseSchoolToken(value: string): { value: PunchSchool; other: string } | null {
   const token = value.trim();
   if (!token) return null;
-  if (/清|NTHU/i.test(token)) return { value: "NTHU", other: "" };
-  if (/交|NYCU|NCTU/i.test(token)) return { value: "NYCU", other: "" };
-  if (/其他|OTHER/i.test(token)) return { value: "OTHER", other: "" };
+  if (/^(清大?|清華|nthu)/i.test(token)) return { value: "NTHU", other: "" };
+  if (/^(交大?|陽明交通|交通大學|nycu|nctu)/i.test(token)) return { value: "NYCU", other: "" };
+  if (/^(其他|other)$/i.test(token)) return { value: "OTHER", other: "" };
+  if (token.length <= 2) return null;
   return { value: "OTHER", other: token.slice(0, 40) };
 }
 
 function parseGenderToken(value: string): PunchGender | null {
   const token = value.trim();
-  if (/^女|female/i.test(token)) return "female";
-  if (/^男|male/i.test(token)) return "male";
+  if (/^(女|女生|女生組|female)/i.test(token)) return "female";
+  if (/^(男|男生|男生組|male)/i.test(token)) return "male";
   return null;
 }
 

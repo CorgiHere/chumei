@@ -220,7 +220,11 @@ function PixelPanel({
 }) {
   return (
     <section
-      className={cn("punch-panel relative flex h-full min-h-0 flex-col px-4 pb-4 pt-8", className)}
+      className={cn(
+        "punch-panel relative flex h-full min-h-0 flex-col px-4 pb-4 pt-8",
+        tone === "gold" ? "punch-panel--gold" : "punch-panel--cyan",
+        className,
+      )}
       style={{
         border: "16px solid transparent",
         borderImageSource: `url(${punchArt(tone === "gold" ? "panel-gold.svg" : "panel-cyan.svg")})`,
@@ -531,7 +535,7 @@ function RankRow({
       data-punch-climb={rising ? "" : undefined}
     >
       <span className={cn(arcade, "text-center text-[10px] leading-none text-[#ffd54a]")}>{rank}</span>
-      <p className="whitespace-nowrap text-[16px] leading-tight text-white">{entry.name}</p>
+      <p className="min-w-0 truncate text-[16px] leading-tight text-white">{entry.name}</p>
       <p className="punch-hud-row__meta truncate text-[13px] leading-tight text-white/50">
         {punchSchoolDisplay(entry)}
       </p>
