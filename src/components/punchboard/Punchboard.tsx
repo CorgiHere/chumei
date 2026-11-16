@@ -8,7 +8,6 @@ import {
   emptyPunchboard,
   getPunchboardEndpoint,
   getPunchboardLookupEndpoint,
-  matchesQuery,
   normalizePlayerId,
   parsePunchCue,
   punchSchoolDisplay,
@@ -251,15 +250,11 @@ function AwardPodium({
   slots,
   risingId,
   arcade,
-  seeking,
-  hitIds,
   onSelect,
 }: {
   slots: Array<RankedPunchEntry | null>;
   risingId?: string;
   arcade: string;
-  seeking: boolean;
-  hitIds: Set<string>;
   onSelect: (entry: RankedPunchEntry) => void;
 }) {
   const places = [
@@ -276,8 +271,6 @@ function AwardPodium({
           entry={entry}
           arcade={arcade}
           rising={Boolean(risingId && entry && entry.id === risingId)}
-          hit={Boolean(entry && seeking && hitIds.has(entry.id))}
-          dim={Boolean(entry && seeking && !hitIds.has(entry.id))}
           onSelect={onSelect}
         />
       ))}
@@ -290,16 +283,12 @@ function PodiumPlace({
   entry,
   arcade,
   rising,
-  hit,
-  dim,
   onSelect,
 }: {
   place: 1 | 2 | 3;
   entry: RankedPunchEntry | null;
   arcade: string;
   rising?: boolean;
-  hit?: boolean;
-  dim?: boolean;
   onSelect: (entry: RankedPunchEntry) => void;
 }) {
   const look =
@@ -346,8 +335,6 @@ function PodiumPlace({
   const wrapClass = cn(
     "min-w-0 overflow-visible border-0 bg-transparent shadow-none ring-0 outline-none",
     rising && "punch-climb",
-    hit && "punch-hit",
-    dim && "punch-dim",
   );
   if (!entry) {
     return <div className={wrapClass}>{body}</div>;
@@ -414,8 +401,6 @@ function GenderList({
   rows,
   risingId,
   arcade,
-  seeking,
-  hitIds,
   onSelect,
   stage = "full",
 }: {
@@ -425,8 +410,6 @@ function GenderList({
   rows: RankedPunchEntry[];
   risingId?: string;
   arcade: string;
-  seeking: boolean;
-  hitIds: Set<string>;
   onSelect: (entry: RankedPunchEntry) => void;
   stage?: "full" | "podium" | "list";
 }) {
@@ -459,8 +442,6 @@ function GenderList({
               slots={slots}
               risingId={risingId}
               arcade={arcade}
-              seeking={seeking}
-              hitIds={hitIds}
               onSelect={onSelect}
             />
           </div>
@@ -477,8 +458,6 @@ function GenderList({
                   tone={tone}
                   arcade={arcade}
                   rising={Boolean(risingId && row.id === risingId)}
-                  hit={seeking && hitIds.has(row.id)}
-                  dim={seeking && !hitIds.has(row.id)}
                   onSelect={onSelect}
                 />
               ) : (
@@ -517,8 +496,6 @@ function RankRow({
   tone,
   arcade,
   rising,
-  hit,
-  dim,
   onSelect,
 }: {
   entry: RankedPunchEntry;
@@ -526,8 +503,6 @@ function RankRow({
   tone: "gold" | "cyan";
   arcade: string;
   rising?: boolean;
-  hit?: boolean;
-  dim?: boolean;
   onSelect: (entry: RankedPunchEntry) => void;
 }) {
   return (
@@ -538,8 +513,6 @@ function RankRow({
         "punch-hud-row w-full cursor-pointer text-left hover:bg-white/5",
         tone === "gold" && "punch-hud-row--gold",
         rising && "punch-climb",
-        hit && "punch-hit",
-        dim && "punch-dim",
       )}
       data-punch-climb={rising ? "" : undefined}
     >
@@ -583,9 +556,6 @@ function TeamBattle({
 
 export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2" }) {
   const [board, setBoard] = useState<PunchboardPayload>(emptyPunchboard);
-  const [query, setQuery] = useState("");
-  const [draft, setDraft] = useState("");
-  const [school, setSchool] = useState<PunchSchool | null>(null);
   const [tab, setTab] = useState<PunchGender>("male");
   const [arrival, setArrival] = useState<RankedPunchEntry | null>(null);
   const [shownRank, setShownRank] = useState<number | null>(null);
@@ -711,17 +681,6 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
     [arrival, board.female, shownRank],
   );
 
-  const seeking = query.trim().length > 0 || school !== null;
-  const hitIds = useMemo(() => {
-    const ids = new Set<string>();
-    if (!seeking) return ids;
-    for (const row of [...board.male, ...board.female]) {
-      if (school && row.school !== school) continue;
-      if (!matchesQuery(row, query)) continue;
-      ids.add(row.id);
-    }
-    return ids;
-  }, [board.female, board.male, query, school, seeking]);
   const arcade = pressStart.className;
 
   return (
@@ -761,26 +720,8 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
           </div>
         </div>
 
-        <div className="relative z-1 mt-3 flex w-full flex-col gap-2 lg:flex-row lg:items-stretch">
-          <form
-            className="punch-search"
-            onSubmit={(e) => {
-              e.preventDefault();
-              setQuery(draft);
-            }}
-          >
-            <label className="sr-only" htmlFor="punch-search">
-              搜尋姓名／學校／系所
-            </label>
-            <input
-              id="punch-search"
-              value={draft}
-              onChange={(e) => setDraft(e.target.value)}
-              placeholder="搜尋姓名／學校／系所"
-            />
-            <button type="submit">搜尋</button>
-          </form>
-          <div className="punch-chips">
+        <div className="relative z-1 mt-3 flex w-full flex-col gap-2">
+          <div className="punch-chips lg:hidden">
             <div className="punch-chips__group punch-chips__group--gender" role="group" aria-label="性別">
               <button
                 type="button"
@@ -799,35 +740,9 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
                 女生
               </button>
             </div>
-            <div className="punch-chips__group punch-chips__group--school" role="group" aria-label="學校">
-              <button
-                type="button"
-                className="punch-chip"
-                aria-pressed={school === "NTHU"}
-                onClick={() => setSchool("NTHU")}
-              >
-                清大
-              </button>
-              <button
-                type="button"
-                className="punch-chip"
-                aria-pressed={school === "NYCU"}
-                onClick={() => setSchool("NYCU")}
-              >
-                交大
-              </button>
-              <button
-                type="button"
-                className="punch-chip"
-                aria-pressed={school === null}
-                onClick={() => setSchool(null)}
-              >
-                全部
-              </button>
-            </div>
           </div>
+          <ScoreLookup onFound={setDiploma} />
         </div>
-        <ScoreLookup onFound={setDiploma} />
 
         <div className="relative mt-5 grid items-stretch gap-5 lg:grid-cols-2 lg:gap-4">
           <GenderList
@@ -837,8 +752,6 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
             rows={maleView}
             risingId={arrival?.id}
             arcade={arcade}
-            seeking={seeking}
-            hitIds={hitIds}
             onSelect={setDiploma}
           />
           <GenderList
@@ -848,8 +761,6 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
             rows={femaleView}
             risingId={arrival?.id}
             arcade={arcade}
-            seeking={seeking}
-            hitIds={hitIds}
             onSelect={setDiploma}
           />
         </div>
