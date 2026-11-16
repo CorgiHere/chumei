@@ -1,0 +1,26 @@
+name: Import punchboard roster
+
+on:
+  workflow_dispatch:
+
+jobs:
+  import:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Write roster JSON
+        env:
+          ROSTER_JSON: ${{ secrets.PUNCHBOARD_ROSTER_IMPORT }}
+        run: |
+          if [ -z "$ROSTER_JSON" ]; then
+            echo "Missing PUNCHBOARD_ROSTER_IMPORT secret"
+            exit 1
+          fi
+          printf '%s' "$ROSTER_JSON" > roster.json
+          node -e "const j=require('./roster.json'); if(!Array.isArray(j)||!j.length) process.exit(1); console.log('rows', j.length)"
+
+      - name: Put roster in KV
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: kv key put punchboard-v1-roster --namespace-id=372f9efa74d44b478654007ca240db2c --path roster.json --remote
