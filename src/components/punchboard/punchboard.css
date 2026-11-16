@@ -1321,6 +1321,78 @@
   }
 }
 
+.punch-diploma-hit {
+  position: absolute;
+  cursor: pointer;
+  border: 0;
+  background: transparent;
+  padding: 0;
+}
+
+.punch-diploma-hit--save {
+  inset: 0;
+}
+
+.punch-diploma-hit--logo {
+  left: 14%;
+  right: 14%;
+  top: 3.5%;
+  height: 13.5%;
+  z-index: 2;
+}
+
+.punch-diploma-share {
+  position: absolute;
+  left: 50%;
+  top: 16%;
+  z-index: 3;
+  width: min(22rem, 88%);
+  transform: translateX(-50%);
+  border: 3px solid #3af6ff;
+  background: #06142f;
+  padding: 0.85rem 0.85rem 0.7rem;
+  box-shadow: 0 4px 0 #087780;
+}
+
+.punch-diploma-share__title {
+  margin: 0 0 0.55rem;
+  color: #ffd54a;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-align: center;
+}
+
+.punch-diploma-share__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.4rem;
+}
+
+.punch-diploma-share__grid button,
+.punch-diploma-share__close {
+  min-height: 2.4rem;
+  cursor: pointer;
+  border: 0;
+  background: #ffd54a;
+  color: #071028;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.punch-diploma-share__grid button:hover,
+.punch-diploma-share__close:hover {
+  background: #ffe27a;
+}
+
+.punch-diploma-share__close {
+  display: block;
+  width: 100%;
+  margin-top: 0.45rem;
+  background: #22e0f0;
+}
+
 @keyframes openflat-shine {
   from {
     transform: rotate(32deg) translateX(-280%);

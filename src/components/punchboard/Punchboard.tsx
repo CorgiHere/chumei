@@ -1,6 +1,7 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from "react";
+import { FormEvent, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { ScoreDiploma } from "./ScoreDiploma";
 import { Press_Start_2P } from "next/font/google";
 import localFont from "next/font/local";
 import {
@@ -122,14 +123,6 @@ function scoreArrivals(prev: RankedPunchEntry[], next: RankedPunchEntry[]) {
 
 function formatScore(n: number) {
   return n.toLocaleString("en-US");
-}
-
-function formatHitTime(iso: string) {
-  const at = new Date(iso);
-  if (!Number.isFinite(at.getTime()) || !iso) return "";
-  const wall = at.toLocaleString("sv-SE", { timeZone: "Asia/Taipei" });
-  const match = wall.match(/\s(\d{2}):(\d{2})(?::\d{2})?$/);
-  return match ? `${match[1]}:${match[2]}` : "";
 }
 
 function schoolTotal(rows: RankedPunchEntry[], school: PunchSchool) {
@@ -861,8 +854,9 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
     {diploma ? (
       <ScoreDiploma
         entry={diploma}
-        arcade={arcade}
+        arcadeFamily={pressStart.style.fontFamily}
         fusion={fusionPixel.className}
+        fusionFamily={fusionPixel.style.fontFamily}
         onClose={() => setDiploma(null)}
       />
     ) : null}
@@ -1026,159 +1020,5 @@ function InfoShot({
   );
 }
 
-function ScoreDiploma({
-  entry,
-  arcade,
-  fusion,
-  onClose,
-}: {
-  entry: RankedPunchEntry;
-  arcade: string;
-  fusion: string;
-  onClose: () => void;
-}) {
-  useEffect(() => {
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    document.addEventListener("keydown", onKey);
-    return () => {
-      document.body.style.overflow = previous;
-      document.removeEventListener("keydown", onKey);
-    };
-  }, [onClose]);
-  const male = entry.gender === "male";
-  const schoolLine = entry.department.trim()
-    ? `${punchSchoolDisplay(entry)} | ${entry.department.trim()}`
-    : punchSchoolDisplay(entry);
-  const hitTime = formatHitTime(entry.updatedAt);
-  return (
-    <div
-      className={cn(
-        fusion,
-        "fixed inset-0 z-200 flex items-center justify-center bg-black/92 p-1",
-      )}
-      role="dialog"
-      aria-modal="true"
-      aria-label={`${entry.name}的獎狀`}
-      onClick={onClose}
-    >
-      <button
-        type="button"
-        onClick={onClose}
-        aria-label="關閉"
-        className="absolute right-3 top-3 z-10 flex h-11 w-11 cursor-pointer items-center justify-center border-4 border-white/50 bg-black text-[32px] leading-none text-white"
-      >
-        ×
-      </button>
-      <div
-        className="relative max-h-[98dvh] w-auto max-w-[min(801px,98vw)]"
-        onClick={(event) => event.stopPropagation()}
-        style={{ WebkitFontSmoothing: "none" }}
-      >
-        <div className="relative mx-auto w-fit">
-          <img
-            src={withBasePath("/images/punchboard/diploma-bg.png")}
-            alt=""
-            className="block h-auto max-h-[98dvh] w-auto max-w-[min(801px,98vw)]"
-          />
-          <div className="absolute inset-0 text-white">
-            <DiplomaField
-              className={cn(arcade, "text-[clamp(48px,10vw,92px)] leading-none tracking-tight")}
-              top="26.6%"
-              height="15.2%"
-              left="18%"
-              right="18%"
-            >
-              <span className="punch-diploma-score">{formatScore(entry.score)}</span>
-            </DiplomaField>
-            <DiplomaField
-              className={cn(
-                arcade,
-                "punch-diploma-rank text-[clamp(26px,6vw,48px)] leading-none",
-              )}
-              top="52.2%"
-              height="5.6%"
-              left="36%"
-              right="36%"
-            >
-              {entry.rank >= 1 && entry.rank <= 10 ? `#${entry.rank}` : "#?"}
-            </DiplomaField>
-            {entry.rank >= 1 && entry.rank <= 10 ? null : (
-              <DiplomaField
-                className={cn(arcade, "punch-diploma-highest")}
-                top="57.6%"
-                height="4.6%"
-                left="31%"
-                right="31%"
-              >
-                HIGHEST
-              </DiplomaField>
-            )}
-            <DiplomaField
-              className="px-1 text-center text-[15px] leading-none sm:text-[17px]"
-              top="67.7%"
-              height="3.5%"
-              left="32%"
-              right="10%"
-            >
-              <span className="max-w-full wrap-break-word">
-                {hitTime ? `${entry.name} | ${hitTime}` : entry.name}
-              </span>
-            </DiplomaField>
-            <DiplomaField
-              className="px-1 text-center text-[13px] leading-none sm:text-[15px]"
-              top="74.5%"
-              height="3.2%"
-              left="32%"
-              right="10%"
-            >
-              <span className="max-w-full truncate">{schoolLine}</span>
-            </DiplomaField>
-            <DiplomaField
-              className="text-[15px] leading-none sm:text-[17px]"
-              top="81.4%"
-              height="5.0%"
-              left="45.5%"
-              right="32%"
-              style={{ color: "#1a1400" }}
-            >
-              {male ? "男生組" : "女生組"}
-            </DiplomaField>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function DiplomaField({
-  top,
-  height,
-  left,
-  right,
-  className,
-  style,
-  children,
-}: {
-  top: string;
-  height: string;
-  left: string;
-  right: string;
-  className?: string;
-  style?: CSSProperties;
-  children: ReactNode;
-}) {
-  return (
-    <div
-      className={cn("absolute flex items-center justify-center overflow-visible", className)}
-      style={{ top, height, left, right, ...style }}
-    >
-      {children}
-    </div>
-  );
-}
 
 
