@@ -971,6 +971,23 @@
   .punch-chips__group--gender {
     display: none;
   }
+
+  .punch-actions {
+    display: grid;
+    width: min(100%, 42rem);
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+    align-items: stretch;
+  }
+
+  .punch-cta-row {
+    grid-column: 1 / -1;
+  }
+
+  .punch-chip,
+  .punch-chips__group {
+    height: 3.15rem;
+    min-height: 3.15rem;
+  }
 }
 
 .punch-mini-cta {
