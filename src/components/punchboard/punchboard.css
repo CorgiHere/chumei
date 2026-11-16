@@ -225,6 +225,15 @@
     0 0 12px rgba(255, 225, 74, 0.8);
 }
 
+.punch-diploma-highest {
+  background: #f5c51a;
+  color: #1a1400;
+  font-size: clamp(11px, 2.6vw, 18px);
+  letter-spacing: 0.06em;
+  text-shadow: none;
+  box-shadow: 0 3px 0 #b8860a;
+}
+
 .punch-pixel-frame {
   position: relative;
   background: #071028;

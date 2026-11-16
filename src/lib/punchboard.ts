@@ -101,6 +101,15 @@ export function getPunchboardAdminEndpoint(): string {
   return "/api/punchboard/admin/";
 }
 
+export function getPunchboardLookupEndpoint() {
+  if (typeof window === "undefined") return "https://chumei.org/api/punchboard/lookup/";
+  const host = window.location.hostname;
+  if (host === "chumei.org" || host.endsWith(".pages.dev")) {
+    return "/api/punchboard/lookup/";
+  }
+  return "https://chumei.org/api/punchboard/lookup/";
+}
+
 export function emptyPunchboard(): PunchboardPayload {
   return {
     ready: false,
