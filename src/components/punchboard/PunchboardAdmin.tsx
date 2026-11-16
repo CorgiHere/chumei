@@ -7,7 +7,6 @@ import {
   clipPunchScore,
   getPunchboardAdminEndpoint,
   normalizePlayerId,
-  PUNCH_CUE_DELAY_MS,
   PUNCH_GENDER_LABEL,
   PUNCH_SCORE_MAX,
   punchDisplayName,
@@ -224,13 +223,19 @@ export function PunchboardAdmin() {
     const person = board.roster.find((row) => normalizePlayerId(row.id) === id);
     if (!person) return null;
     const scored = board.entries.find((row) => normalizePlayerId(row.id) === id);
-    const nickname = punchNickname(person) || punchNickname(scored);
+    const nickname = punchNickname(person) || punchNickname(scored) || punchNickname({
+      legalName: person.legalName,
+      nickname: person.nickname,
+      name: scored?.name,
+    });
     return {
       ...person,
       legalName: punchLegalName(person) || person.legalName,
       nickname,
     };
   }, [board.entries, board.roster, form.id]);
+  const lookupNick = (lookedUp ? punchNickname(lookedUp) : "").trim();
+  const lookupLegal = (lookedUp ? punchLegalName(lookedUp) : "").trim();
 
   async function sendCode() {
     setError("");
@@ -304,12 +309,10 @@ export function PunchboardAdmin() {
   async function cueRank(row: PunchEntry, rank: number) {
     window.clearTimeout(cueTimerRef.current);
     setError("");
-    setNotice(`第${rank}名 ${row.name}，3 秒後即時榜上場`);
-    cueTimerRef.current = window.setTimeout(() => {
-      void postAction({ action: "cue", id: row.id }).then((ok) => {
-        if (ok) setNotice(`第${rank}名 ${row.name} 已通知即時榜`);
-      });
-    }, PUNCH_CUE_DELAY_MS);
+    setNotice(`第${rank}名 ${row.name}，即時榜上場中`);
+    void postAction({ action: "cue", id: row.id }).then((ok) => {
+      if (ok) setNotice(`第${rank}名 ${row.name} 已通知即時榜`);
+    });
   }
 
   async function postAction(body: unknown) {
@@ -467,7 +470,7 @@ export function PunchboardAdmin() {
         </button>
       </div>
       <p className="text-[12px] text-white/55">
-        先填選手 ID，報名資料會自動帶出。沒有分數的人不會出現在公開榜。點名次，3 秒後即時榜會播上場動畫。分數 1–999。男生組或女生組前 10 名有變動時，會寄到 chu.mei.committee+punchboard@gmail.com。
+        先填選手 ID，報名資料會自動帶出。登錄成績後即時榜會自己從下往上浮現。沒有分數的人不會出現在公開榜。分數 1–999。男生組或女生組前 10 名有變動時，會寄到 chu.mei.committee+punchboard@gmail.com。
       </p>
 
       <form className={panelClass} onSubmit={sendBoardMail}>
@@ -732,8 +735,8 @@ export function PunchboardAdmin() {
             <div className="border-2 border-[#2ee0d6]/50 bg-[#06102f] p-4 text-[13px] text-white">
               <p className="text-[#ffd54a]">已報名　ID {lookedUp.id}</p>
               <p className="mt-2">
-                本名 {lookedUp.legalName}
-                {lookedUp.nickname.trim() ? `　暱稱 ${lookedUp.nickname}` : ""}
+                本名 {lookupLegal || lookedUp.legalName}
+                {lookupNick ? `　暱稱 ${lookupNick}` : ""}
               </p>
               <p className="mt-1 text-white/75">
                 {punchSchoolDisplay(lookedUp)}
@@ -755,20 +758,18 @@ export function PunchboardAdmin() {
               onChange={() => setForm((f) => ({ ...f, nameMode: "legal" }))}
             />
             本名
-            {lookedUp ? `（${lookedUp.legalName}）` : ""}
+            {lookupLegal ? `（${lookupLegal}）` : lookedUp ? `（${lookedUp.legalName}）` : ""}
           </label>
-          <label className="inline-flex items-center gap-2 text-[13px]">
+          <label key={`nick-${lookupNick || "empty"}`} className="inline-flex items-center gap-2 text-[13px]">
             <input
               type="radio"
               name="name-mode"
               checked={form.nameMode === "nick"}
               onChange={() => setForm((f) => ({ ...f, nameMode: "nick" }))}
-              disabled={!(lookedUp?.nickname ?? "").trim()}
+              disabled={!lookupNick}
             />
             暱稱
-            {(lookedUp?.nickname ?? "").trim()
-              ? `（${lookedUp?.nickname}）`
-              : "（這位沒填暱稱）"}
+            {lookupNick ? `（${lookupNick}）` : "（這位沒填暱稱）"}
           </label>
         </fieldset>
         <div className="flex flex-wrap gap-3">

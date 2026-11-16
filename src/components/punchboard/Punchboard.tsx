@@ -112,6 +112,14 @@ function findCuedPlayer(
   );
 }
 
+function scoreArrivals(prev: RankedPunchEntry[], next: RankedPunchEntry[]) {
+  const old = new Map(prev.map((row) => [normalizePlayerId(row.id), row]));
+  return next.filter((row) => {
+    const before = old.get(normalizePlayerId(row.id));
+    return !before || before.score !== row.score || before.updatedAt !== row.updatedAt;
+  });
+}
+
 function formatScore(n: number) {
   return n.toLocaleString("en-US");
 }
@@ -584,23 +592,35 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
   const [infoShot, setInfoShot] = useState<"poster" | "safety" | null>(null);
   const queueRef = useRef<RankedPunchEntry[]>([]);
   const cueRef = useRef("");
+  const hydratedRef = useRef(false);
   const prevRef = useRef<{ male: RankedPunchEntry[]; female: RankedPunchEntry[] }>({
     male: [],
     female: [],
   });
   const Heading = headingLevel;
 
+  const enqueueArrival = (incoming: RankedPunchEntry) => {
+    setTab(incoming.gender);
+    setArrival((current) => {
+      if (!current) return incoming;
+      if (normalizePlayerId(current.id) === normalizePlayerId(incoming.id)) return incoming;
+      if (
+        !queueRef.current.some(
+          (row) => normalizePlayerId(row.id) === normalizePlayerId(incoming.id),
+        )
+      ) {
+        queueRef.current.push(incoming);
+      }
+      return current;
+    });
+  };
+
   const playCue = (cue: PunchCue | null | undefined, male: RankedPunchEntry[], female: RankedPunchEntry[]) => {
     if (!cue || cue.nonce === cueRef.current) return;
     const incoming = findCuedPlayer(male, female, cue);
     if (!incoming) return;
     cueRef.current = cue.nonce;
-    setTab(incoming.gender);
-    setArrival((current) => {
-      if (!current) return incoming;
-      queueRef.current.push(incoming);
-      return current;
-    });
+    enqueueArrival(incoming);
   };
 
   useEffect(() => {
@@ -618,6 +638,17 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
         if (!alive || !next) return;
         const male = topTen(next.male);
         const female = topTen(next.female);
+        const prev = prevRef.current;
+        if (hydratedRef.current) {
+          for (const row of [
+            ...scoreArrivals(prev.male, male),
+            ...scoreArrivals(prev.female, female),
+          ]) {
+            enqueueArrival(row);
+          }
+        } else {
+          hydratedRef.current = true;
+        }
         prevRef.current = { male, female };
         playCue(next.cue, male, female);
         setBoard({ ...next, male, female });

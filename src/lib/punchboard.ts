@@ -141,21 +141,29 @@ export function punchNickname(row?: {
   const direct = [row.nickname, extra.nickName, extra["暱稱"]]
     .map((value) => String(value ?? "").trim())
     .find((value) => value && value !== "0" && value !== "-" && value !== "無");
-  if (direct) return direct.slice(0, 40);
-  const legal = String(row.legalName ?? "").trim();
-  const parts = legal.split(/[\s　]*暱稱[\s　]+/);
-  if (parts.length >= 2 && parts[1].trim()) return parts[1].trim().slice(0, 40);
+  const fromNickField = splitLegalAndNick(direct ?? "", "");
+  const split = splitLegalAndNick(String(row.legalName ?? ""), fromNickField.nickname || direct || "");
+  if (split.nickname) return split.nickname;
   const name = String(row.name ?? "").trim();
-  const legalCore = (parts[0] ?? legal).trim();
-  if (name && legalCore && name !== legalCore) return name.slice(0, 40);
+  if (name && split.legalName && name !== split.legalName) return name.slice(0, 40);
   return "";
 }
 
+export function splitLegalAndNick(legalName: string, nickname: string) {
+  let legal = legalName.trim().replace(/^本名[\s　]*/, "");
+  let nick = nickname.trim();
+  if (!nick || nick === "0" || nick === "-" || nick === "無") nick = "";
+  const parts = legal.split(/暱\s*稱|昵\s*稱|昵\s*称/);
+  if (parts.length >= 2) {
+    legal = parts[0].trim() || legal;
+    if (!nick) nick = parts.slice(1).join("").trim();
+  }
+  return { legalName: legal.slice(0, 40), nickname: nick.slice(0, 40) };
+}
+
 export function punchLegalName(row?: { legalName?: string | null; name?: string | null } | null) {
-  const legal = String(row?.legalName ?? "").trim();
-  const parts = legal.split(/[\s　]*暱稱[\s　]+/);
-  if (parts.length >= 2 && parts[0].trim()) return parts[0].trim().slice(0, 40);
-  return legal || String(row?.name ?? "").trim();
+  const split = splitLegalAndNick(String(row?.legalName ?? ""), "");
+  return split.legalName || String(row?.name ?? "").trim();
 }
 
 export function punchDisplayName(row: {

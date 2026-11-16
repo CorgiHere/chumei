@@ -217,13 +217,13 @@ export async function readBoard(
 }
 
 export function splitLegalAndNick(legalName: string, nickname: string) {
-  let legal = legalName.trim();
+  let legal = legalName.trim().replace(/^本名[\s　]*/, "");
   let nick = nickname.trim();
   if (!nick || nick === "0" || nick === "-" || nick === "無") nick = "";
-  const parts = legal.split(/[\s　]*暱稱[\s　]+/);
+  const parts = legal.split(/暱\s*稱|昵\s*稱|昵\s*称/);
   if (parts.length >= 2) {
     legal = parts[0].trim() || legal;
-    if (!nick) nick = parts[1].trim();
+    if (!nick) nick = parts.slice(1).join("").trim();
   }
   return { legalName: legal.slice(0, 40), nickname: nick.slice(0, 40) };
 }

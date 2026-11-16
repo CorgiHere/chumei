@@ -347,17 +347,16 @@ export async function onRequestPost(context: PagesContext) {
     const next = entryFromRegistrant(registrant, Number(raw.score), parseNameMode(raw.nameMode));
     if (!next) return authedJson(request, { error: "invalid_entry", ...snapshot() }, 400);
     const idx = board.entries.findIndex((e) => personKey(e) === personKey(next));
+    next.updatedAt = now;
     if (idx >= 0) {
-      const prev = board.entries[idx];
-      next.updatedAt = prev.score === next.score ? prev.updatedAt : now;
       board.entries[idx] = next;
     } else {
       if (board.entries.length >= MAX_ENTRIES) {
         return authedJson(request, { error: "too_many" }, 400);
       }
-      next.updatedAt = now;
       board.entries.push(next);
     }
+    board.cue = { id: next.id, nonce: `${Date.now()}-${next.id}`, at: now };
   } else if (action === "delete") {
     const id = normalizePlayerId(clip(payload.id, 80));
     board.entries = board.entries.filter((e) => normalizePlayerId(e.id) !== id);
