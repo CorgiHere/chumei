@@ -211,12 +211,13 @@ export function ScoreDiploma({
             <button
               key={id}
               type="button"
+              className={`punch-diploma-social__btn punch-diploma-social__btn--${id}`}
               disabled={!blob || busy !== null}
               onClick={() => void sharePost()}
               aria-label={`分享到 ${label}`}
               title={label}
             >
-              <Icon className="h-6 w-6" />
+              <Icon className="h-7 w-7" />
             </button>
           ))}
         </div>
