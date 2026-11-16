@@ -741,7 +741,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
             decoding="async"
             className="relative z-1 mx-auto block h-auto w-full max-w-3xl object-contain"
           />
-          <div className="relative z-1 mt-2 flex flex-col items-center gap-3">
+          <div className="punch-actions">
             <div className="punch-cta-row">
               <DownloadWhoscall variant="compact" />
               <a
@@ -753,57 +753,56 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
                 馬上報名
               </a>
             </div>
-          </div>
-        </div>
-
-        <div className="relative z-1 mt-3 flex w-full flex-col gap-2 lg:flex-row lg:items-center">
-          <div className="punch-chips lg:hidden">
-            <div className="punch-chips__group punch-chips__group--gender" role="group" aria-label="性別">
-              <button
-                type="button"
-                className="punch-chip"
-                aria-pressed={tab === "male"}
-                onClick={() => setTab("male")}
-              >
-                男生
-              </button>
-              <button
-                type="button"
-                className="punch-chip"
-                aria-pressed={tab === "female"}
-                onClick={() => setTab("female")}
-              >
-                女生
-              </button>
+            <div className="punch-chips lg:hidden">
+              <div className="punch-chips__group punch-chips__group--gender" role="group" aria-label="性別">
+                <button
+                  type="button"
+                  className="punch-chip"
+                  aria-pressed={tab === "male"}
+                  onClick={() => setTab("male")}
+                >
+                  男生
+                </button>
+                <button
+                  type="button"
+                  className="punch-chip"
+                  aria-pressed={tab === "female"}
+                  onClick={() => setTab("female")}
+                >
+                  女生
+                </button>
+              </div>
             </div>
-          </div>
-          <ScoreLookup onFound={setDiploma} />
-          <div className="punch-chips">
-            <div className="punch-chips__group punch-chips__group--school" role="group" aria-label="學校">
-              <button
-                type="button"
-                className="punch-chip"
-                aria-pressed={school === "NTHU"}
-                onClick={() => setSchool("NTHU")}
-              >
-                清大
-              </button>
-              <button
-                type="button"
-                className="punch-chip"
-                aria-pressed={school === "NYCU"}
-                onClick={() => setSchool("NYCU")}
-              >
-                交大
-              </button>
-              <button
-                type="button"
-                className="punch-chip"
-                aria-pressed={school === null}
-                onClick={() => setSchool(null)}
-              >
-                全部
-              </button>
+            <div className="punch-filter-row">
+              <ScoreLookup onFound={setDiploma} />
+              <div className="punch-chips">
+                <div className="punch-chips__group punch-chips__group--school" role="group" aria-label="學校">
+                  <button
+                    type="button"
+                    className="punch-chip"
+                    aria-pressed={school === "NTHU"}
+                    onClick={() => setSchool("NTHU")}
+                  >
+                    清大
+                  </button>
+                  <button
+                    type="button"
+                    className="punch-chip"
+                    aria-pressed={school === "NYCU"}
+                    onClick={() => setSchool("NYCU")}
+                  >
+                    交大
+                  </button>
+                  <button
+                    type="button"
+                    className="punch-chip"
+                    aria-pressed={school === null}
+                    onClick={() => setSchool(null)}
+                  >
+                    全部
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -951,7 +950,7 @@ function ScoreLookup({ onFound }: { onFound: (entry: RankedPunchEntry) => void }
   }
 
   return (
-    <div className="relative z-1 mt-2">
+    <div className="punch-lookup">
       <form className="punch-search punch-search--id" onSubmit={(event) => void lookup(event)}>
         <label className="sr-only" htmlFor="score-lookup-id">
           選手 ID
@@ -968,7 +967,7 @@ function ScoreLookup({ onFound }: { onFound: (entry: RankedPunchEntry) => void }
         </button>
       </form>
       {error ? (
-        <p className="mt-1 text-[12px] text-[#ff6b6b]">{error}</p>
+        <p className="punch-lookup__error">{error}</p>
       ) : null}
     </div>
   );
