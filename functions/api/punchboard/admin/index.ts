@@ -27,6 +27,7 @@ import {
   isPunchAuthed,
   originAllowed,
   startOtpChallenge,
+  touchPunchSession,
 } from "../_admin-session";
 import {
   notifyTop10IfChanged,
@@ -149,7 +150,7 @@ export async function onRequestGet(context: PagesContext) {
   }
   const { board, ready } = await readBoard(context.env);
   const roster = await readRoster(context.env);
-  return authedJson(context.request, {
+  const body = {
     ok: true,
     ready,
     eventName: board.eventName,
@@ -157,7 +158,10 @@ export async function onRequestGet(context: PagesContext) {
     updatedAt: board.updatedAt,
     entries: board.entries,
     roster,
-  });
+  };
+  const refreshed = await touchPunchSession(context.request, context.env, secret);
+  if (refreshed) return withCookies(context.request, body, [refreshed]);
+  return authedJson(context.request, body);
 }
 
 export async function onRequestPost(context: PagesContext) {

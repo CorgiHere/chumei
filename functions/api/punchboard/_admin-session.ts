@@ -14,7 +14,7 @@ const COOKIE_PATH = "/api/punchboard/admin/";
 const OTP_KEY = "punchboard-admin-otp-v1";
 const SESSION_KEY = "punchboard-admin-session-v1";
 const OTP_TTL_SEC = 10 * 60;
-const SESSION_TTL_SEC = 4 * 60 * 60;
+const SESSION_TTL_SEC = 24 * 60 * 60;
 const RATE_TTL_SEC = 15 * 60;
 const MAX_OTP_SENDS = 5;
 const MAX_OTP_TRIES = 5;
@@ -108,11 +108,25 @@ export async function isPunchAuthed(request: Request, env: PunchEnv, secret: str
 }
 
 function challengeCookies(request: Request, id: string) {
-  return [
-    punchCookie(request, OTP_COOKIE, id, OTP_TTL_SEC),
-    punchCookie(request, SESSION_COOKIE, "", 0),
-    cookieHeader(request, "", 0),
-  ];
+  return [punchCookie(request, OTP_COOKIE, id, OTP_TTL_SEC)];
+}
+
+export async function touchPunchSession(request: Request, env: PunchEnv, secret: string) {
+  if (!secret || !env.CHUMEI_VOTES) return null;
+  const token = readNamedCookie(request, SESSION_COOKIE);
+  if (!token || token.length < 32) return null;
+  const row = await readJson<SessionRecord>(env, SESSION_KEY);
+  if (!row || row.exp < Date.now()) return null;
+  const hash = await hmacHex(secret, `sess:${token}`);
+  if (!timingSafeEqual(hash, row.hash)) return null;
+  const session: SessionRecord = {
+    hash: row.hash,
+    exp: Date.now() + SESSION_TTL_SEC * 1000,
+  };
+  await env.CHUMEI_VOTES.put(SESSION_KEY, JSON.stringify(session), {
+    expirationTtl: SESSION_TTL_SEC,
+  });
+  return punchCookie(request, SESSION_COOKIE, token, SESSION_TTL_SEC);
 }
 
 export async function startOtpChallenge(
@@ -142,7 +156,6 @@ export async function startOtpChallenge(
   await env.CHUMEI_VOTES.put(OTP_KEY, JSON.stringify(record), {
     expirationTtl: OTP_TTL_SEC,
   });
-  await env.CHUMEI_VOTES.put(SESSION_KEY, "", { expirationTtl: 60 });
 
   if (accepted) {
     const mailed = await sendAdminOtp(env, code);

@@ -101,6 +101,7 @@ export function PunchboardAdmin() {
   const [codeSent, setCodeSent] = useState(false);
   const [sendingCode, setSendingCode] = useState(false);
   const [authed, setAuthed] = useState(false);
+  const [authChecking, setAuthChecking] = useState(true);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [board, setBoard] = useState<AdminState>({
@@ -123,10 +124,26 @@ export function PunchboardAdmin() {
   );
 
   useEffect(() => {
-    void adminFetch({
-      method: "POST",
-      body: JSON.stringify({ action: "logout" }),
-    });
+    let cancelled = false;
+    void adminFetch()
+      .then(async (res) => {
+        if (!res.ok || cancelled) return;
+        const boardData = (await res.json()) as AdminState;
+        if (cancelled) return;
+        setBoard({
+          eventName: boardData.eventName,
+          endAt: boardData.endAt,
+          entries: boardData.entries ?? [],
+          roster: boardData.roster ?? [],
+        });
+        setAuthed(true);
+      })
+      .finally(() => {
+        if (!cancelled) setAuthChecking(false);
+      });
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   const filteredByGender = useMemo(() => {
@@ -373,13 +390,21 @@ export function PunchboardAdmin() {
     }
   }
 
+  if (authChecking) {
+    return (
+      <AdminFrame>
+        <p className="text-[12px] text-white/70">載入中…</p>
+      </AdminFrame>
+    );
+  }
+
   if (!authed) {
     return (
       <AdminFrame>
         <form onSubmit={login} className={panelClass}>
           <p className={cn(pressStart.className, "text-[10px] text-[#ffd54a]")}>ADMIN</p>
           <p className="text-[12px] text-white/70">
-            每次進入都要密碼與驗證碼。
+            這台電腦登入後可繼續使用。另一台電腦登入會把這台登出。
           </p>
           <label className="block text-[12px]" htmlFor="admin-pass">
             後台密碼
