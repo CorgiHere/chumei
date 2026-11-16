@@ -1321,76 +1321,60 @@
   }
 }
 
-.punch-diploma-hit {
-  position: absolute;
-  cursor: pointer;
-  border: 0;
-  background: transparent;
-  padding: 0;
-}
-
-.punch-diploma-hit--save {
-  inset: 0;
-}
-
-.punch-diploma-hit--logo {
-  left: 14%;
-  right: 14%;
-  top: 3.5%;
-  height: 13.5%;
-  z-index: 2;
-}
-
-.punch-diploma-share {
-  position: absolute;
-  left: 50%;
-  top: 16%;
-  z-index: 3;
-  width: min(22rem, 88%);
-  transform: translateX(-50%);
-  border: 3px solid #3af6ff;
-  background: #06142f;
-  padding: 0.85rem 0.85rem 0.7rem;
-  box-shadow: 0 4px 0 #087780;
-}
-
-.punch-diploma-share__title {
-  margin: 0 0 0.55rem;
-  color: #ffd54a;
-  font-size: 15px;
-  font-weight: 800;
-  letter-spacing: 0.04em;
-  text-align: center;
-}
-
-.punch-diploma-share__grid {
+.punch-diploma-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 0.4rem;
+  gap: 0.45rem;
+  margin-top: 0.7rem;
 }
 
-.punch-diploma-share__grid button,
-.punch-diploma-share__close {
-  min-height: 2.4rem;
+.punch-diploma-actions button,
+.punch-diploma-social button {
+  min-height: 2.7rem;
   cursor: pointer;
   border: 0;
-  background: #ffd54a;
-  color: #071028;
   font: inherit;
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 800;
 }
 
-.punch-diploma-share__grid button:hover,
-.punch-diploma-share__close:hover {
-  background: #ffe27a;
+.punch-diploma-actions button:disabled,
+.punch-diploma-social button:disabled {
+  cursor: wait;
+  opacity: 0.55;
 }
 
-.punch-diploma-share__close {
-  display: block;
-  width: 100%;
-  margin-top: 0.45rem;
+.punch-diploma-actions__share {
+  background: #ffd54a;
+  color: #071028;
+  box-shadow: 0 3px 0 #8a7000;
+}
+
+.punch-diploma-actions__save {
   background: #22e0f0;
+  color: #071028;
+  box-shadow: 0 3px 0 #0a8f96;
+}
+
+.punch-diploma-social {
+  display: none;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0.35rem;
+  margin-top: 0.45rem;
+}
+
+.punch-diploma-social button {
+  min-height: 2.4rem;
+  background: #06142f;
+  color: #e8f4ff;
+  box-shadow: inset 0 0 0 3px #3af6ff;
+  font-size: 13px;
+}
+
+@media (min-width: 1024px) {
+  .punch-diploma-social {
+    display: grid;
+  }
 }
 
 @keyframes openflat-shine {

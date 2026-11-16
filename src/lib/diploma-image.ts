@@ -55,10 +55,18 @@ export function downloadBlob(blob: Blob, fileName: string) {
   link.href = href;
   link.download = fileName;
   link.rel = "noopener";
+  if (isAppleMobile()) {
+    link.target = "_blank";
+  }
   document.body.append(link);
   link.click();
   link.remove();
-  window.setTimeout(() => URL.revokeObjectURL(href), 4000);
+  window.setTimeout(() => URL.revokeObjectURL(href), 8000);
+}
+
+function isAppleMobile() {
+  return /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 }
 
 export async function copyPng(blob: Blob) {

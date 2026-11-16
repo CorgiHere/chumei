@@ -13,7 +13,7 @@ import { cn, withBasePath } from "@/lib/utils";
 
 const SHARE_PAGE = `${siteConfig.siteUrl}/punchboard/`;
 
-type ShareApp = "system" | "messenger" | "facebook" | "line" | "threads" | "instagram";
+type ShareApp = "messenger" | "facebook" | "line" | "threads" | "instagram";
 
 export function ScoreDiploma({
   entry,
@@ -31,24 +31,18 @@ export function ScoreDiploma({
   const [src, setSrc] = useState("");
   const [blob, setBlob] = useState<Blob | null>(null);
   const [error, setError] = useState("");
-  const [shareOpen, setShareOpen] = useState(false);
   const [note, setNote] = useState("");
+  const [busy, setBusy] = useState<"share" | "save" | null>(null);
   const fileName = diplomaFileName(entry.id, String(entry.score));
   const shareText = useMemo(() => {
     const place =
       entry.rank >= 1 && entry.rank <= 10 ? `第 ${entry.rank} 名` : "歷史最高";
     return `${entry.name} 在竹梅賽拳擊機打出 ${entry.score} 分（${place}）`;
   }, [entry.name, entry.rank, entry.score]);
-  const canSystemShare = Boolean(
-    blob && typeof navigator !== "undefined" && typeof navigator.share === "function",
-  );
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        if (shareOpen) setShareOpen(false);
-        else onClose();
-      }
+      if (event.key === "Escape") onClose();
     };
     const previous = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -57,7 +51,7 @@ export function ScoreDiploma({
       document.body.style.overflow = previous;
       document.removeEventListener("keydown", onKey);
     };
-  }, [onClose, shareOpen]);
+  }, [onClose]);
 
   useEffect(() => {
     let alive = true;
@@ -95,30 +89,56 @@ export function ScoreDiploma({
     };
   }, [src]);
 
-  function save() {
-    if (!blob) return;
-    downloadBlob(blob, fileName);
-    setNote("已下載獎狀圖。");
+  async function save() {
+    if (!blob || busy) return;
+    setBusy("save");
+    try {
+      const saved = await saveWithPicker(blob, fileName);
+      if (saved === "abort") return;
+      if (saved === "ok") {
+        setNote("已儲存獎狀圖。");
+        return;
+      }
+      downloadBlob(blob, fileName);
+      setNote("已下載獎狀圖。");
+    } finally {
+      setBusy(null);
+    }
   }
 
-  async function share(app: ShareApp) {
-    if (!blob) return;
-    if (app === "system") {
-      try {
-        const file = new File([blob], fileName, { type: "image/png" });
-        const withFile: ShareData = { files: [file], title: "竹梅賽拳擊機獎狀", text: shareText };
-        if (navigator.canShare?.(withFile)) {
-          await navigator.share(withFile);
-          setShareOpen(false);
-          return;
-        }
-        await navigator.share({ title: "竹梅賽拳擊機獎狀", text: `${shareText}\n${SHARE_PAGE}` });
-        setShareOpen(false);
+  async function shareSystem() {
+    if (!blob || busy) return;
+    setBusy("share");
+    try {
+      const file = new File([blob], fileName, { type: "image/png" });
+      const withFile: ShareData = {
+        files: [file],
+        title: "竹梅賽拳擊機獎狀",
+        text: shareText,
+      };
+      if (navigator.canShare?.(withFile)) {
+        await navigator.share(withFile);
         return;
-      } catch (err) {
-        if ((err as { name?: string }).name === "AbortError") return;
       }
+      if (typeof navigator.share === "function") {
+        await navigator.share({
+          title: "竹梅賽拳擊機獎狀",
+          text: `${shareText}\n${SHARE_PAGE}`,
+        });
+        return;
+      }
+      await copyPng(blob);
+      setNote("已複製獎狀圖，可貼到聊天室。");
+    } catch (err) {
+      if ((err as { name?: string }).name === "AbortError") return;
+      setNote("這個裝置暫時無法開啟系統分享。");
+    } finally {
+      setBusy(null);
     }
+  }
+
+  async function shareApp(app: ShareApp) {
+    if (!blob || busy) return;
     try {
       await copyPng(blob);
       setNote("獎狀圖已複製，可貼到限時動態或聊天室。");
@@ -126,7 +146,6 @@ export function ScoreDiploma({
       setNote("請先下載獎狀圖再貼上。");
     }
     window.open(shareHref(app, shareText), "_blank", "noopener,noreferrer");
-    setShareOpen(false);
   }
 
   return (
@@ -153,72 +172,79 @@ export function ScoreDiploma({
         onClick={(event) => event.stopPropagation()}
       >
         {src ? (
-          <div className="relative mx-auto w-fit">
-            <img
-              src={src}
-              alt={`${entry.name}的獎狀`}
-              className="block h-auto max-h-[90dvh] w-auto max-w-[min(801px,98vw)]"
-              draggable={false}
-            />
-            <button
-              type="button"
-              className="punch-diploma-hit punch-diploma-hit--save"
-              aria-label="下載獎狀圖"
-              onClick={save}
-            />
-            <button
-              type="button"
-              className="punch-diploma-hit punch-diploma-hit--logo"
-              aria-label="分享獎狀"
-              onClick={() => setShareOpen(true)}
-            />
-            {shareOpen ? (
-              <div className="punch-diploma-share">
-                <p className="punch-diploma-share__title">分享到</p>
-                <div className="punch-diploma-share__grid">
-                  {canSystemShare ? (
-                    <button type="button" onClick={() => void share("system")}>
-                      本機 App
-                    </button>
-                  ) : null}
-                  <button type="button" onClick={() => void share("messenger")}>
-                    Messenger
-                  </button>
-                  <button type="button" onClick={() => void share("facebook")}>
-                    Facebook
-                  </button>
-                  <button type="button" onClick={() => void share("line")}>
-                    LINE
-                  </button>
-                  <button type="button" onClick={() => void share("threads")}>
-                    Threads
-                  </button>
-                  <button type="button" onClick={() => void share("instagram")}>
-                    Instagram
-                  </button>
-                </div>
-                <button
-                  type="button"
-                  className="punch-diploma-share__close"
-                  onClick={() => setShareOpen(false)}
-                >
-                  取消
-                </button>
-              </div>
-            ) : null}
-          </div>
+          <img
+            src={src}
+            alt={`${entry.name}的獎狀`}
+            className="mx-auto block h-auto max-h-[78dvh] w-auto max-w-[min(801px,98vw)]"
+            draggable={false}
+          />
         ) : (
           <p className="px-6 py-16 text-center text-[16px] text-white">
             {error || "獎狀產生中"}
           </p>
         )}
-        <p className="mt-2 text-center text-[13px] leading-snug text-[#8aa4c7]">
-          點獎狀下載圖片。點上方 Whoscall × Chu Mei LOGO 分享。
-        </p>
-        {note ? <p className="mt-1 text-center text-[13px] text-[#ffd54a]">{note}</p> : null}
+        <div className="punch-diploma-actions">
+          <button
+            type="button"
+            className="punch-diploma-actions__share"
+            disabled={!blob || busy !== null}
+            onClick={() => void shareSystem()}
+          >
+            {busy === "share" ? "開啟中" : "分享"}
+          </button>
+          <button
+            type="button"
+            className="punch-diploma-actions__save"
+            disabled={!blob || busy !== null}
+            onClick={() => void save()}
+          >
+            {busy === "save" ? "下載中" : "下載"}
+          </button>
+        </div>
+        <div className="punch-diploma-social">
+          <button type="button" disabled={!blob} onClick={() => void shareApp("messenger")}>
+            Messenger
+          </button>
+          <button type="button" disabled={!blob} onClick={() => void shareApp("facebook")}>
+            Facebook
+          </button>
+          <button type="button" disabled={!blob} onClick={() => void shareApp("line")}>
+            LINE
+          </button>
+          <button type="button" disabled={!blob} onClick={() => void shareApp("threads")}>
+            Threads
+          </button>
+          <button type="button" disabled={!blob} onClick={() => void shareApp("instagram")}>
+            Instagram
+          </button>
+        </div>
+        {note ? <p className="mt-2 text-center text-[13px] text-[#ffd54a]">{note}</p> : null}
       </div>
     </div>
   );
+}
+
+async function saveWithPicker(blob: Blob, fileName: string) {
+  const picker = window as Window & {
+    showSaveFilePicker?: (options: {
+      suggestedName: string;
+      types: Array<{ description: string; accept: Record<string, string[]> }>;
+    }) => Promise<{ createWritable: () => Promise<{ write: (data: Blob) => Promise<void>; close: () => Promise<void> }> }>;
+  };
+  if (typeof picker.showSaveFilePicker !== "function") return "skip";
+  try {
+    const handle = await picker.showSaveFilePicker({
+      suggestedName: fileName,
+      types: [{ description: "PNG", accept: { "image/png": [".png"] } }],
+    });
+    const writable = await handle.createWritable();
+    await writable.write(blob);
+    await writable.close();
+    return "ok";
+  } catch (err) {
+    if ((err as { name?: string }).name === "AbortError") return "abort";
+    return "skip";
+  }
 }
 
 function shareHref(app: ShareApp, text: string) {
