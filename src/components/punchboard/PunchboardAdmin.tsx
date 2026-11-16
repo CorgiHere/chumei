@@ -730,11 +730,11 @@ export function PunchboardAdmin() {
             }
             void postAction({
               action: "replaceRoster",
-              roster: [...board.roster, ...parsed],
+              roster: parsed,
             }).then((ok) => {
               if (ok) {
                 setRosterText("");
-                setNotice(`已匯入 ${parsed.length} 筆報名。`);
+                setNotice(`已取代成 ${parsed.length} 筆報名，舊名單與分數已清空。`);
               }
             });
           }}

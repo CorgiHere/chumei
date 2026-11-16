@@ -300,6 +300,13 @@ export async function onRequestPost(context: PagesContext) {
     const byId = new Map(nextRoster.map((row) => [row.id, row]));
     roster = [...byId.values()];
     await writeRoster(env, roster);
+    board.entries = [];
+    board.cue = null;
+    board.updatedAt = now;
+    board.version += 1;
+    await env.CHUMEI_VOTES.put(BOARD_KEY, JSON.stringify(board));
+    await pushBoardHistory(env, board);
+    await purgePublicBoardCache();
     return authedJson(request, { ok: true, ready: true, ...snapshot() });
   }
 
