@@ -753,29 +753,28 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
                 馬上報名
               </a>
             </div>
-            <div className="punch-chips lg:hidden">
-              <div className="punch-chips__group punch-chips__group--gender" role="group" aria-label="性別">
-                <button
-                  type="button"
-                  className="punch-chip"
-                  aria-pressed={tab === "male"}
-                  onClick={() => setTab("male")}
-                >
-                  男生
-                </button>
-                <button
-                  type="button"
-                  className="punch-chip"
-                  aria-pressed={tab === "female"}
-                  onClick={() => setTab("female")}
-                >
-                  女生
-                </button>
+            <div className="punch-chip-row">
+              <div className="punch-chips punch-chips--gender">
+                <div className="punch-chips__group punch-chips__group--gender" role="group" aria-label="性別">
+                  <button
+                    type="button"
+                    className="punch-chip"
+                    aria-pressed={tab === "male"}
+                    onClick={() => setTab("male")}
+                  >
+                    男生
+                  </button>
+                  <button
+                    type="button"
+                    className="punch-chip"
+                    aria-pressed={tab === "female"}
+                    onClick={() => setTab("female")}
+                  >
+                    女生
+                  </button>
+                </div>
               </div>
-            </div>
-            <div className="punch-filter-row">
-              <ScoreLookup onFound={setDiploma} />
-              <div className="punch-chips">
+              <div className="punch-chips punch-chips--school">
                 <div className="punch-chips__group punch-chips__group--school" role="group" aria-label="學校">
                   <button
                     type="button"
@@ -804,6 +803,7 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
                 </div>
               </div>
             </div>
+            <ScoreLookup onFound={setDiploma} />
           </div>
         </div>
 
