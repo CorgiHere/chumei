@@ -1328,8 +1328,7 @@
   margin-top: 0.7rem;
 }
 
-.punch-diploma-actions button,
-.punch-diploma-social button {
+.punch-diploma-actions button {
   display: inline-flex;
   min-height: 2.7rem;
   align-items: center;
@@ -1342,8 +1341,7 @@
   font-weight: 800;
 }
 
-.punch-diploma-actions button:disabled,
-.punch-diploma-social button:disabled {
+.punch-diploma-actions button:disabled {
   cursor: wait;
   opacity: 0.55;
 }
@@ -1358,47 +1356,6 @@
   background: #22e0f0;
   color: #071028;
   box-shadow: 0 3px 0 #0a8f96;
-}
-
-.punch-diploma-social {
-  display: none;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 0.45rem;
-  margin-top: 0.55rem;
-  justify-items: center;
-}
-
-.punch-diploma-social__btn {
-  width: 2.75rem;
-  min-height: 2.75rem;
-  background: transparent;
-  box-shadow: none;
-}
-
-.punch-diploma-social__btn--messenger {
-  color: #0084ff;
-}
-
-.punch-diploma-social__btn--facebook {
-  color: #1877f2;
-}
-
-.punch-diploma-social__btn--line {
-  color: #06c755;
-}
-
-.punch-diploma-social__btn--threads {
-  color: #f4f4f5;
-}
-
-.punch-diploma-social__btn--instagram {
-  color: #e4405f;
-}
-
-@media (min-width: 1024px) {
-  .punch-diploma-social {
-    display: grid;
-  }
 }
 
 @keyframes openflat-shine {

@@ -1,15 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import {
-  DownloadIcon,
-  FacebookIcon,
-  InstagramIcon,
-  LineIcon,
-  MessengerIcon,
-  ShareIcon,
-  ThreadsIcon,
-} from "@/components/BrandIcons";
+import { DownloadIcon, ShareIcon } from "@/components/BrandIcons";
 import {
   copyPng,
   diplomaFileName,
@@ -18,14 +10,6 @@ import {
 } from "@/lib/diploma-image";
 import { punchSchoolDisplay, type RankedPunchEntry } from "@/lib/punchboard";
 import { cn, withBasePath } from "@/lib/utils";
-
-const SOCIALS = [
-  { id: "messenger", label: "Messenger", Icon: MessengerIcon },
-  { id: "facebook", label: "Facebook", Icon: FacebookIcon },
-  { id: "line", label: "LINE", Icon: LineIcon },
-  { id: "threads", label: "Threads", Icon: ThreadsIcon },
-  { id: "instagram", label: "Instagram", Icon: InstagramIcon },
-] as const;
 
 export function ScoreDiploma({
   entry,
@@ -205,21 +189,6 @@ export function ScoreDiploma({
             <DownloadIcon className="h-6 w-6" />
             <span>{busy === "save" ? "下載中" : "下載"}</span>
           </button>
-        </div>
-        <div className="punch-diploma-social">
-          {SOCIALS.map(({ id, label, Icon }) => (
-            <button
-              key={id}
-              type="button"
-              className={`punch-diploma-social__btn punch-diploma-social__btn--${id}`}
-              disabled={!blob || busy !== null}
-              onClick={() => void sharePost()}
-              aria-label={`分享到 ${label}`}
-              title={label}
-            >
-              <Icon className="h-7 w-7" />
-            </button>
-          ))}
         </div>
         {note ? <p className="mt-2 text-center text-[13px] text-[#ffd54a]">{note}</p> : null}
       </div>
