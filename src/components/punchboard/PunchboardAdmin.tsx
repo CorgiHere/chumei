@@ -88,8 +88,9 @@ function authErrorMessage(error: string | undefined, status: number) {
     return "驗證碼寄送失敗。請看垃圾郵件，或確認 Resend 網域與 PUNCHBOARD_MAIL_FROM。";
   }
   if (error === "rate_limited") return "嘗試太多次，請 15 分鐘後再試。";
-  if (error === "bad_code") return "驗證碼不對或已過期，請重新寄送。";
-  if (error === "bad_password") return "密碼不對。";
+  if (error === "bad_login" || error === "bad_code" || error === "bad_password") {
+    return "";
+  }
   if (error === "forbidden") return "請從 https://chumei.org/punchboard/admin/ 開啟此頁。";
   return "無法連到後台 API。請在 chumei.org 開啟此頁。";
 }
@@ -224,7 +225,6 @@ export function PunchboardAdmin() {
       }
       setCodeSent(true);
       setCode("");
-      setNotice("驗證碼已寄到 chu.mei.committee@gmail.com，請在 10 分鐘內輸入。");
     } catch {
       setError("無法連到後台 API。請在 chumei.org 開啟此頁。");
     } finally {
@@ -245,7 +245,8 @@ export function PunchboardAdmin() {
     });
     const data = (await res.json().catch(() => ({}))) as { error?: string };
     if (!res.ok) {
-      setError(authErrorMessage(data.error, res.status));
+      const message = authErrorMessage(data.error, res.status);
+      if (message) setError(message);
       return;
     }
     setPassword("");
@@ -378,7 +379,7 @@ export function PunchboardAdmin() {
         <form onSubmit={login} className={panelClass}>
           <p className={cn(pressStart.className, "text-[10px] text-[#ffd54a]")}>ADMIN</p>
           <p className="text-[12px] text-white/70">
-            每次進入都要密碼與驗證碼。驗證碼會寄到 chu.mei.committee@gmail.com。
+            每次進入都要密碼與驗證碼。
           </p>
           <label className="block text-[12px]" htmlFor="admin-pass">
             後台密碼
@@ -403,7 +404,6 @@ export function PunchboardAdmin() {
             placeholder={codeSent ? "6 位數" : "先寄送驗證碼"}
             className={fieldClass}
           />
-          {notice ? <p className="text-[12px] text-[#7dff9a]">{notice}</p> : null}
           {error ? <p className="text-[12px] text-[#ff6b6b]">{error}</p> : null}
           <div className="flex flex-wrap gap-2">
             <button

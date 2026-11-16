@@ -50,8 +50,8 @@ export function OpenFlatFloat() {
   return (
     <Link
       ref={rootRef}
-      href={appPath("/activities/punchboard")}
-      aria-label="前往活動頁面：詐騙來電，Whoscall 開扁"
+      href={appPath("/punchboard")}
+      aria-label="前往即時榜：詐騙來電，Whoscall 開扁"
       className={cn(
         "openflat-float fixed right-3 z-62 no-underline sm:right-4",
         lift

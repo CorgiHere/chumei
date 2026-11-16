@@ -11,7 +11,6 @@ import {
   normalizePlayerId,
   parsePunchCue,
   punchSchoolDisplay,
-  PUNCHBOARD_START_AT,
   uniqueByPerson,
   type PunchboardPayload,
   type PunchCue,
@@ -123,47 +122,6 @@ function formatHitTime(iso: string) {
   const wall = at.toLocaleString("sv-SE", { timeZone: "Asia/Taipei" });
   const match = wall.match(/\s(\d{2}):(\d{2})(?::\d{2})?$/);
   return match ? `${match[1]}:${match[2]}` : "";
-}
-
-function formatRemain(ms: number) {
-  const total = Math.max(0, Math.floor(ms / 1000));
-  const days = Math.floor(total / 86400);
-  const hours = Math.floor((total % 86400) / 3600);
-  const minutes = Math.floor((total % 3600) / 60);
-  const seconds = total % 60;
-  const pad = (n: number) => String(n).padStart(2, "0");
-  const clock = `${pad(hours)}:${pad(minutes)}:${pad(seconds)}`;
-  return days > 0 ? `${days} 天 ${clock}` : clock;
-}
-
-function useCountdown(startAt: string, endAt: string) {
-  const [now, setNow] = useState<number | null>(null);
-  useEffect(() => {
-    const tick = () => setNow(Date.now());
-    tick();
-    const id = window.setInterval(tick, 250);
-    return () => window.clearInterval(id);
-  }, []);
-  const start = new Date(startAt).getTime();
-  const end = new Date(endAt).getTime();
-  if (now === null || !Number.isFinite(start)) {
-    return { phase: "waiting" as const, label: "距離 11/17", clock: "—" };
-  }
-  if (now < start) {
-    return {
-      phase: "waiting" as const,
-      label: "距離 11/17",
-      clock: formatRemain(start - now),
-    };
-  }
-  if (Number.isFinite(end) && now > end) {
-    return { phase: "ended" as const, label: "活動狀態", clock: "本場完賽" };
-  }
-  return {
-    phase: "live" as const,
-    label: "距離結束",
-    clock: Number.isFinite(end) ? formatRemain(end - now) : "進行中",
-  };
 }
 
 function schoolTotal(rows: RankedPunchEntry[], school: PunchSchool) {
@@ -627,7 +585,6 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
     female: [],
   });
   const Heading = headingLevel;
-  const countdown = useCountdown(PUNCHBOARD_START_AT, board.endAt);
 
   const playCue = (cue: PunchCue | null | undefined, male: RankedPunchEntry[], female: RankedPunchEntry[]) => {
     if (!cue || cue.nonce === cueRef.current) return;
@@ -754,18 +711,6 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
             className="relative z-1 mx-auto block h-auto w-full max-w-3xl object-contain"
           />
           <div className="relative z-1 mt-2 flex flex-col items-center gap-3">
-            <div className="flex flex-wrap items-center justify-center gap-2 text-[14px] text-white/75">
-              <span>活動倒數</span>
-              <span>{countdown.clock}</span>
-              <span
-                className={cn(
-                  arcade,
-                  "inline-flex items-center border-2 border-[#19e36a] bg-[#07331a] px-2 py-0.5 text-[8px] text-[#19e36a]",
-                )}
-              >
-                {countdown.phase === "ended" ? "FINAL" : "LIVE"}
-              </span>
-            </div>
             <div className="punch-cta-row">
               <DownloadWhoscall variant="compact" />
               <a

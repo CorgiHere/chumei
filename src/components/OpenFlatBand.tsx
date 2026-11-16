@@ -100,7 +100,7 @@ export function OpenFlatBand() {
               </p>
 
               <div className="mt-6 flex flex-wrap gap-3">
-                <Link href={appPath("/activities/punchboard")} className="btn-primary">
+                <Link href={appPath("/punchboard")} className="btn-primary">
                   前往活動頁面 →
                 </Link>
                 <a

@@ -18,7 +18,6 @@ const SESSION_TTL_SEC = 4 * 60 * 60;
 const RATE_TTL_SEC = 15 * 60;
 const MAX_OTP_SENDS = 5;
 const MAX_OTP_TRIES = 5;
-const MAX_PASSWORD_FAILS = 8;
 
 type OtpRecord = {
   id: string;
@@ -108,6 +107,14 @@ export async function isPunchAuthed(request: Request, env: PunchEnv, secret: str
   return timingSafeEqual(hash, row.hash);
 }
 
+function challengeCookies(request: Request, id: string) {
+  return [
+    punchCookie(request, OTP_COOKIE, id, OTP_TTL_SEC),
+    punchCookie(request, SESSION_COOKIE, "", 0),
+    cookieHeader(request, "", 0),
+  ];
+}
+
 export async function startOtpChallenge(
   request: Request,
   env: PunchEnv,
@@ -115,17 +122,17 @@ export async function startOtpChallenge(
   password: string,
 ) {
   if (!env.CHUMEI_VOTES) return { ok: false as const, error: "kv_missing", status: 503 as const };
-  const ip = clientIp(request);
-  if (!passwordOk(password, secret)) {
-    await bumpRate(env, "pw", ip, MAX_PASSWORD_FAILS);
-    return { ok: false as const, error: "bad_password", status: 401 as const };
+  if (!env.RESEND_API_KEY && !env.PUNCHBOARD_MAIL_WEBHOOK) {
+    return { ok: false as const, error: "mail_unconfigured", status: 503 as const };
   }
+  const ip = clientIp(request);
   const sendLimit = await bumpRate(env, "otp", ip, MAX_OTP_SENDS);
   if (!sendLimit.ok) return { ok: false as const, error: sendLimit.error, status: 429 as const };
 
+  const accepted = passwordOk(password, secret);
   const id = randomToken();
   const code = sixDigitCode();
-  const hash = await hmacHex(secret, `otp:${id}:${code}`);
+  const hash = await hmacHex(secret, `otp:${id}:${accepted ? code : `x${code}`}`);
   const record: OtpRecord = {
     id,
     hash,
@@ -137,22 +144,16 @@ export async function startOtpChallenge(
   });
   await env.CHUMEI_VOTES.put(SESSION_KEY, "", { expirationTtl: 60 });
 
-  const mailed = await sendAdminOtp(env, code);
-  if (mailed.mailed !== "sent") {
-    await env.CHUMEI_VOTES.put(OTP_KEY, "", { expirationTtl: 60 });
-    return {
-      ok: false as const,
-      error: mailed.mailed === "skipped" ? "mail_unconfigured" : "mail_failed",
-      status: 503 as const,
-    };
+  if (accepted) {
+    const mailed = await sendAdminOtp(env, code);
+    if (mailed.mailed !== "sent") {
+      await env.CHUMEI_VOTES.put(OTP_KEY, "", { expirationTtl: 60 });
+    }
   }
+
   return {
     ok: true as const,
-    cookies: [
-      punchCookie(request, OTP_COOKIE, id, OTP_TTL_SEC),
-      punchCookie(request, SESSION_COOKIE, "", 0),
-      cookieHeader(request, "", 0),
-    ],
+    cookies: challengeCookies(request, id),
   };
 }
 
@@ -165,11 +166,7 @@ export async function completeOtpLogin(
 ) {
   if (!env.CHUMEI_VOTES) return { ok: false as const, error: "kv_missing", status: 503 as const };
   const ip = clientIp(request);
-  if (!passwordOk(password, secret)) {
-    await bumpRate(env, "pw", ip, MAX_PASSWORD_FAILS);
-    return { ok: false as const, error: "bad_password", status: 401 as const };
-  }
-
+  const accepted = passwordOk(password, secret);
   const code = String(rawCode ?? "").replace(/\D/g, "").slice(0, 6);
   const challengeId = readNamedCookie(request, OTP_COOKIE);
   const record = await readJson<OtpRecord>(env, OTP_KEY);
@@ -179,7 +176,7 @@ export async function completeOtpLogin(
   const fresh = Boolean(record && record.id === challengeId && record.exp >= Date.now());
   const match = timingSafeEqual(provided, expected);
 
-  if (!fresh || !match || code.length !== 6) {
+  if (!accepted || !fresh || !match || code.length !== 6) {
     if (record && record.id === challengeId) {
       record.tries += 1;
       if (record.tries >= MAX_OTP_TRIES) {
@@ -191,7 +188,7 @@ export async function completeOtpLogin(
       }
     }
     await bumpRate(env, "otptry", ip, MAX_OTP_TRIES * 3);
-    return { ok: false as const, error: "bad_code", status: 401 as const };
+    return { ok: false as const, error: "bad_login", status: 401 as const };
   }
 
   await env.CHUMEI_VOTES.put(OTP_KEY, "", { expirationTtl: 60 });
