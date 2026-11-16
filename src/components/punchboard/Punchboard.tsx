@@ -973,7 +973,7 @@ function ScoreLookup({ onFound }: { onFound: (entry: RankedPunchEntry) => void }
 
   return (
     <div className="relative z-1 mt-2">
-      <form className="punch-search" onSubmit={(event) => void lookup(event)}>
+      <form className="punch-search punch-search--id" onSubmit={(event) => void lookup(event)}>
         <label className="sr-only" htmlFor="score-lookup-id">
           選手 ID
         </label>
@@ -982,14 +982,14 @@ function ScoreLookup({ onFound }: { onFound: (entry: RankedPunchEntry) => void }
           value={id}
           autoCapitalize="characters"
           onChange={(event) => setId(event.target.value)}
-          placeholder="輸入 ID 查成績"
+          placeholder="輸入 ID"
         />
         <button type="submit" disabled={busy}>
-          {busy ? "查詢中…" : "查成績"}
+          {busy ? "…" : "查成績"}
         </button>
       </form>
       {error ? (
-        <p className="mt-2 text-center text-[13px] text-[#ff6b6b]">{error}</p>
+        <p className="mt-1 text-[12px] text-[#ff6b6b]">{error}</p>
       ) : null}
     </div>
   );

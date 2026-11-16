@@ -855,6 +855,24 @@
   background: #ffe27a;
 }
 
+.punch-search--id {
+  width: min(100%, 15.5rem);
+  padding: 0.18rem 0.18rem 0.18rem 0.7rem;
+  border-width: 2px;
+  box-shadow: 0 2px 0 #087780;
+}
+
+.punch-search--id input {
+  font-size: 13px;
+}
+
+.punch-search--id button {
+  min-height: 1.7rem;
+  padding: 0 0.7rem;
+  font-size: 12px;
+  box-shadow: 0 1px 0 #c9a000;
+}
+
 .punch-chips {
   display: flex;
   align-items: stretch;
