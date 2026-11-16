@@ -1330,7 +1330,11 @@
 
 .punch-diploma-actions button,
 .punch-diploma-social button {
+  display: inline-flex;
   min-height: 2.7rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
   cursor: pointer;
   border: 0;
   font: inherit;
@@ -1364,11 +1368,10 @@
 }
 
 .punch-diploma-social button {
-  min-height: 2.4rem;
+  min-height: 2.7rem;
   background: #06142f;
   color: #e8f4ff;
   box-shadow: inset 0 0 0 3px #3af6ff;
-  font-size: 13px;
 }
 
 @media (min-width: 1024px) {

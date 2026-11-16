@@ -1,7 +1,15 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { siteConfig } from "@/data/site";
+import {
+  DownloadIcon,
+  FacebookIcon,
+  InstagramIcon,
+  LineIcon,
+  MessengerIcon,
+  ShareIcon,
+  ThreadsIcon,
+} from "@/components/BrandIcons";
 import {
   copyPng,
   diplomaFileName,
@@ -11,9 +19,13 @@ import {
 import { punchSchoolDisplay, type RankedPunchEntry } from "@/lib/punchboard";
 import { cn, withBasePath } from "@/lib/utils";
 
-const SHARE_PAGE = `${siteConfig.siteUrl}/punchboard/`;
-
-type ShareApp = "messenger" | "facebook" | "line" | "threads" | "instagram";
+const SOCIALS = [
+  { id: "messenger", label: "Messenger", Icon: MessengerIcon },
+  { id: "facebook", label: "Facebook", Icon: FacebookIcon },
+  { id: "line", label: "LINE", Icon: LineIcon },
+  { id: "threads", label: "Threads", Icon: ThreadsIcon },
+  { id: "instagram", label: "Instagram", Icon: InstagramIcon },
+] as const;
 
 export function ScoreDiploma({
   entry,
@@ -37,7 +49,7 @@ export function ScoreDiploma({
   const shareText = useMemo(() => {
     const place =
       entry.rank >= 1 && entry.rank <= 10 ? `第 ${entry.rank} 名` : "歷史最高";
-    return `${entry.name} 在竹梅賽拳擊機打出 ${entry.score} 分（${place}）`;
+    return `${entry.name} 在竹梅賽拳擊機打出 ${entry.score} 分！${place}｜Whoscall × 竹梅賽`;
   }, [entry.name, entry.rank, entry.score]);
 
   useEffect(() => {
@@ -106,46 +118,35 @@ export function ScoreDiploma({
     }
   }
 
-  async function shareSystem() {
+  async function sharePost() {
     if (!blob || busy) return;
     setBusy("share");
     try {
       const file = new File([blob], fileName, { type: "image/png" });
       const withFile: ShareData = {
         files: [file],
-        title: "竹梅賽拳擊機獎狀",
+        title: shareText,
         text: shareText,
       };
-      if (navigator.canShare?.(withFile)) {
+      if (navigator.canShare?.({ files: [file] })) {
         await navigator.share(withFile);
         return;
       }
-      if (typeof navigator.share === "function") {
-        await navigator.share({
-          title: "竹梅賽拳擊機獎狀",
-          text: `${shareText}\n${SHARE_PAGE}`,
-        });
-        return;
-      }
+      await navigator.clipboard.writeText(shareText).catch(() => undefined);
       await copyPng(blob);
-      setNote("已複製獎狀圖，可貼到聊天室。");
+      setNote("已複製獎狀圖和貼文，直接貼上即可。");
     } catch (err) {
       if ((err as { name?: string }).name === "AbortError") return;
-      setNote("這個裝置暫時無法開啟系統分享。");
+      try {
+        await navigator.clipboard.writeText(shareText);
+        await copyPng(blob);
+        setNote("已複製獎狀圖和貼文，直接貼上即可。");
+      } catch {
+        setNote("這個裝置暫時無法分享圖片。");
+      }
     } finally {
       setBusy(null);
     }
-  }
-
-  async function shareApp(app: ShareApp) {
-    if (!blob || busy) return;
-    try {
-      await copyPng(blob);
-      setNote("獎狀圖已複製，可貼到限時動態或聊天室。");
-    } catch {
-      setNote("請先下載獎狀圖再貼上。");
-    }
-    window.open(shareHref(app, shareText), "_blank", "noopener,noreferrer");
   }
 
   return (
@@ -188,35 +189,36 @@ export function ScoreDiploma({
             type="button"
             className="punch-diploma-actions__share"
             disabled={!blob || busy !== null}
-            onClick={() => void shareSystem()}
+            onClick={() => void sharePost()}
+            aria-label="分享"
           >
-            {busy === "share" ? "開啟中" : "分享"}
+            <ShareIcon className="h-6 w-6" />
+            <span>{busy === "share" ? "開啟中" : "分享"}</span>
           </button>
           <button
             type="button"
             className="punch-diploma-actions__save"
             disabled={!blob || busy !== null}
             onClick={() => void save()}
+            aria-label="下載"
           >
-            {busy === "save" ? "下載中" : "下載"}
+            <DownloadIcon className="h-6 w-6" />
+            <span>{busy === "save" ? "下載中" : "下載"}</span>
           </button>
         </div>
         <div className="punch-diploma-social">
-          <button type="button" disabled={!blob} onClick={() => void shareApp("messenger")}>
-            Messenger
-          </button>
-          <button type="button" disabled={!blob} onClick={() => void shareApp("facebook")}>
-            Facebook
-          </button>
-          <button type="button" disabled={!blob} onClick={() => void shareApp("line")}>
-            LINE
-          </button>
-          <button type="button" disabled={!blob} onClick={() => void shareApp("threads")}>
-            Threads
-          </button>
-          <button type="button" disabled={!blob} onClick={() => void shareApp("instagram")}>
-            Instagram
-          </button>
+          {SOCIALS.map(({ id, label, Icon }) => (
+            <button
+              key={id}
+              type="button"
+              disabled={!blob || busy !== null}
+              onClick={() => void sharePost()}
+              aria-label={`分享到 ${label}`}
+              title={label}
+            >
+              <Icon className="h-6 w-6" />
+            </button>
+          ))}
         </div>
         {note ? <p className="mt-2 text-center text-[13px] text-[#ffd54a]">{note}</p> : null}
       </div>
@@ -245,24 +247,6 @@ async function saveWithPicker(blob: Blob, fileName: string) {
     if ((err as { name?: string }).name === "AbortError") return "abort";
     return "skip";
   }
-}
-
-function shareHref(app: ShareApp, text: string) {
-  const encodedPage = encodeURIComponent(SHARE_PAGE);
-  const encodedText = encodeURIComponent(`${text}\n${SHARE_PAGE}`);
-  if (app === "facebook") {
-    return `https://www.facebook.com/sharer/sharer.php?u=${encodedPage}`;
-  }
-  if (app === "messenger") {
-    return `https://www.facebook.com/dialog/send?app_id=966242223397117&link=${encodedPage}&redirect_uri=${encodedPage}`;
-  }
-  if (app === "line") {
-    return `https://social-plugins.line.me/lineit/share?url=${encodedPage}`;
-  }
-  if (app === "threads") {
-    return `https://www.threads.net/intent/post?text=${encodedText}`;
-  }
-  return "https://www.instagram.com/";
 }
 
 function formatHitTime(iso: string) {

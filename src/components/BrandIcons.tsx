@@ -36,6 +36,51 @@ export function MailIcon({ className }: IconProps) {
   );
 }
 
+export function ShareIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8">
+      <circle cx="18" cy="5.5" r="2.4" />
+      <circle cx="6" cy="12" r="2.4" />
+      <circle cx="18" cy="18.5" r="2.4" />
+      <path d="m8.2 10.8 7.6-4.1M8.2 13.2l7.6 4.1" />
+    </svg>
+  );
+}
+
+export function DownloadIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8">
+      <path d="M12 4v11" />
+      <path d="m7.5 11.5 4.5 4.5 4.5-4.5" />
+      <path d="M5 19.5h14" />
+    </svg>
+  );
+}
+
+export function MessengerIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden fill="currentColor">
+      <path d="M12 3.2c-4.9 0-8.8 3.6-8.8 8.1 0 2.5 1.2 4.8 3.2 6.3v2.7l2.9-1.6c.8.2 1.7.4 2.7.4 4.9 0 8.8-3.6 8.8-8.1S16.9 3.2 12 3.2zm.9 10.9-2.2-2.4-4.3 2.4 4.7-5 2.3 2.4 4.2-2.4-4.7 5z" />
+    </svg>
+  );
+}
+
+export function LineIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden fill="currentColor">
+      <path d="M12 3.4C7 3.4 3 6.7 3 10.8c0 3.7 3.3 6.8 7.7 7.4.3 0 .7.2.8.5l.4 1.4c.1.3.4.3.6.2l1.9-1.1c.2-.1.3-.1.5-.1 5.1-.2 8.1-3.6 8.1-8.3C23 6.7 19 3.4 12 3.4zM8.1 13.1H6.6V9h1.5v4.1zm2.4 0H9.1c-.3 0-.5-.2-.5-.5V9h1.5v3.1h1.4v1zm3.3 0h-1.5l-1.3-1.8V13.1H9.5V9h1.5l1.3 1.8V9h1.5v4.1zm4.6 0h-2.8c-.3 0-.5-.2-.5-.5V9h1.5v3.1H18.4v1z" />
+    </svg>
+  );
+}
+
+export function ThreadsIcon({ className }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" className={className} aria-hidden fill="currentColor">
+      <path d="M16.7 10.2c-.2-3.1-1.9-4.9-4.8-4.9-3.5 0-5.8 2.6-5.8 7 0 4.3 2.2 6.9 5.8 6.9 2.7 0 4.5-1.5 5.2-4.1h-2.2c-.5 1.4-1.5 2.2-3 2.2-2.1 0-3.4-1.7-3.4-5 0-3.3 1.3-5 3.4-5 1.4 0 2.4.7 2.8 2h-2.5v1.7h4.7c.1-.6.2-1.2.2-1.8h-.4zm1.6 2.1c.2 4.6-2.2 7.9-6.4 7.9-4.8 0-7.5-3.4-7.5-8.5S7.1 3.2 12 3.2c4.2 0 6.6 2.7 7 6.6h-2.1c-.3-2.4-1.8-4.4-4.9-4.4-3.6 0-5.6 2.7-5.6 7.3s2 7.3 5.6 7.3c3.2 0 5-2.1 5.3-5.1h1z" />
+    </svg>
+  );
+}
+
 export function JoinIcon({ className }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" className={className} aria-hidden fill="none" stroke="currentColor" strokeWidth="1.8">
