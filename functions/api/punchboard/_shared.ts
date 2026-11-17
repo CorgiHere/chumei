@@ -285,6 +285,37 @@ export function findRegistrant(roster: PunchRegistrant[], id: string) {
   return roster.find((row) => row.id === key) ?? null;
 }
 
+export function normalizePhone(raw: string) {
+  let token = raw.normalize("NFKC").trim();
+  if (token.startsWith("+886")) token = `0${token.slice(4)}`;
+  else if (/^886/.test(token.replace(/\D/g, "")) && token.replace(/\D/g, "").length >= 11) {
+    token = `0${token.replace(/\D/g, "").slice(3)}`;
+  }
+  token = token.replace(/\D/g, "");
+  if (token.length === 9 && token.startsWith("9")) token = `0${token}`;
+  return token;
+}
+
+export function phonesFromContact(contact: string) {
+  const found = new Set<string>();
+  const compact = contact.normalize("NFKC");
+  for (const chunk of compact.split(/[^\d+]+/)) {
+    const phone = normalizePhone(chunk);
+    if (phone.length >= 9 && phone.length <= 13) found.add(phone);
+  }
+  const joined = compact.replace(/[-\s()]/g, "");
+  const matches = joined.match(/(?:\+?886)?0?9\d{8}/g) ?? [];
+  for (const match of matches) found.add(normalizePhone(match));
+  return [...found];
+}
+
+export function findRegistrantByPhone(roster: PunchRegistrant[], phone: string) {
+  const key = normalizePhone(phone);
+  if (key.length < 9) return null;
+  const hits = roster.filter((row) => phonesFromContact(row.contact).includes(key));
+  return hits[0] ?? null;
+}
+
 export function normalizePlayerId(id: string) {
   return id.normalize("NFKC").trim().toUpperCase().replace(/\s+/g, "");
 }

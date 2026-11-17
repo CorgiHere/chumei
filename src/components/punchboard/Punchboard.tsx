@@ -9,6 +9,7 @@ import {
   emptyPunchboard,
   getPunchboardEndpoint,
   getPunchboardLookupEndpoint,
+  normalizePhone,
   normalizePlayerId,
   parsePunchCue,
   punchSchoolDisplay,
@@ -877,22 +878,22 @@ export function Punchboard({ headingLevel = "h1" }: { headingLevel?: "h1" | "h2"
 }
 
 function ScoreLookup({ onFound }: { onFound: (entry: RankedPunchEntry) => void }) {
-  const [id, setId] = useState("");
+  const [phone, setPhone] = useState("");
   const [error, setError] = useState("");
   const [busy, setBusy] = useState(false);
 
   async function lookup(event: FormEvent) {
     event.preventDefault();
-    const playerId = normalizePlayerId(id);
-    if (!playerId) {
-      setError("請輸入選手 ID。");
+    const number = normalizePhone(phone);
+    if (number.length < 9) {
+      setError("請輸入手機號碼。");
       return;
     }
     setBusy(true);
     setError("");
     try {
       const res = await fetch(
-        `${getPunchboardLookupEndpoint()}?id=${encodeURIComponent(playerId)}`,
+        `${getPunchboardLookupEndpoint()}?phone=${encodeURIComponent(number)}`,
         { cache: "no-store", headers: { Accept: "application/json" } },
       );
       const data = (await res.json().catch(() => ({}))) as {
@@ -911,11 +912,11 @@ function ScoreLookup({ onFound }: { onFound: (entry: RankedPunchEntry) => void }
         nameMode?: "legal" | "nick";
       };
       if (data.error === "no_score") {
-        setError("這個 ID 還沒有成績。");
+        setError("這個號碼還沒有成績。");
         return;
       }
       if (data.error === "not_found" || res.status === 404) {
-        setError("查無此 ID。");
+        setError("查無此電話。");
         return;
       }
       if (!res.ok || !data.id || !data.name || !data.gender) {
@@ -946,15 +947,17 @@ function ScoreLookup({ onFound }: { onFound: (entry: RankedPunchEntry) => void }
   return (
     <div className="punch-lookup">
       <form className="punch-search punch-search--id" onSubmit={(event) => void lookup(event)}>
-        <label className="sr-only" htmlFor="score-lookup-id">
-          選手 ID
+        <label className="sr-only" htmlFor="score-lookup-phone">
+          手機號碼
         </label>
         <input
-          id="score-lookup-id"
-          value={id}
-          autoCapitalize="characters"
-          onChange={(event) => setId(event.target.value)}
-          placeholder="輸入 ID"
+          id="score-lookup-phone"
+          type="tel"
+          inputMode="numeric"
+          autoComplete="tel"
+          value={phone}
+          onChange={(event) => setPhone(event.target.value)}
+          placeholder="輸入手機號碼"
         />
         <button type="submit" disabled={busy}>
           {busy ? "…" : "查成績"}

@@ -134,6 +134,17 @@ export function normalizePlayerId(id: string) {
   return id.normalize("NFKC").trim().toUpperCase().replace(/\s+/g, "");
 }
 
+export function normalizePhone(raw: string) {
+  let token = raw.normalize("NFKC").trim();
+  if (token.startsWith("+886")) token = `0${token.slice(4)}`;
+  else if (/^886/.test(token.replace(/\D/g, "")) && token.replace(/\D/g, "").length >= 11) {
+    token = `0${token.replace(/\D/g, "").slice(3)}`;
+  }
+  token = token.replace(/\D/g, "");
+  if (token.length === 9 && token.startsWith("9")) token = `0${token}`;
+  return token;
+}
+
 export function personKey(entry: { id?: string; name: string; gender: PunchGender }) {
   const id = normalizePlayerId(entry.id ?? "");
   if (id) return `id:${id}`;

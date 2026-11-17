@@ -1,8 +1,9 @@
 import {
-  findRegistrant,
   isDemoEntry,
   json,
+  normalizePhone,
   normalizePlayerId,
+  phonesFromContact,
   punchDisplayName,
   rank,
   readBoard,
@@ -20,9 +21,9 @@ export async function onRequestOptions(context: PagesContext) {
 }
 
 export async function onRequestGet(context: PagesContext) {
-  const id = normalizePlayerId(new URL(context.request.url).searchParams.get("id") ?? "");
-  if (!id) {
-    return json(context.request, { error: "missing_id" }, 400, {
+  const phone = normalizePhone(new URL(context.request.url).searchParams.get("phone") ?? "");
+  if (phone.length < 9) {
+    return json(context.request, { error: "missing_phone" }, 400, {
       "Cache-Control": "no-store",
     });
   }
@@ -35,23 +36,29 @@ export async function onRequestGet(context: PagesContext) {
   }
 
   const roster = await readRoster(context.env);
-  const registrant = findRegistrant(roster, id);
-  if (!registrant) {
+  const matches = roster.filter((row) => phonesFromContact(row.contact).includes(phone));
+  if (matches.length === 0) {
     return json(context.request, { error: "not_found" }, 404, {
       "Cache-Control": "no-store",
     });
   }
 
   const live = board.entries.filter((entry) => !isDemoEntry(entry));
-  const hit = rank(live, registrant.gender).find(
-    (row) => normalizePlayerId(row.id) === id,
-  );
-  if (!hit || hit.score < 1) {
+  const rankedHits = matches.flatMap((registrant) => {
+    const hit = rank(live, registrant.gender).find(
+      (row) => normalizePlayerId(row.id) === normalizePlayerId(registrant.id),
+    );
+    return hit && hit.score >= 1 ? [{ registrant, hit }] : [];
+  });
+  rankedHits.sort((a, b) => b.hit.score - a.hit.score);
+  const picked = rankedHits[0];
+  if (!picked) {
     return json(context.request, { error: "no_score" }, 404, {
       "Cache-Control": "no-store",
     });
   }
 
+  const { registrant, hit } = picked;
   return json(
     context.request,
     {
